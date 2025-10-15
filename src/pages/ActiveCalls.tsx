@@ -10,16 +10,17 @@ interface ActiveCall {
   id: string;
   extension: string;
   agent: string;
+  callerId: string;
   destination: string;
   duration: number;
   status: 'talking' | 'ringing';
 }
 
 const mockCalls: ActiveCall[] = [
-  { id: '1', extension: '101', agent: 'João Silva', destination: '(11) 98765-4321', duration: 225, status: 'talking' },
-  { id: '2', extension: '102', agent: 'Maria Santos', destination: '(21) 99887-6543', duration: 82, status: 'talking' },
-  { id: '3', extension: '103', agent: 'Pedro Costa', destination: '(85) 91234-5678', duration: 15, status: 'ringing' },
-  { id: '4', extension: '104', agent: 'Ana Lima', destination: '(11) 93456-7890', duration: 5, status: 'ringing' },
+  { id: '1', extension: '101', agent: 'João Silva', callerId: '1001', destination: '(11) 98765-4321', duration: 225, status: 'talking' },
+  { id: '2', extension: '102', agent: 'Maria Santos', callerId: '1002', destination: '(21) 99887-6543', duration: 82, status: 'talking' },
+  { id: '3', extension: '103', agent: 'Pedro Costa', callerId: '1003', destination: '(85) 91234-5678', duration: 15, status: 'ringing' },
+  { id: '4', extension: '104', agent: 'Ana Lima', callerId: '1004', destination: '(11) 93456-7890', duration: 5, status: 'ringing' },
 ];
 
 export default function ActiveCalls() {
@@ -167,14 +168,18 @@ export default function ActiveCalls() {
               </div>
 
               {/* Info Grid */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Ramal</p>
                   <p className="font-semibold text-sm">{call.extension}</p>
                 </div>
-                <div className="col-span-2">
+                <div>
                   <p className="text-xs text-muted-foreground mb-1">Agente</p>
                   <p className="font-semibold text-sm truncate">{call.agent}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-xs text-muted-foreground mb-1">CallerID</p>
+                  <p className="font-semibold text-sm font-mono text-primary">{call.callerId}</p>
                 </div>
               </div>
 
