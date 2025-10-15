@@ -46,7 +46,7 @@ export default function Dashboard() {
   ] : [
     { icon: Phone, label: 'Chamadas Ativas', value: '8', color: 'text-primary' },
     { icon: Activity, label: 'Total Hoje', value: '127', change: '+15%', color: 'text-success' },
-    { icon: Clock, label: 'Tempo Médio', value: '4m 32s', change: '-8%', color: 'text-accent' },
+    { icon: DollarSign, label: 'Crédito', value: 'R$ 2.450', change: '+5%', color: 'text-accent' },
     { icon: Users, label: 'Agentes Online', value: '5', suffix: '/12', color: 'text-warning' },
   ];
 

@@ -92,6 +92,22 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* Plan Info */}
+      {!collapsed && (
+        <div className="mx-4 mt-4 mb-2 p-3 rounded-lg bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Plano Atual</span>
+            <CreditCard className="w-3 h-3 text-primary/60" />
+          </div>
+          <p className="text-sm font-semibold text-foreground mb-0.5">
+            {user?.plan || 'Profissional'}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Válido até 15/12/2025
+          </p>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {items.map((item) => (
