@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AgentModal } from '@/components/modals/AgentModal';
+import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
+import { toast } from '@/hooks/use-toast';
 
 interface Agent {
   id: string;
@@ -25,6 +28,10 @@ const mockAgents: Agent[] = [
 export default function Agents() {
   const [search, setSearch] = useState('');
   const [agents] = useState<Agent[]>(mockAgents);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<any>(null);
+  const [agentToDelete, setAgentToDelete] = useState<string | null>(null);
 
   const filteredAgents = agents.filter((agent) =>
     agent.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -45,6 +52,40 @@ export default function Agents() {
     );
   };
 
+  const handleCreateAgent = () => {
+    setSelectedAgent(null);
+    setIsAgentModalOpen(true);
+  };
+
+  const handleEditAgent = (agent: Agent) => {
+    setSelectedAgent({
+      id: parseInt(agent.id),
+      name: agent.name,
+      extension: agent.extension,
+      email: `${agent.name.toLowerCase().replace(' ', '.')}@empresa.com`,
+      status: agent.status as 'online' | 'offline' | 'paused',
+    });
+    setIsAgentModalOpen(true);
+  };
+
+  const handleDeleteAgent = (id: string) => {
+    setAgentToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    toast({
+      title: 'Agente removido',
+      description: 'O agente foi removido com sucesso',
+    });
+    setIsDeleteModalOpen(false);
+    setAgentToDelete(null);
+  };
+
+  const handleSaveAgent = (agent: any) => {
+    console.log('Salvando agente:', agent);
+  };
+
   return (
     <div className="space-y-6 animate-in">
       {/* Header */}
@@ -55,7 +96,7 @@ export default function Agents() {
             Gerencie os agentes do sistema
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary">
+        <Button className="gradient-primary shadow-primary" onClick={handleCreateAgent}>
           <Plus className="w-4 h-4 mr-2" />
           Adicionar Agente
         </Button>
@@ -149,10 +190,15 @@ export default function Agents() {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" onClick={() => handleEditAgent(agent)}>
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteAgent(agent.id)}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -163,6 +209,21 @@ export default function Agents() {
           </table>
         </div>
       </Card>
+
+      <AgentModal
+        open={isAgentModalOpen}
+        onOpenChange={setIsAgentModalOpen}
+        agent={selectedAgent}
+        onSave={handleSaveAgent}
+      />
+
+      <DeleteConfirmModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        onConfirm={confirmDelete}
+        title="Confirmar exclusão de agente"
+        description="Tem certeza que deseja excluir este agente? Esta ação não pode ser desfeita."
+      />
     </div>
   );
 }

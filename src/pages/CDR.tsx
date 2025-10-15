@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ExportModal } from '@/components/modals/ExportModal';
 
 interface CDRRecord {
   id: string;
@@ -37,6 +38,7 @@ export default function CDR() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [records] = useState<CDRRecord[]>(mockCDR);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const filteredRecords = records.filter((record) => {
     const matchesSearch = 
@@ -77,7 +79,7 @@ export default function CDR() {
             Visualize e exporte o histórico completo
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary">
+        <Button className="gradient-primary shadow-primary" onClick={() => setIsExportModalOpen(true)}>
           <Download className="w-4 h-4 mr-2" />
           Exportar
         </Button>
@@ -181,6 +183,12 @@ export default function CDR() {
           </div>
         </div>
       </Card>
+
+      <ExportModal
+        open={isExportModalOpen}
+        onOpenChange={setIsExportModalOpen}
+        title="Exportar Histórico CDR"
+      />
     </div>
   );
 }

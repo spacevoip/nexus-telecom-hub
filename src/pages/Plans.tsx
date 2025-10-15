@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { PlanModal } from '@/components/modals/PlanModal';
+import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
+import { toast } from '@/hooks/use-toast';
 
 interface Plan {
   id: string;
@@ -56,8 +59,48 @@ const mockPlans: Plan[] = [
 export default function Plans() {
   const { user } = useAuth();
   const [plans] = useState<Plan[]>(mockPlans);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [planToDelete, setPlanToDelete] = useState<string | null>(null);
 
   const isReseller = user?.role === 'reseller';
+
+  const handleCreatePlan = () => {
+    setSelectedPlan(null);
+    setIsPlanModalOpen(true);
+  };
+
+  const handleEditPlan = (plan: Plan) => {
+    setSelectedPlan({
+      id: parseInt(plan.id),
+      name: plan.name,
+      price: parseFloat(plan.price.replace('R$ ', '').replace('.', '')),
+      minutes: parseInt(plan.minutes.replace('.', '')),
+      agents: plan.agents,
+      concurrent: plan.calls,
+      features: plan.features,
+    });
+    setIsPlanModalOpen(true);
+  };
+
+  const handleDeletePlan = (id: string) => {
+    setPlanToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    toast({
+      title: 'Plano removido',
+      description: 'O plano foi removido com sucesso',
+    });
+    setIsDeleteModalOpen(false);
+    setPlanToDelete(null);
+  };
+
+  const handleSavePlan = (plan: any) => {
+    console.log('Salvando plano:', plan);
+  };
 
   return (
     <div className="space-y-6 animate-in">
@@ -73,7 +116,7 @@ export default function Plans() {
               : 'Crie e gerencie os planos disponíveis'}
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary">
+        <Button className="gradient-primary shadow-primary" onClick={handleCreatePlan}>
           <Plus className="w-4 h-4 mr-2" />
           {isReseller ? 'Criar Plano Customizado' : 'Novo Plano'}
         </Button>
@@ -170,11 +213,16 @@ export default function Plans() {
                 <Eye className="w-3 h-3 mr-1" />
                 Ver
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => handleEditPlan(plan)}>
                 <Edit className="w-3 h-3" />
               </Button>
               {user?.role === 'admin' && (
-                <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-destructive hover:text-destructive"
+                  onClick={() => handleDeletePlan(plan.id)}
+                >
                   <Trash2 className="w-3 h-3" />
                 </Button>
               )}
@@ -188,6 +236,21 @@ export default function Plans() {
           </Card>
         ))}
       </div>
+
+      <PlanModal
+        open={isPlanModalOpen}
+        onOpenChange={setIsPlanModalOpen}
+        plan={selectedPlan}
+        onSave={handleSavePlan}
+      />
+
+      <DeleteConfirmModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        onConfirm={confirmDelete}
+        title="Confirmar exclusão de plano"
+        description="Tem certeza que deseja excluir este plano? Os usuários vinculados a ele serão afetados."
+      />
     </div>
   );
 }

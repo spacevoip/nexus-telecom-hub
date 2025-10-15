@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Download, TrendingUp, TrendingDown, Users, Phone, DollarSign, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,6 +17,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { ExportModal } from '@/components/modals/ExportModal';
 
 const monthlyData = [
   { month: 'Jan', calls: 340, revenue: 12400 },
@@ -33,6 +35,8 @@ const planDistribution = [
 ];
 
 export default function Reports() {
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
   const metrics = [
     {
       icon: Phone,
@@ -78,7 +82,7 @@ export default function Reports() {
             Análise consolidada do desempenho
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary">
+        <Button className="gradient-primary shadow-primary" onClick={() => setIsExportModalOpen(true)}>
           <Download className="w-4 h-4 mr-2" />
           Exportar Relatório
         </Button>
@@ -244,6 +248,12 @@ export default function Reports() {
           </div>
         </Card>
       </div>
+
+      <ExportModal
+        open={isExportModalOpen}
+        onOpenChange={setIsExportModalOpen}
+        title="Exportar Relatório Completo"
+      />
     </div>
   );
 }

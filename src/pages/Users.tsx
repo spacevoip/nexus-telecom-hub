@@ -5,6 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserModal } from '@/components/modals/UserModal';
+import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
+import { toast } from '@/hooks/use-toast';
 
 interface User {
   id: string;
@@ -28,6 +31,10 @@ export default function Users() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [users] = useState<User[]>(mockUsers);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   const filteredUsers = users.filter((u) =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -52,6 +59,41 @@ export default function Users() {
     suspended: users.filter(u => u.status === 'suspended').length,
   };
 
+  const handleCreateUser = () => {
+    setSelectedUser(null);
+    setIsUserModalOpen(true);
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser({
+      id: parseInt(user.id),
+      name: user.name,
+      email: user.email,
+      company: user.company,
+      plan: user.plan.toLowerCase(),
+      status: user.status,
+    });
+    setIsUserModalOpen(true);
+  };
+
+  const handleDeleteUser = (id: string) => {
+    setUserToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    toast({
+      title: 'Usuário removido',
+      description: 'O usuário foi removido com sucesso',
+    });
+    setIsDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleSaveUser = (user: any) => {
+    console.log('Salvando usuário:', user);
+  };
+
   return (
     <div className="space-y-6 animate-in">
       {/* Header */}
@@ -66,7 +108,7 @@ export default function Users() {
               : 'Visualize e gerencie todos os usuários do sistema'}
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary">
+        <Button className="gradient-primary shadow-primary" onClick={handleCreateUser}>
           <Plus className="w-4 h-4 mr-2" />
           {isReseller ? 'Novo Cliente' : 'Novo Usuário'}
         </Button>
@@ -137,7 +179,7 @@ export default function Users() {
                   <td className="p-4 text-sm text-muted-foreground">{user.registeredAt}</td>
                   <td className="p-4">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" title="Ver detalhes">
+                      <Button variant="ghost" size="icon" title="Ver detalhes" onClick={() => handleEditUser(user)}>
                         <Edit className="w-4 h-4" />
                       </Button>
                       {isAdmin && (
@@ -165,6 +207,7 @@ export default function Users() {
                             variant="ghost"
                             size="icon"
                             className="text-destructive hover:text-destructive"
+                            onClick={() => handleDeleteUser(user.id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -189,6 +232,21 @@ export default function Users() {
           </div>
         </div>
       </Card>
+
+      <UserModal
+        open={isUserModalOpen}
+        onOpenChange={setIsUserModalOpen}
+        user={selectedUser}
+        onSave={handleSaveUser}
+      />
+
+      <DeleteConfirmModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        onConfirm={confirmDelete}
+        title="Confirmar exclusão de usuário"
+        description="Tem certeza que deseja excluir este usuário? Todos os seus dados serão removidos."
+      />
     </div>
   );
 }

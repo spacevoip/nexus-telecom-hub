@@ -3,6 +3,8 @@ import { Phone, Headphones, Pause, PhoneOff, ArrowRightLeft } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { CallActionModal } from '@/components/modals/CallActionModal';
+import { toast } from '@/hooks/use-toast';
 
 interface ActiveCall {
   id: string;
@@ -21,6 +23,9 @@ const mockCalls: ActiveCall[] = [
 
 export default function ActiveCalls() {
   const [calls, setCalls] = useState<ActiveCall[]>(mockCalls);
+  const [isCallModalOpen, setIsCallModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState<'transfer' | 'listen' | null>(null);
+  const [selectedCallId, setSelectedCallId] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,6 +59,32 @@ export default function ActiveCalls() {
         {variant.label}
       </Badge>
     );
+  };
+
+  const handleTransfer = (callId: string) => {
+    setSelectedCallId(parseInt(callId));
+    setModalAction('transfer');
+    setIsCallModalOpen(true);
+  };
+
+  const handleListen = (callId: string) => {
+    setSelectedCallId(parseInt(callId));
+    setModalAction('listen');
+    setIsCallModalOpen(true);
+  };
+
+  const handleEndCall = () => {
+    toast({
+      title: 'Chamada encerrada',
+      description: 'A chamada foi finalizada com sucesso',
+    });
+  };
+
+  const handlePauseCall = () => {
+    toast({
+      title: 'Chamada pausada',
+      description: 'A chamada foi colocada em espera',
+    });
   };
 
   return (
@@ -150,17 +181,17 @@ export default function ActiveCalls() {
 
             {/* Actions */}
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1">
+              <Button size="sm" variant="outline" className="flex-1" onClick={() => handleListen(call.id)}>
                 <Headphones className="w-3 h-3 mr-1" />
                 Escutar
               </Button>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={handlePauseCall}>
                 <Pause className="w-3 h-3" />
               </Button>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={() => handleTransfer(call.id)}>
                 <ArrowRightLeft className="w-3 h-3" />
               </Button>
-              <Button size="sm" variant="outline" className="text-destructive hover:text-destructive">
+              <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" onClick={handleEndCall}>
                 <PhoneOff className="w-3 h-3" />
               </Button>
             </div>
@@ -180,6 +211,13 @@ export default function ActiveCalls() {
           </p>
         </Card>
       )}
+
+      <CallActionModal
+        open={isCallModalOpen}
+        onOpenChange={setIsCallModalOpen}
+        action={modalAction}
+        callId={selectedCallId || undefined}
+      />
     </div>
   );
 }

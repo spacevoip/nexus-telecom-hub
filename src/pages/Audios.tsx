@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AudioUploadModal } from '@/components/modals/AudioUploadModal';
+import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
+import { toast } from '@/hooks/use-toast';
 
 interface Audio {
   id: string;
@@ -26,6 +29,9 @@ export default function Audios() {
   const [search, setSearch] = useState('');
   const [audios] = useState<Audio[]>(mockAudios);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [audioToDelete, setAudioToDelete] = useState<string | null>(null);
 
   const filteredAudios = audios.filter((audio) =>
     audio.name.toLowerCase().includes(search.toLowerCase())
@@ -53,6 +59,24 @@ export default function Audios() {
     { key: 'announcement', label: 'Anúncios', count: audios.filter(a => a.category === 'announcement').length },
   ];
 
+  const handleUpload = (audio: any) => {
+    console.log('Upload:', audio);
+  };
+
+  const handleDelete = (id: string) => {
+    setAudioToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    toast({
+      title: 'Áudio removido',
+      description: 'O áudio foi removido com sucesso',
+    });
+    setIsDeleteModalOpen(false);
+    setAudioToDelete(null);
+  };
+
   return (
     <div className="space-y-6 animate-in">
       {/* Header */}
@@ -63,7 +87,7 @@ export default function Audios() {
             Gerencie mensagens, URA e músicas de espera
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary">
+        <Button className="gradient-primary shadow-primary" onClick={() => setIsUploadModalOpen(true)}>
           <Upload className="w-4 h-4 mr-2" />
           Upload de Áudio
         </Button>
@@ -135,10 +159,15 @@ export default function Audios() {
                     <Play className="w-3 h-3" />
                   )}
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => toast({ title: 'Download iniciado' })}>
                   <Download className="w-3 h-3" />
                 </Button>
-                <Button size="sm" variant="outline" className="text-destructive hover:text-destructive">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-destructive hover:text-destructive"
+                  onClick={() => handleDelete(audio.id)}
+                >
                   <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
@@ -146,6 +175,20 @@ export default function Audios() {
           </Card>
         ))}
       </div>
+
+      <AudioUploadModal
+        open={isUploadModalOpen}
+        onOpenChange={setIsUploadModalOpen}
+        onUpload={handleUpload}
+      />
+
+      <DeleteConfirmModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        onConfirm={confirmDelete}
+        title="Confirmar exclusão de áudio"
+        description="Tem certeza que deseja excluir este áudio? Esta ação não pode ser desfeita."
+      />
     </div>
   );
 }
