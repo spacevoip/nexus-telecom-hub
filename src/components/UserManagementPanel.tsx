@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Save, User, Mail, Building, CreditCard, Shield, Calendar, Phone, UserCog, TrendingUp } from 'lucide-react';
+import { Save, User, Mail, Building, CreditCard, Shield, Calendar, Phone, UserCog, TrendingUp, Ban, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -28,6 +29,7 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
     notes: '',
     role: 'user',
   });
+  const [showSuspendDialog, setShowSuspendDialog] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -62,6 +64,20 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
     onClose();
   };
 
+  const handleToggleSuspend = () => {
+    const newStatus = formData.status === 'active' ? 'suspended' : 'active';
+    setFormData({ ...formData, status: newStatus });
+    setShowSuspendDialog(false);
+    
+    toast({
+      title: newStatus === 'suspended' ? 'Usuário suspenso' : 'Usuário ativado',
+      description: newStatus === 'suspended' 
+        ? 'O usuário foi suspenso e não poderá acessar a plataforma' 
+        : 'O usuário foi reativado e pode acessar a plataforma',
+      variant: newStatus === 'suspended' ? 'destructive' : 'default',
+    });
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -93,11 +109,31 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
                   {formData.name.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="font-medium text-base sm:text-lg truncate">{formData.name || 'Novo Usuário'}</p>
-                <Badge variant="outline" className={formData.status === 'active' ? 'status-badge-active' : 'status-badge-error'}>
-                  {formData.status === 'active' ? 'Ativo' : 'Suspenso'}
-                </Badge>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className={formData.status === 'active' ? 'status-badge-active' : 'status-badge-error'}>
+                    {formData.status === 'active' ? 'Ativo' : 'Suspenso'}
+                  </Badge>
+                  <Button
+                    variant={formData.status === 'active' ? 'destructive' : 'outline'}
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => setShowSuspendDialog(true)}
+                  >
+                    {formData.status === 'active' ? (
+                      <>
+                        <Ban className="w-3 h-3 mr-1" />
+                        Suspender
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Reativar
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -345,6 +381,32 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
           Salvar Alterações
         </Button>
       </div>
+
+      {/* Suspend/Activate Confirmation Dialog */}
+      <AlertDialog open={showSuspendDialog} onOpenChange={setShowSuspendDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {formData.status === 'active' ? 'Suspender usuário?' : 'Reativar usuário?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {formData.status === 'active' 
+                ? `Tem certeza que deseja suspender ${formData.name}? O usuário não poderá acessar a plataforma até ser reativado.`
+                : `Tem certeza que deseja reativar ${formData.name}? O usuário poderá acessar a plataforma novamente.`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleToggleSuspend}
+              className={formData.status === 'active' ? 'bg-destructive hover:bg-destructive/90' : ''}
+            >
+              {formData.status === 'active' ? 'Suspender' : 'Reativar'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
