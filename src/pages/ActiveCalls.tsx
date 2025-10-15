@@ -168,7 +168,7 @@ export default function ActiveCalls() {
               </div>
 
               {/* Info Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-3 gap-3 mb-4">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Ramal</p>
                   <p className="font-semibold text-sm">{call.extension}</p>
@@ -177,7 +177,7 @@ export default function ActiveCalls() {
                   <p className="text-xs text-muted-foreground mb-1">Agente</p>
                   <p className="font-semibold text-sm truncate">{call.agent}</p>
                 </div>
-                <div className="col-span-2">
+                <div>
                   <p className="text-xs text-muted-foreground mb-1">CallerID</p>
                   <p className="font-semibold text-sm font-mono text-primary">{call.callerId}</p>
                 </div>
