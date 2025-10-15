@@ -5,14 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { Progress } from '@/components/ui/progress';
 
 export default function Settings() {
   const { user } = useAuth();
-  const [twoFactor, setTwoFactor] = useState(false);
 
   const planData = {
     name: user?.plan || 'Profissional',
@@ -105,19 +103,6 @@ export default function Settings() {
               <Button className="gradient-primary shadow-primary">
                 Atualizar Senha
               </Button>
-            </div>
-          </Card>
-
-          <Card className="p-6 shadow-card">
-            <h2 className="text-xl font-semibold mb-4">Autenticação de Dois Fatores</h2>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Ativar 2FA</p>
-                <p className="text-sm text-muted-foreground">
-                  Adicione uma camada extra de segurança
-                </p>
-              </div>
-              <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
             </div>
           </Card>
 
