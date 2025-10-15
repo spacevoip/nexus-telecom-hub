@@ -14,13 +14,20 @@ import {
 } from 'recharts';
 
 const callsData = [
-  { time: '00:00', calls: 12 },
-  { time: '04:00', calls: 8 },
-  { time: '08:00', calls: 25 },
-  { time: '12:00', calls: 42 },
-  { time: '16:00', calls: 38 },
-  { time: '20:00', calls: 18 },
-  { time: '24:00', calls: 10 },
+  { time: '00:00', chamadas: 12, atendidas: 10 },
+  { time: '04:00', chamadas: 8, atendidas: 7 },
+  { time: '08:00', chamadas: 25, atendidas: 22 },
+  { time: '12:00', chamadas: 42, atendidas: 38 },
+  { time: '16:00', chamadas: 38, atendidas: 35 },
+  { time: '20:00', chamadas: 18, atendidas: 16 },
+  { time: '24:00', chamadas: 10, atendidas: 9 },
+];
+
+const agents = [
+  { name: 'João Silva', status: 'online', avatar: 'JS', calls: 12 },
+  { name: 'Maria Santos', status: 'busy', avatar: 'MS', calls: 8 },
+  { name: 'Pedro Costa', status: 'online', avatar: 'PC', calls: 15 },
+  { name: 'Ana Lima', status: 'pause', avatar: 'AL', calls: 6 },
 ];
 
 export default function Dashboard() {
@@ -92,105 +99,90 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Charts */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="p-6 shadow-card">
-          <h3 className="font-semibold mb-4">Chamadas nas Últimas 24h</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={callsData}>
-              <defs>
-                <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(239 84% 67%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(239 84% 67%)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis
-                dataKey="time"
-                className="text-xs"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
-              />
-              <YAxis
-                className="text-xs"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="calls"
-                stroke="hsl(239 84% 67%)"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorCalls)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Card>
-
-        <Card className="p-6 shadow-card">
-          <h3 className="font-semibold mb-4">Tendência Semanal</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={callsData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis
-                dataKey="time"
-                className="text-xs"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
-              />
-              <YAxis
-                className="text-xs"
-                tick={{ fill: 'hsl(var(--muted-foreground))' }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="calls"
-                stroke="hsl(262 83% 58%)"
-                strokeWidth={2}
-                dot={{ fill: 'hsl(262 83% 58%)', r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
+      {/* Chart - Chamadas x Atendidas */}
       <Card className="p-6 shadow-card">
-        <h3 className="font-semibold mb-4">Atividade Recente</h3>
-        <div className="space-y-4">
-          {[
-            { agent: 'João Silva', action: 'finalizou uma chamada', time: 'há 2 minutos', duration: '4m 23s' },
-            { agent: 'Maria Santos', action: 'iniciou uma chamada', time: 'há 5 minutos', duration: 'em andamento' },
-            { agent: 'Pedro Costa', action: 'entrou em pausa', time: 'há 15 minutos', duration: '-' },
-            { agent: 'Ana Lima', action: 'finalizou uma chamada', time: 'há 20 minutos', duration: '2m 11s' },
-          ].map((activity, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b border-border last:border-0">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-xs font-semibold text-primary">
-                    {activity.agent.charAt(0)}
-                  </span>
+        <h3 className="font-semibold mb-4">Chamadas x Atendidas (Últimas 24h)</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={callsData}>
+            <defs>
+              <linearGradient id="colorChamadas" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="colorAtendidas" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis
+              dataKey="time"
+              className="text-xs"
+              tick={{ fill: 'hsl(var(--muted-foreground))' }}
+            />
+            <YAxis
+              className="text-xs"
+              tick={{ fill: 'hsl(var(--muted-foreground))' }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '8px',
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="chamadas"
+              name="Chamadas"
+              stroke="hsl(var(--primary))"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorChamadas)"
+            />
+            <Area
+              type="monotone"
+              dataKey="atendidas"
+              name="Atendidas"
+              stroke="hsl(var(--success))"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorAtendidas)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </Card>
+
+      {/* Agentes Online */}
+      <Card className="p-6 shadow-card">
+        <h3 className="font-semibold mb-4">Agentes Online</h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {agents.map((agent, index) => (
+            <div key={index} className="p-4 rounded-lg border border-border bg-card/50 hover:shadow-md transition-smooth">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+                    <span className="text-sm font-bold text-primary-foreground">
+                      {agent.avatar}
+                    </span>
+                  </div>
+                  <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-card ${
+                    agent.status === 'online' ? 'bg-success' : 
+                    agent.status === 'busy' ? 'bg-destructive' : 'bg-warning'
+                  }`} />
                 </div>
-                <div>
-                  <p className="text-sm font-medium">
-                    {activity.agent} <span className="text-muted-foreground">{activity.action}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">{agent.name}</p>
+                  <p className="text-xs text-muted-foreground capitalize">
+                    {agent.status === 'online' ? 'Disponível' : 
+                     agent.status === 'busy' ? 'Em chamada' : 'Em pausa'}
                   </p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
                 </div>
               </div>
-              <span className="text-sm text-muted-foreground">{activity.duration}</span>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Chamadas hoje</span>
+                <span className="font-semibold text-primary">{agent.calls}</span>
+              </div>
             </div>
           ))}
         </div>
