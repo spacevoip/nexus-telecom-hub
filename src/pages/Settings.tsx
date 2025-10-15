@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, CreditCard, Bell } from 'lucide-react';
+import { User, Lock, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,8 +13,6 @@ import { Progress } from '@/components/ui/progress';
 export default function Settings() {
   const { user } = useAuth();
   const [twoFactor, setTwoFactor] = useState(false);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [smsNotifications, setSmsNotifications] = useState(false);
 
   const planData = {
     name: user?.plan || 'Profissional',
@@ -38,7 +36,7 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="profile">
             <User className="w-4 h-4 mr-2" />
             Perfil
@@ -50,10 +48,6 @@ export default function Settings() {
           <TabsTrigger value="plan">
             <CreditCard className="w-4 h-4 mr-2" />
             Plano
-          </TabsTrigger>
-          <TabsTrigger value="notifications">
-            <Bell className="w-4 h-4 mr-2" />
-            Notificações
           </TabsTrigger>
         </TabsList>
 
@@ -233,51 +227,6 @@ export default function Settings() {
           </Card>
         </TabsContent>
 
-        {/* Notifications Tab */}
-        <TabsContent value="notifications" className="space-y-6">
-          <Card className="p-6 shadow-card">
-            <h2 className="text-xl font-semibold mb-6">Preferências de Notificação</h2>
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-sm text-muted-foreground">
-                    Receber notificações por email
-                  </p>
-                </div>
-                <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">SMS</p>
-                  <p className="text-sm text-muted-foreground">
-                    Receber notificações por SMS
-                  </p>
-                </div>
-                <Switch checked={smsNotifications} onCheckedChange={setSmsNotifications} />
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 shadow-card">
-            <h2 className="text-xl font-semibold mb-6">Tipos de Notificação</h2>
-            <div className="space-y-4">
-              {[
-                { label: 'Nova chamada recebida', checked: true },
-                { label: 'Chamada perdida', checked: true },
-                { label: 'Agente offline', checked: true },
-                { label: 'Limite de minutos atingido', checked: true },
-                { label: 'Relatório semanal', checked: false },
-                { label: 'Atualizações do sistema', checked: false },
-              ].map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <span className="text-sm">{item.label}</span>
-                  <Switch defaultChecked={item.checked} />
-                </div>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );
