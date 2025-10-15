@@ -51,43 +51,47 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-background">
+    <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-[420px] space-y-6 animate-in">
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-md space-y-8 animate-in">
           {/* Logo */}
-          <div className="flex justify-center lg:justify-start">
-            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-primary">
-              <Phone className="w-8 h-8 text-primary-foreground" />
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-primary">
+              <Phone className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">PABX Online</h1>
+              <p className="text-sm text-muted-foreground">Sistema de Gerenciamento</p>
             </div>
           </div>
 
           {/* Title */}
-          <div className="text-center lg:text-left">
-            <h2 className="text-3xl font-bold mb-2">
-              {isLogin ? 'Welcome Back!' : 'Create Account'}
+          <div>
+            <h2 className="text-3xl font-bold">
+              {isLogin ? 'Bem-vindo de volta' : 'Criar conta'}
             </h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground mt-2">
               {isLogin
-                ? 'Please Sign In to continue'
-                : 'Fill in the details to get started'}
+                ? 'Faça login para acessar sua conta'
+                : 'Preencha os dados para começar'}
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-foreground">Name</Label>
+                <Label htmlFor="name">Nome completo</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Your full name"
+                    placeholder="Seu nome"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="pl-10 h-11"
+                    className="pl-10"
                     required
                   />
                 </div>
@@ -95,157 +99,132 @@ export default function Auth() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="example@gmail.com"
+                  placeholder="seu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-11"
+                  className="pl-10"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Password"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-11"
+                  className="pl-10"
                   required
                 />
               </div>
             </div>
 
             {isLogin && (
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="w-4 h-4 rounded border-input text-primary focus:ring-primary focus:ring-offset-0 focus:ring-2" 
-                  />
-                  <span className="text-sm text-muted-foreground">Remember me</span>
+                  <input type="checkbox" className="rounded" />
+                  <span className="text-muted-foreground">Lembrar-me</span>
                 </label>
-                <button
-                  type="button"
-                  className="text-sm text-primary hover:underline font-medium"
-                >
-                  Forgot Password
-                </button>
+                <a href="#" className="text-primary hover:underline">
+                  Esqueci minha senha
+                </a>
               </div>
             )}
 
             <Button
               type="submit"
-              className="w-full h-12 gradient-primary shadow-primary text-base font-semibold"
+              className="w-full gradient-primary shadow-primary"
               disabled={loading}
             >
-              {loading ? 'Loading...' : isLogin ? 'Login' : 'Create Account'}
+              {loading ? (
+                'Carregando...'
+              ) : (
+                <>
+                  {isLogin ? 'Entrar' : 'Criar conta'}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </>
+              )}
             </Button>
           </form>
 
           {/* Toggle */}
-          <div className="text-center text-sm pt-2">
+          <div className="text-center text-sm">
             <span className="text-muted-foreground">
-              {isLogin ? 'Not a member?' : 'Already have an account?'}
+              {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
             </span>{' '}
             <button
-              type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline font-semibold"
+              className="text-primary hover:underline font-medium"
             >
-              {isLogin ? 'Register Now' : 'Sign In'}
+              {isLogin ? 'Criar conta' : 'Fazer login'}
             </button>
           </div>
 
-          {/* Demo credentials - only show on login */}
-          {isLogin && (
-            <div className="pt-6 border-t border-border">
-              <p className="text-xs text-muted-foreground mb-3 font-medium">
-                Demo credentials:
-              </p>
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between p-2 rounded-lg bg-muted/50">
-                  <span className="text-muted-foreground">Admin:</span>
-                  <span className="font-mono text-foreground">admin@pabx.com / admin123</span>
-                </div>
-                <div className="flex justify-between p-2 rounded-lg bg-muted/50">
-                  <span className="text-muted-foreground">User:</span>
-                  <span className="font-mono text-foreground">usuario@empresa.com / user123</span>
-                </div>
+          {/* Demo credentials */}
+          <div className="pt-6 border-t border-border">
+            <p className="text-xs text-muted-foreground mb-3 font-medium">
+              Credenciais de demonstração:
+            </p>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">Admin:</span>
+                <span className="font-mono">admin@pabx.com / admin123</span>
+              </div>
+              <div className="flex justify-between p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">Usuário:</span>
+                <span className="font-mono">usuario@empresa.com / user123</span>
+              </div>
+              <div className="flex justify-between p-2 rounded bg-muted/50">
+                <span className="text-muted-foreground">Revenda:</span>
+                <span className="font-mono">revenda@telecom.com / reseller123</span>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden bg-gradient-to-br from-primary via-primary to-[hsl(262,83%,58%)]">
-        {/* Pattern overlay */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djEyaDEyVjM0SDM2em0wLTEyVjEwaDEydjEySDM2eiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
+      <div className="hidden lg:flex flex-1 relative overflow-hidden">
+        <div className="absolute inset-0 gradient-primary opacity-90" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAtMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20" />
         
-        {/* Content */}
-        <div className="relative z-10 flex items-center justify-center w-full p-12 text-white">
-          <div className="max-w-md space-y-8 text-center">
-            {/* Icon/Illustration placeholder */}
-            <div className="relative w-full aspect-square max-w-sm mx-auto">
-              <div className="absolute inset-0 flex items-center justify-center">
-                {/* Lock shield illustration - simplified */}
-                <div className="relative">
-                  {/* Shield background */}
-                  <div className="w-48 h-56 rounded-[40px] bg-gradient-to-br from-[hsl(262,83%,25%)] to-[hsl(239,84%,35%)] shadow-2xl flex items-center justify-center border-4 border-[hsl(45,100%,60%)]">
-                    {/* Lock icon */}
-                    <div className="w-24 h-32 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <Lock className="w-14 h-14 text-white" />
-                    </div>
-                  </div>
-                  
-                  {/* Floating elements */}
-                  <div className="absolute -top-6 -right-6 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-pulse">
-                    <Phone className="w-8 h-8 text-white" />
-                  </div>
-                  
-                  <div className="absolute -bottom-4 -left-8 w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
-                    <div className="text-2xl">🔒</div>
-                  </div>
-                </div>
-              </div>
+        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+          <div className="max-w-lg text-center space-y-6">
+            <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-8">
+              <Phone className="w-10 h-10" />
             </div>
-
-            {/* Text content */}
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold leading-tight">
-                Secure Access to Your PABX System
-              </h2>
-              <p className="text-lg text-white/80">
-                Manage your calls, agents, and reports with enterprise-grade security and reliability.
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="flex items-center justify-center gap-8 pt-4">
+            <h2 className="text-4xl font-bold leading-tight">
+              Gerencie suas chamadas com inteligência
+            </h2>
+            <p className="text-lg text-white/80">
+              Sistema completo de PABX online com relatórios em tempo real,
+              gerenciamento de agentes e muito mais.
+            </p>
+            <div className="flex items-center justify-center gap-8 pt-8">
               <div className="text-center">
                 <div className="text-3xl font-bold">99.9%</div>
                 <div className="text-sm text-white/70">Uptime</div>
               </div>
-              <div className="w-px h-12 bg-white/30" />
+              <div className="w-px h-12 bg-white/20" />
               <div className="text-center">
                 <div className="text-3xl font-bold">24/7</div>
-                <div className="text-sm text-white/70">Support</div>
+                <div className="text-sm text-white/70">Suporte</div>
               </div>
-              <div className="w-px h-12 bg-white/30" />
+              <div className="w-px h-12 bg-white/20" />
               <div className="text-center">
                 <div className="text-3xl font-bold">500+</div>
-                <div className="text-sm text-white/70">Clients</div>
+                <div className="text-sm text-white/70">Empresas</div>
               </div>
             </div>
           </div>
