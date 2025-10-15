@@ -10,6 +10,13 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Agents from "./pages/Agents";
 import ActiveCalls from "./pages/ActiveCalls";
+import CDR from "./pages/CDR";
+import Audios from "./pages/Audios";
+import Settings from "./pages/Settings";
+import Plans from "./pages/Plans";
+import Users from "./pages/Users";
+import Reports from "./pages/Reports";
+import SystemStatus from "./pages/SystemStatus";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +46,13 @@ const App = () => (
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/agents" element={<Agents />} />
                         <Route path="/active-calls" element={<ActiveCalls />} />
+                        <Route path="/cdr" element={<CDR />} />
+                        <Route path="/audios" element={<Audios />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/plans" element={<Plans />} />
+                        <Route path="/users" element={<Users />} />
+                        <Route path="/reports" element={<Reports />} />
+                        <Route path="/system-status" element={<SystemStatus />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </DashboardLayout>
