@@ -178,9 +178,21 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-border">
-                <span className="text-muted-foreground">CallerID</span>
-                <span className="font-semibold text-primary">{agent.callerId}</span>
+              <div className="space-y-2 pt-2 border-t border-border">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className={`font-medium capitalize ${
+                    agent.status === 'online' ? 'text-success' : 
+                    agent.status === 'busy' ? 'text-destructive' : 'text-warning'
+                  }`}>
+                    {agent.status === 'online' ? 'Disponível' : 
+                     agent.status === 'busy' ? 'Em chamada' : 'Em pausa'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">CallerID</span>
+                  <span className="font-semibold text-primary">{agent.callerId}</span>
+                </div>
               </div>
             </div>
           ))}
