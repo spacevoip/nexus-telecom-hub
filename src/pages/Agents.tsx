@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, CreditCard } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -35,8 +36,12 @@ const mockAgents: Agent[] = [
 ];
 
 export default function Agents() {
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [agents] = useState<Agent[]>(mockAgents);
+  
+  // Plan limits - in a real app, this would come from the user's plan
+  const planLimit = user?.role === 'admin' ? 100 : 12;
   const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<any>(null);
@@ -145,7 +150,7 @@ export default function Agents() {
       </Card>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card className="p-4 shadow-card hover:shadow-lg transition-smooth">
           <div className="flex items-center justify-between">
             <div>
@@ -176,6 +181,24 @@ export default function Agents() {
             </div>
             <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
               <div className="w-2 h-2 rounded-full bg-muted-foreground" />
+            </div>
+          </div>
+        </Card>
+        <Card className="p-4 shadow-card hover:shadow-lg transition-smooth">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Limite do Plano</p>
+              <div className="flex items-baseline gap-2 mt-1">
+                <p className="text-2xl font-bold text-primary">{totalAgents}</p>
+                <span className="text-lg text-muted-foreground">/</span>
+                <p className="text-xl font-semibold text-muted-foreground">{planLimit}</p>
+              </div>
+              <p className="text-xs mt-1 text-muted-foreground">
+                {planLimit - totalAgents} ramais disponíveis
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-accent" />
             </div>
           </div>
         </Card>
