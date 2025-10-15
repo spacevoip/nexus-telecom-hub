@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save, User, Mail, Building, CreditCard, Shield, Calendar, Phone, MapPin } from 'lucide-react';
+import { Save, User, Mail, Building, CreditCard, Shield, Calendar, Phone, UserCog, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,8 +25,8 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
     plan: '',
     status: 'active',
     phone: '',
-    address: '',
     notes: '',
+    role: 'user',
   });
 
   useEffect(() => {
@@ -38,8 +38,8 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
         plan: user.plan?.toLowerCase() || 'básico',
         status: user.status || 'active',
         phone: user.phone || '',
-        address: user.address || '',
         notes: user.notes || '',
+        role: user.role || 'user',
       });
     }
   }, [user]);
@@ -65,39 +65,36 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-border">
+      <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
         <div>
-          <h2 className="text-xl font-semibold">Gerenciar Usuário</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h2 className="text-lg sm:text-xl font-semibold">Gerenciar Usuário</h2>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Edite as informações e configurações do usuário
           </p>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="w-5 h-5" />
-        </Button>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         <Tabs defaultValue="info" className="w-full">
-          <div className="px-6 pt-4">
+          <div className="px-4 sm:px-6 pt-4">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="info">Informações</TabsTrigger>
-              <TabsTrigger value="plan">Plano</TabsTrigger>
-              <TabsTrigger value="activity">Atividade</TabsTrigger>
+              <TabsTrigger value="info" className="text-xs sm:text-sm">Informações</TabsTrigger>
+              <TabsTrigger value="plan" className="text-xs sm:text-sm">Plano</TabsTrigger>
+              <TabsTrigger value="activity" className="text-xs sm:text-sm">Atividade</TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value="info" className="p-6 space-y-6">
+          <TabsContent value="info" className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* User Avatar */}
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary-foreground">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
+                <span className="text-xl sm:text-2xl font-bold text-primary-foreground">
                   {formData.name.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div>
-                <p className="font-medium text-lg">{formData.name || 'Novo Usuário'}</p>
+              <div className="min-w-0">
+                <p className="font-medium text-base sm:text-lg truncate">{formData.name || 'Novo Usuário'}</p>
                 <Badge variant="outline" className={formData.status === 'active' ? 'status-badge-active' : 'status-badge-error'}>
                   {formData.status === 'active' ? 'Ativo' : 'Suspenso'}
                 </Badge>
@@ -162,16 +159,20 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address" className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Endereço
+                <Label htmlFor="role" className="flex items-center gap-2">
+                  <UserCog className="w-4 h-4" />
+                  Tipo de Usuário
                 </Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  placeholder="Endereço completo"
-                />
+                <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">Usuário</SelectItem>
+                    <SelectItem value="reseller">Revenda</SelectItem>
+                    <SelectItem value="admin">Administrador</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -187,7 +188,7 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
             </div>
           </TabsContent>
 
-          <TabsContent value="plan" className="p-6 space-y-6">
+          <TabsContent value="plan" className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="plan" className="flex items-center gap-2">
@@ -226,8 +227,8 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
 
               {/* Plan Details */}
               <Card className="p-4 bg-muted/30">
-                <h3 className="font-semibold mb-3">Detalhes do Plano</h3>
-                <div className="space-y-2 text-sm">
+                <h3 className="font-semibold mb-3 text-sm sm:text-base">Detalhes do Plano</h3>
+                <div className="space-y-2 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Chamadas mensais</span>
                     <span className="font-medium">1.000</span>
@@ -246,10 +247,47 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
                   </div>
                 </div>
               </Card>
+
+              {/* Plan Usage */}
+              <Card className="p-4 bg-muted/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold text-sm sm:text-base">Uso do Plano</h3>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-1">
+                      <span className="text-muted-foreground">Chamadas</span>
+                      <span className="font-medium">687 / 1.000</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '68.7%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-1">
+                      <span className="text-muted-foreground">Agentes</span>
+                      <span className="font-medium">3 / 5</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '60%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs sm:text-sm mb-1">
+                      <span className="text-muted-foreground">Armazenamento</span>
+                      <span className="font-medium">6.2 GB / 10 GB</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '62%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="p-6 space-y-4">
+          <TabsContent value="activity" className="p-4 sm:p-6 space-y-4">
             <Card className="p-4">
               <div className="flex items-center gap-3 mb-3">
                 <Calendar className="w-5 h-5 text-muted-foreground" />
@@ -261,7 +299,7 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
             </Card>
 
             <Card className="p-4">
-              <h3 className="font-semibold mb-3">Estatísticas</h3>
+              <h3 className="font-semibold mb-3 text-sm sm:text-base">Estatísticas</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Total de chamadas</span>
@@ -279,7 +317,7 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
             </Card>
 
             <Card className="p-4">
-              <h3 className="font-semibold mb-3">Atividade Recente</h3>
+              <h3 className="font-semibold mb-3 text-sm sm:text-base">Atividade Recente</h3>
               <div className="space-y-3">
                 {[
                   { action: 'Login realizado', time: 'Há 2 horas' },
@@ -298,11 +336,11 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-muted/30">
-        <Button variant="outline" onClick={onClose}>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 p-4 sm:p-6 border-t border-border bg-muted/30">
+        <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
           Cancelar
         </Button>
-        <Button className="gradient-primary shadow-primary" onClick={handleSave}>
+        <Button className="gradient-primary shadow-primary w-full sm:w-auto" onClick={handleSave}>
           <Save className="w-4 h-4 mr-2" />
           Salvar Alterações
         </Button>
