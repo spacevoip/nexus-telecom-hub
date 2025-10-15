@@ -84,34 +84,31 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            {agent ? "Editar Agente" : "Criar Novo Agente"}
+          <DialogTitle>
+            {agent ? "Editar Agente" : "Novo Agente"}
           </DialogTitle>
           <DialogDescription>
-            {agent ? "Atualize as informações do agente" : "Configure um novo agente no sistema"}
+            {agent ? "Atualize as informações" : "Configure um novo agente"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-5 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="extension" className="text-sm font-medium">
+        <div className="grid gap-3 py-2">
+          <div className="grid gap-1.5">
+            <Label htmlFor="extension" className="text-xs font-medium">
               Ramal
             </Label>
             <Input
               id="extension"
               value={formData.extension}
               disabled
-              className="bg-muted cursor-not-allowed font-mono"
+              className="bg-muted/50 cursor-not-allowed font-mono h-9 text-sm"
             />
-            <p className="text-xs text-muted-foreground">
-              Ramal gerado automaticamente
-            </p>
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="name" className="text-sm font-medium">
+          <div className="grid gap-1.5">
+            <Label htmlFor="name" className="text-xs font-medium">
               Nome do Agente *
             </Label>
             <Input
@@ -119,12 +116,12 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Ex: João Silva"
-              className="transition-smooth"
+              className="h-9 text-sm"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="password" className="text-sm font-medium">
+          <div className="grid gap-1.5">
+            <Label htmlFor="password" className="text-xs font-medium">
               Senha *
             </Label>
             <Input
@@ -132,16 +129,13 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
               type="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder="Digite uma senha segura"
-              className="transition-smooth"
+              placeholder="Mínimo 6 caracteres"
+              className="h-9 text-sm"
             />
-            <p className="text-xs text-muted-foreground">
-              Mínimo 6 caracteres
-            </p>
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="callerId" className="text-sm font-medium">
+          <div className="grid gap-1.5">
+            <Label htmlFor="callerId" className="text-xs font-medium">
               Caller ID *
             </Label>
             <Input
@@ -149,20 +143,17 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
               value={formData.callerId}
               onChange={(e) => setFormData({ ...formData, callerId: e.target.value })}
               placeholder="Ex: João Silva <101>"
-              className="transition-smooth"
+              className="h-9 text-sm"
             />
-            <p className="text-xs text-muted-foreground">
-              Identificação que aparecerá nas chamadas
-            </p>
           </div>
         </div>
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleClose} className="transition-smooth">
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose} size="sm" className="flex-1 sm:flex-none">
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="transition-smooth">
-            {agent ? "Atualizar" : "Criar Agente"}
+          <Button onClick={handleSave} size="sm" className="flex-1 sm:flex-none">
+            {agent ? "Atualizar" : "Criar"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -40,45 +40,45 @@ export function ExportModal({ open, onOpenChange, title = "Exportar Dados" }: Ex
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
-            Escolha o formato para exportar os dados
+            Escolha o formato
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          <RadioGroup value={format} onValueChange={setFormat}>
-            <div className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+        <div className="py-2">
+          <RadioGroup value={format} onValueChange={setFormat} className="gap-2">
+            <div className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-accent/50 transition-colors cursor-pointer">
               <RadioGroupItem value="csv" id="csv" />
-              <Label htmlFor="csv" className="flex items-center gap-3 cursor-pointer flex-1">
-                <FileText className="h-5 w-5 text-primary" />
-                <div>
+              <Label htmlFor="csv" className="flex items-center gap-2 cursor-pointer flex-1">
+                <FileText className="h-4 w-4 text-primary" />
+                <div className="text-sm">
                   <p className="font-medium">CSV</p>
-                  <p className="text-sm text-muted-foreground">Arquivo de valores separados por vírgula</p>
+                  <p className="text-xs text-muted-foreground">Valores separados</p>
                 </div>
               </Label>
             </div>
 
-            <div className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+            <div className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-accent/50 transition-colors cursor-pointer">
               <RadioGroupItem value="excel" id="excel" />
-              <Label htmlFor="excel" className="flex items-center gap-3 cursor-pointer flex-1">
-                <FileSpreadsheet className="h-5 w-5 text-success" />
-                <div>
+              <Label htmlFor="excel" className="flex items-center gap-2 cursor-pointer flex-1">
+                <FileSpreadsheet className="h-4 w-4 text-success" />
+                <div className="text-sm">
                   <p className="font-medium">Excel</p>
-                  <p className="text-sm text-muted-foreground">Planilha do Microsoft Excel (.xlsx)</p>
+                  <p className="text-xs text-muted-foreground">Planilha (.xlsx)</p>
                 </div>
               </Label>
             </div>
 
-            <div className="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+            <div className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-accent/50 transition-colors cursor-pointer">
               <RadioGroupItem value="pdf" id="pdf" />
-              <Label htmlFor="pdf" className="flex items-center gap-3 cursor-pointer flex-1">
-                <FileDown className="h-5 w-5 text-destructive" />
-                <div>
+              <Label htmlFor="pdf" className="flex items-center gap-2 cursor-pointer flex-1">
+                <FileDown className="h-4 w-4 text-destructive" />
+                <div className="text-sm">
                   <p className="font-medium">PDF</p>
-                  <p className="text-sm text-muted-foreground">Documento em formato PDF</p>
+                  <p className="text-xs text-muted-foreground">Documento PDF</p>
                 </div>
               </Label>
             </div>
@@ -86,11 +86,11 @@ export function ExportModal({ open, onOpenChange, title = "Exportar Dados" }: Ex
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} size="sm" className="flex-1 sm:flex-none">
             Cancelar
           </Button>
-          <Button onClick={handleExport}>
-            <FileDown className="mr-2 h-4 w-4" />
+          <Button onClick={handleExport} size="sm" className="flex-1 sm:flex-none">
+            <FileDown className="mr-2 h-3 w-3" />
             Exportar
           </Button>
         </DialogFooter>

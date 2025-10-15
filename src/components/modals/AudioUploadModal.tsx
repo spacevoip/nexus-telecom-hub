@@ -73,29 +73,30 @@ export function AudioUploadModal({ open, onOpenChange, onUpload }: AudioUploadMo
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Upload de Áudio</DialogTitle>
           <DialogDescription>
-            Envie um novo áudio para o sistema (formatos: MP3, WAV, OGG)
+            Envie MP3, WAV ou OGG
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="audio-name">Nome do Áudio *</Label>
+        <div className="grid gap-3 py-2">
+          <div className="grid gap-1.5">
+            <Label htmlFor="audio-name" className="text-xs font-medium">Nome do Áudio *</Label>
             <Input
               id="audio-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex: Mensagem de boas-vindas"
+              className="h-9 text-sm"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="category">Categoria</Label>
+          <div className="grid gap-1.5">
+            <Label htmlFor="category" className="text-xs font-medium">Categoria</Label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
+              <SelectTrigger className="h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -107,32 +108,29 @@ export function AudioUploadModal({ open, onOpenChange, onUpload }: AudioUploadMo
             </Select>
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="file">Arquivo de Áudio *</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="file"
-                type="file"
-                accept=".mp3,.wav,.ogg"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="cursor-pointer"
-              />
-              <Upload className="h-4 w-4 text-muted-foreground" />
-            </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="file" className="text-xs font-medium">Arquivo *</Label>
+            <Input
+              id="file"
+              type="file"
+              accept=".mp3,.wav,.ogg"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="cursor-pointer h-9 text-sm"
+            />
             {file && (
-              <p className="text-sm text-muted-foreground">
-                Arquivo: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+              <p className="text-xs text-muted-foreground">
+                {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={handleClose} size="sm" className="flex-1 sm:flex-none">
             Cancelar
           </Button>
-          <Button onClick={handleUpload}>
-            Fazer Upload
+          <Button onClick={handleUpload} size="sm" className="flex-1 sm:flex-none">
+            Upload
           </Button>
         </DialogFooter>
       </DialogContent>

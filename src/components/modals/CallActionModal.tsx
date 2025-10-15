@@ -55,38 +55,37 @@ export function CallActionModal({ open, onOpenChange, action, callId }: CallActi
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {action === "transfer" ? "Transferir Chamada" : "Escutar Chamada"}
+            {action === "transfer" ? "Transferir" : "Escutar"}
           </DialogTitle>
           <DialogDescription>
             {action === "transfer" 
-              ? "Informe o ramal para onde deseja transferir a chamada" 
-              : "Você está prestes a escutar esta chamada em andamento"}
+              ? "Informe o ramal de destino" 
+              : "Você irá escutar esta chamada"}
           </DialogDescription>
         </DialogHeader>
 
         {action === "transfer" && (
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="extension">Ramal de Destino</Label>
-              <Input
-                id="extension"
-                value={extension}
-                onChange={(e) => setExtension(e.target.value)}
-                placeholder="Ex: 105"
-              />
-            </div>
+          <div className="grid gap-1.5 py-2">
+            <Label htmlFor="extension" className="text-xs font-medium">Ramal de Destino</Label>
+            <Input
+              id="extension"
+              value={extension}
+              onChange={(e) => setExtension(e.target.value)}
+              placeholder="Ex: 105"
+              className="h-9 text-sm"
+            />
           </div>
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={handleClose} size="sm" className="flex-1 sm:flex-none">
             Cancelar
           </Button>
-          <Button onClick={handleAction}>
-            {action === "transfer" ? "Transferir" : "Iniciar Escuta"}
+          <Button onClick={handleAction} size="sm" className="flex-1 sm:flex-none">
+            {action === "transfer" ? "Transferir" : "Escutar"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -87,79 +87,84 @@ export function UserModal({ open, onOpenChange, user, onSave }: UserModalProps) 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>{user ? "Editar Usuário" : "Criar Novo Usuário"}</DialogTitle>
+          <DialogTitle>{user ? "Editar Usuário" : "Novo Usuário"}</DialogTitle>
           <DialogDescription>
-            {user ? "Atualize as informações do usuário" : "Cadastre um novo usuário no sistema"}
+            {user ? "Atualize as informações" : "Cadastre um novo usuário"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="user-name">Nome *</Label>
+        <div className="grid gap-3 py-2">
+          <div className="grid gap-1.5">
+            <Label htmlFor="user-name" className="text-xs font-medium">Nome *</Label>
             <Input
               id="user-name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Nome completo"
+              className="h-9 text-sm"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="user-email">Email *</Label>
+          <div className="grid gap-1.5">
+            <Label htmlFor="user-email" className="text-xs font-medium">Email *</Label>
             <Input
               id="user-email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="usuario@empresa.com"
+              className="h-9 text-sm"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="company">Empresa *</Label>
+          <div className="grid gap-1.5">
+            <Label htmlFor="company" className="text-xs font-medium">Empresa *</Label>
             <Input
               id="company"
               value={formData.company}
               onChange={(e) => setFormData({ ...formData, company: e.target.value })}
               placeholder="Nome da empresa"
+              className="h-9 text-sm"
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="plan">Plano</Label>
-            <Select value={formData.plan} onValueChange={(value) => setFormData({ ...formData, plan: value })}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="basico">Básico</SelectItem>
-                <SelectItem value="profissional">Profissional</SelectItem>
-                <SelectItem value="empresarial">Empresarial</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="grid gap-1.5">
+              <Label htmlFor="plan" className="text-xs font-medium">Plano</Label>
+              <Select value={formData.plan} onValueChange={(value) => setFormData({ ...formData, plan: value })}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="basico">Básico</SelectItem>
+                  <SelectItem value="profissional">Profissional</SelectItem>
+                  <SelectItem value="empresarial">Empresarial</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="user-status">Status</Label>
-            <Select value={formData.status} onValueChange={(value: User["status"]) => setFormData({ ...formData, status: value })}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="active">Ativo</SelectItem>
-                <SelectItem value="suspended">Suspenso</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="grid gap-1.5">
+              <Label htmlFor="user-status" className="text-xs font-medium">Status</Label>
+              <Select value={formData.status} onValueChange={(value: User["status"]) => setFormData({ ...formData, status: value })}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Ativo</SelectItem>
+                  <SelectItem value="suspended">Suspenso</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
+          <Button variant="outline" onClick={handleClose} size="sm" className="flex-1 sm:flex-none">
             Cancelar
           </Button>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave} size="sm" className="flex-1 sm:flex-none">
             {user ? "Atualizar" : "Criar"}
           </Button>
         </DialogFooter>
