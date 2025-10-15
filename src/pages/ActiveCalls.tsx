@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Phone, Headphones, PhoneOff, ArrowRightLeft, Settings, Mic, Hash } from 'lucide-react';
+import { Phone, Headphones, PhoneOff, ArrowRightLeft, Settings, Mic, Hash, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -196,10 +196,10 @@ export default function ActiveCalls() {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className={`transition-all duration-300 ${isManaging ? 'animate-in' : ''}`}>
+              {/* Actions - Fixed Height Container */}
+              <div className="h-[72px]">
                 {!isManaging ? (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 animate-fade-in">
                     <Button 
                       size="sm" 
                       variant="outline" 
@@ -220,52 +220,65 @@ export default function ActiveCalls() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-2 animate-fade-in">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full" 
-                      onClick={() => handleInjectAudio(call.id)}
-                    >
-                      <Mic className="w-3.5 h-3.5 mr-1.5" />
-                      <span className="text-xs">Injetar Áudio</span>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full" 
-                      onClick={() => handleCaptureDigits(call.id)}
-                    >
-                      <Hash className="w-3.5 h-3.5 mr-1.5" />
-                      <span className="text-xs">Captura Dígitos</span>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full" 
-                      onClick={() => handleTransfer(call.id)}
-                    >
-                      <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" />
-                      <span className="text-xs">Transferir</span>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full" 
-                      onClick={() => handleListen(call.id)}
-                    >
-                      <Headphones className="w-3.5 h-3.5 mr-1.5" />
-                      <span className="text-xs">Escutar</span>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="w-full text-destructive hover:text-destructive hover:bg-destructive/10 col-span-2" 
-                      onClick={handleEndCall}
-                    >
-                      <PhoneOff className="w-3.5 h-3.5 mr-1.5" />
-                      <span className="text-xs">Encerrar</span>
-                    </Button>
+                  <div className="space-y-2 animate-fade-in">
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={() => handleInjectAudio(call.id)}
+                      >
+                        <Mic className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Injetar</span>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={() => handleCaptureDigits(call.id)}
+                      >
+                        <Hash className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Captura</span>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={() => handleTransfer(call.id)}
+                      >
+                        <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Transfer</span>
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={() => handleListen(call.id)}
+                      >
+                        <Headphones className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Escutar</span>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" 
+                        onClick={handleEndCall}
+                      >
+                        <PhoneOff className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Encerrar</span>
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={() => handleManageCall(call.id)}
+                      >
+                        <X className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Voltar</span>
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
