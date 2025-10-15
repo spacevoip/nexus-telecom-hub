@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Download, Filter, Calendar, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -62,12 +62,12 @@ export default function CDR() {
     );
   };
 
-  const stats = {
+  const stats = useMemo(() => ({
     total: records.length,
     completed: records.filter(r => r.status === 'completed').length,
     missed: records.filter(r => r.status === 'missed').length,
     abandoned: records.filter(r => r.status === 'abandoned').length,
-  };
+  }), [records]);
 
   return (
     <div className="space-y-6 animate-in">

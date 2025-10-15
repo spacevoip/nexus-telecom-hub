@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Activity, Server, Database, HardDrive, Wifi, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -41,7 +42,10 @@ export default function SystemStatus() {
     );
   };
 
-  const overallHealth = services.filter(s => s.status === 'operational').length / services.length * 100;
+  const overallHealth = useMemo(() => 
+    services.filter(s => s.status === 'operational').length / services.length * 100,
+    []
+  );
 
   return (
     <div className="space-y-6 animate-in">

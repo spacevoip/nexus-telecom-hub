@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Upload, Play, Pause, Download, Trash2, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,31 @@ const mockAudios: Audio[] = [
   { id: '5', name: 'Horário de atendimento', duration: '00:20', category: 'announcement', uploadDate: '08/10/2025' },
   { id: '6', name: 'Feriados e exceções', duration: '00:35', category: 'announcement', uploadDate: '07/10/2025' },
 ];
+
+// Memoized waveform component to prevent re-render on every parent update
+const WaveformDisplay = ({ audioId, isPlaying }: { audioId: string; isPlaying: boolean }) => {
+  const waveformHeights = useMemo(() => 
+    Array.from({ length: 40 }).map(() => Math.random() * 100),
+    [audioId]
+  );
+
+  return (
+    <div className="h-16 bg-muted rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+      <div className="flex items-end gap-1 h-12">
+        {waveformHeights.map((height, i) => (
+          <div
+            key={i}
+            className="w-1 bg-primary/30 rounded-full transition-all"
+            style={{
+              height: `${height}%`,
+              opacity: isPlaying ? 0.8 : 0.4,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function Audios() {
   const [search, setSearch] = useState('');
@@ -129,20 +154,7 @@ export default function Audios() {
             </div>
 
             {/* Waveform Placeholder */}
-            <div className="h-16 bg-muted rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-              <div className="flex items-end gap-1 h-12">
-                {Array.from({ length: 40 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-1 bg-primary/30 rounded-full transition-all"
-                    style={{
-                      height: `${Math.random() * 100}%`,
-                      opacity: playingId === audio.id ? 0.8 : 0.4,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+            <WaveformDisplay audioId={audio.id} isPlaying={playingId === audio.id} />
 
             {/* Controls */}
             <div className="flex items-center justify-between">

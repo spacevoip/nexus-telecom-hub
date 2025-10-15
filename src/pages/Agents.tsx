@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Plus, Edit, Trash2, Search, CreditCard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -67,10 +67,16 @@ export default function Agents() {
     setCurrentPage(1);
   };
 
-  // Calculate stats
+  // Calculate stats with memoization
   const totalAgents = filteredAgents.length;
-  const onlineAgents = filteredAgents.filter(a => a.status === 'online').length;
-  const offlineAgents = filteredAgents.filter(a => a.status === 'offline' || a.status === 'pause').length;
+  const onlineAgents = useMemo(() => 
+    filteredAgents.filter(a => a.status === 'online').length,
+    [filteredAgents]
+  );
+  const offlineAgents = useMemo(() => 
+    filteredAgents.filter(a => a.status === 'offline' || a.status === 'pause').length,
+    [filteredAgents]
+  );
 
   const getStatusBadge = (status: Agent['status']) => {
     const variants = {

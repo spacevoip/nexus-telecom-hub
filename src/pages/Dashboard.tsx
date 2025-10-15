@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Phone, Users, Clock, TrendingUp, Activity, DollarSign } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -33,22 +34,30 @@ const agents = [
 export default function Dashboard() {
   const { user } = useAuth();
 
-  const stats = user?.role === 'admin' ? [
-    { icon: Phone, label: 'Chamadas Ativas', value: '247', change: '+12%', color: 'text-primary' },
-    { icon: Users, label: 'Usuários Ativos', value: '38', suffix: 'empresas', color: 'text-success' },
-    { icon: DollarSign, label: 'Receita MRR', value: 'R$ 45.890', change: '+8%', color: 'text-accent' },
-    { icon: TrendingUp, label: 'Taxa Conversão', value: '23%', change: '+3%', color: 'text-warning' },
-  ] : user?.role === 'reseller' ? [
-    { icon: Phone, label: 'Chamadas Ativas', value: '47', change: '+8%', color: 'text-primary' },
-    { icon: Users, label: 'Clientes Ativos', value: '8', suffix: 'empresas', color: 'text-success' },
-    { icon: DollarSign, label: 'Comissão do Mês', value: 'R$ 2.890', change: '+15%', color: 'text-accent' },
-    { icon: Activity, label: 'Uso Médio', value: '65%', change: '+5%', color: 'text-warning' },
-  ] : [
-    { icon: Phone, label: 'Chamadas Ativas', value: '8', color: 'text-primary' },
-    { icon: Activity, label: 'Total Hoje', value: '127', change: '+15%', color: 'text-success' },
-    { icon: DollarSign, label: 'Crédito', value: 'R$ 2.450', change: '+5%', color: 'text-accent' },
-    { icon: Users, label: 'Agentes Online', value: '5', suffix: '/12', color: 'text-warning' },
-  ];
+  const stats = useMemo(() => {
+    if (user?.role === 'admin') {
+      return [
+        { icon: Phone, label: 'Chamadas Ativas', value: '247', change: '+12%', color: 'text-primary' },
+        { icon: Users, label: 'Usuários Ativos', value: '38', suffix: 'empresas', color: 'text-success' },
+        { icon: DollarSign, label: 'Receita MRR', value: 'R$ 45.890', change: '+8%', color: 'text-accent' },
+        { icon: TrendingUp, label: 'Taxa Conversão', value: '23%', change: '+3%', color: 'text-warning' },
+      ];
+    } else if (user?.role === 'reseller') {
+      return [
+        { icon: Phone, label: 'Chamadas Ativas', value: '47', change: '+8%', color: 'text-primary' },
+        { icon: Users, label: 'Clientes Ativos', value: '8', suffix: 'empresas', color: 'text-success' },
+        { icon: DollarSign, label: 'Comissão do Mês', value: 'R$ 2.890', change: '+15%', color: 'text-accent' },
+        { icon: Activity, label: 'Uso Médio', value: '65%', change: '+5%', color: 'text-warning' },
+      ];
+    } else {
+      return [
+        { icon: Phone, label: 'Chamadas Ativas', value: '8', color: 'text-primary' },
+        { icon: Activity, label: 'Total Hoje', value: '127', change: '+15%', color: 'text-success' },
+        { icon: DollarSign, label: 'Crédito', value: 'R$ 2.450', change: '+5%', color: 'text-accent' },
+        { icon: Users, label: 'Agentes Online', value: '5', suffix: '/12', color: 'text-warning' },
+      ];
+    }
+  }, [user?.role]);
 
   return (
     <div className="space-y-6 animate-in">

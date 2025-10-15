@@ -29,9 +29,9 @@ const monthlyData = [
 ];
 
 const planDistribution = [
-  { name: 'Básico', value: 35, color: 'hsl(262 83% 58%)' },
-  { name: 'Profissional', value: 45, color: 'hsl(239 84% 67%)' },
-  { name: 'Empresarial', value: 20, color: 'hsl(142 71% 45%)' },
+  { name: 'Básico', value: 35, color: 'hsl(var(--accent))' },
+  { name: 'Profissional', value: 45, color: 'hsl(var(--primary))' },
+  { name: 'Empresarial', value: 20, color: 'hsl(var(--success))' },
 ];
 
 export default function Reports() {
@@ -146,7 +146,7 @@ export default function Reports() {
                   borderRadius: '8px',
                 }}
               />
-              <Bar dataKey="calls" fill="hsl(239 84% 67%)" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="calls" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>
@@ -176,9 +176,9 @@ export default function Reports() {
               <Line
                 type="monotone"
                 dataKey="revenue"
-                stroke="hsl(142 71% 45%)"
+                stroke="hsl(var(--success))"
                 strokeWidth={2}
-                dot={{ fill: 'hsl(142 71% 45%)', r: 4 }}
+                dot={{ fill: 'hsl(var(--success))', r: 4 }}
               />
             </LineChart>
           </ResponsiveContainer>

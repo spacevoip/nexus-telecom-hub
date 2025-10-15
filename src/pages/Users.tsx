@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Plus, Edit, Trash2, Search, Ban, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,11 +53,11 @@ export default function Users() {
     );
   };
 
-  const stats = {
+  const stats = useMemo(() => ({
     total: users.length,
     active: users.filter(u => u.status === 'active').length,
     suspended: users.filter(u => u.status === 'suspended').length,
-  };
+  }), [users]);
 
   const handleCreateUser = () => {
     setSelectedUser(null);
