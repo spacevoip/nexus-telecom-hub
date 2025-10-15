@@ -1,13 +1,15 @@
 import { useState, useMemo } from 'react';
-import { Plus, Edit, Trash2, Search, Ban, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Ban, CheckCircle, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { UserModal } from '@/components/modals/UserModal';
 import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
+import { UserManagementPanel } from '@/components/UserManagementPanel';
 import { toast } from '@/hooks/use-toast';
 
 interface User {
@@ -35,6 +37,7 @@ export default function Users() {
   const [users] = useState<User[]>(mockUsers);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isManagementPanelOpen, setIsManagementPanelOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
@@ -76,6 +79,11 @@ export default function Users() {
       status: user.status,
     });
     setIsUserModalOpen(true);
+  };
+
+  const handleManageUser = (user: User) => {
+    setSelectedUser(user);
+    setIsManagementPanelOpen(true);
   };
 
   const handleDeleteUser = (id: string) => {
@@ -176,9 +184,9 @@ export default function Users() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditUser(user)}>
-                    <Edit className="w-4 h-4 mr-1" />
-                    Editar
+                  <Button variant="default" size="sm" className="flex-1 gradient-primary shadow-primary" onClick={() => handleManageUser(user)}>
+                    <Settings className="w-4 h-4 mr-1" />
+                    Gerenciar
                   </Button>
                   {isAdmin && (
                     <Button
@@ -230,8 +238,14 @@ export default function Users() {
                     <td className="p-4 text-sm text-muted-foreground">{user.registeredAt}</td>
                     <td className="p-4">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" title="Ver detalhes" onClick={() => handleEditUser(user)}>
-                          <Edit className="w-4 h-4" />
+                        <Button 
+                          variant="default" 
+                          size="sm" 
+                          className="gradient-primary shadow-primary"
+                          onClick={() => handleManageUser(user)}
+                        >
+                          <Settings className="w-4 h-4 mr-1" />
+                          Gerenciar
                         </Button>
                         {isAdmin && (
                           <>
@@ -299,6 +313,18 @@ export default function Users() {
         title="Confirmar exclusão de usuário"
         description="Tem certeza que deseja excluir este usuário? Todos os seus dados serão removidos."
       />
+
+      <Sheet open={isManagementPanelOpen} onOpenChange={setIsManagementPanelOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-xl p-0">
+          {selectedUser && (
+            <UserManagementPanel
+              user={selectedUser}
+              onClose={() => setIsManagementPanelOpen(false)}
+              onSave={handleSaveUser}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
