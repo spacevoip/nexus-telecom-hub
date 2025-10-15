@@ -24,6 +24,13 @@ const callsData = [
   { time: '24:00', chamadas: 10, atendidas: 9 },
 ];
 
+const clients = [
+  { name: 'Tech Solutions LTDA', status: 'active', avatar: 'TS', calls: 1247, plan: 'Empresarial' },
+  { name: 'Comercial Brasil S.A', status: 'active', avatar: 'CB', calls: 892, plan: 'Premium' },
+  { name: 'Inova Digital', status: 'pending', avatar: 'ID', calls: 345, plan: 'Básico' },
+  { name: 'Global Services', status: 'active', avatar: 'GS', calls: 2103, plan: 'Empresarial' },
+];
+
 const agents = [
   { name: 'João Silva', status: 'online', avatar: 'JS', calls: 12, callerId: '1001' },
   { name: 'Maria Santos', status: 'busy', avatar: 'MS', calls: 8, callerId: '1002' },
@@ -161,6 +168,51 @@ export default function Dashboard() {
           </AreaChart>
         </ResponsiveContainer>
       </Card>
+
+      {/* Clientes Recentes - Admin e Reseller */}
+      {(user?.role === 'admin' || user?.role === 'reseller') && (
+        <Card className="p-4 sm:p-6 shadow-card">
+          <h3 className="font-semibold mb-4 text-sm sm:text-base">Clientes Recentes</h3>
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {clients.map((client, index) => (
+              <div key={index} className="p-4 rounded-lg border border-border bg-card/50 hover:shadow-md transition-smooth">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center">
+                      <span className="text-sm font-bold text-accent-foreground">
+                        {client.avatar}
+                      </span>
+                    </div>
+                    <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-card ${
+                      client.status === 'active' ? 'bg-success' : 'bg-warning'
+                    }`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{client.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {client.plan}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Status</span>
+                    <span className={`font-medium capitalize ${
+                      client.status === 'active' ? 'text-success' : 'text-warning'
+                    }`}>
+                      {client.status === 'active' ? 'Ativo' : 'Pendente'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Chamadas</span>
+                    <span className="font-semibold text-primary">{client.calls.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Agentes Recentes */}
       <Card className="p-4 sm:p-6 shadow-card">
