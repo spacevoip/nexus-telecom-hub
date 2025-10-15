@@ -14,14 +14,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="flex min-h-screen w-full bg-background">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <div className="flex items-center justify-end gap-2 p-4 border-b border-border">
+      <div className="flex-1 flex flex-col relative">
+        <div className="absolute top-6 right-6 z-10 flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
             className="relative"
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
           </Button>
 
@@ -31,9 +31,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             onClick={toggleTheme}
           >
             {theme === 'light' ? (
-              <Moon className="w-4 h-4" />
+              <Moon className="w-5 h-5" />
             ) : (
-              <Sun className="w-4 h-4" />
+              <Sun className="w-5 h-5" />
             )}
           </Button>
         </div>
