@@ -14,8 +14,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="flex min-h-screen w-full bg-background">
       <Sidebar />
-      <div className="flex-1 flex flex-col relative">
-        <div className="absolute top-6 right-6 z-10 flex items-center gap-2">
+      <div className="flex-1 flex flex-col">
+        <header className="flex items-center justify-end gap-2 px-6 py-4 border-b border-border">
           <Button
             variant="ghost"
             size="icon"
@@ -36,7 +36,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Sun className="w-5 h-5" />
             )}
           </Button>
-        </div>
+        </header>
         <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
           {children}
         </main>
