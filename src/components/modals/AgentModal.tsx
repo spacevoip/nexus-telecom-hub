@@ -84,31 +84,31 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[480px] animate-in">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-xl">
             {agent ? "Editar Agente" : "Novo Agente"}
           </DialogTitle>
           <DialogDescription>
-            {agent ? "Atualize as informações" : "Configure um novo agente"}
+            {agent ? "Atualize as informações do agente" : "Configure um novo agente no sistema"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-3 py-2">
-          <div className="grid gap-1.5">
-            <Label htmlFor="extension" className="text-xs font-medium">
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="extension" className="text-sm font-medium">
               Ramal
             </Label>
             <Input
               id="extension"
               value={formData.extension}
               disabled
-              className="bg-muted/50 cursor-not-allowed font-mono h-9 text-sm"
+              className="bg-muted/50 cursor-not-allowed font-mono h-10"
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <Label htmlFor="name" className="text-xs font-medium">
+          <div className="grid gap-2">
+            <Label htmlFor="name" className="text-sm font-medium">
               Nome do Agente *
             </Label>
             <Input
@@ -116,12 +116,12 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Ex: João Silva"
-              className="h-9 text-sm"
+              className="h-10"
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <Label htmlFor="password" className="text-xs font-medium">
+          <div className="grid gap-2">
+            <Label htmlFor="password" className="text-sm font-medium">
               Senha *
             </Label>
             <Input
@@ -130,12 +130,12 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               placeholder="Mínimo 6 caracteres"
-              className="h-9 text-sm"
+              className="h-10"
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <Label htmlFor="callerId" className="text-xs font-medium">
+          <div className="grid gap-2">
+            <Label htmlFor="callerId" className="text-sm font-medium">
               Caller ID *
             </Label>
             <Input
@@ -143,16 +143,16 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
               value={formData.callerId}
               onChange={(e) => setFormData({ ...formData, callerId: e.target.value })}
               placeholder="Ex: João Silva <101>"
-              className="h-9 text-sm"
+              className="h-10"
             />
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleClose} size="sm" className="flex-1 sm:flex-none">
+        <DialogFooter className="gap-2 sm:gap-0">
+          <Button variant="outline" onClick={handleClose} className="flex-1 sm:flex-none">
             Cancelar
           </Button>
-          <Button onClick={handleSave} size="sm" className="flex-1 sm:flex-none">
+          <Button onClick={handleSave} className="flex-1 sm:flex-none gradient-primary shadow-primary">
             {agent ? "Atualizar" : "Criar"}
           </Button>
         </DialogFooter>
