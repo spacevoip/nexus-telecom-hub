@@ -60,13 +60,13 @@ export default function Dashboard() {
   }, [user?.role]);
 
   return (
-    <div className="space-y-6 animate-in">
+    <div className="space-y-4 sm:space-y-6 animate-in">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-2xl sm:text-3xl font-bold">
           Olá, {user?.name}! 👋
         </h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-muted-foreground mt-1 text-sm sm:text-base">
           {user?.role === 'admin'
             ? 'Visão geral do sistema'
             : user?.role === 'reseller'
@@ -76,9 +76,9 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
-          <Card key={index} className="p-6 shadow-card hover:shadow-lg transition-smooth">
+          <Card key={index} className="p-4 sm:p-6 shadow-card hover:shadow-lg transition-smooth">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
@@ -163,9 +163,9 @@ export default function Dashboard() {
       </Card>
 
       {/* Agentes Recentes */}
-      <Card className="p-6 shadow-card">
-        <h3 className="font-semibold mb-4">Agentes Recentes</h3>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card className="p-4 sm:p-6 shadow-card">
+        <h3 className="font-semibold mb-4 text-sm sm:text-base">Agentes Recentes</h3>
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {agents.map((agent, index) => (
             <div key={index} className="p-4 rounded-lg border border-border bg-card/50 hover:shadow-md transition-smooth">
               <div className="flex items-center gap-3 mb-3">

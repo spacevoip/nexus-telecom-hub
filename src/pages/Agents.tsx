@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Plus, Edit, Trash2, Search, CreditCard } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -37,6 +38,7 @@ const mockAgents: Agent[] = [
 
 export default function Agents() {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [search, setSearch] = useState('');
   const [agents] = useState<Agent[]>(mockAgents);
   
@@ -127,18 +129,18 @@ export default function Agents() {
   };
 
   return (
-    <div className="space-y-6 animate-in">
+    <div className="space-y-4 sm:space-y-6 animate-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Agentes</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold">Agentes</h1>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
             Gerencie os agentes do sistema
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary" onClick={handleCreateAgent}>
+        <Button className="gradient-primary shadow-primary w-full sm:w-auto" onClick={handleCreateAgent}>
           <Plus className="w-4 h-4 mr-2" />
-          Adicionar Agente
+          {isMobile ? 'Novo' : 'Adicionar Agente'}
         </Button>
       </div>
 
@@ -156,7 +158,7 @@ export default function Agents() {
       </Card>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <Card className="p-4 shadow-card hover:shadow-lg transition-smooth">
           <div className="flex items-center justify-between">
             <div>
@@ -210,70 +212,120 @@ export default function Agents() {
         </Card>
       </div>
 
-      {/* Agents Table */}
+      {/* Agents Table/Cards */}
       <Card className="shadow-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="text-left p-4 font-semibold text-sm">Agente</th>
-                <th className="text-left p-4 font-semibold text-sm">Ramal</th>
-                <th className="text-left p-4 font-semibold text-sm">CallerID</th>
-                <th className="text-left p-4 font-semibold text-sm">Status</th>
-                <th className="text-right p-4 font-semibold text-sm">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedAgents.length > 0 ? (
-                paginatedAgents.map((agent) => (
-                  <tr
-                    key={agent.id}
-                    className="border-t border-border hover:bg-accent/50 transition-smooth"
-                  >
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-xs font-semibold text-primary">
-                            {agent.name.charAt(0)}
-                          </span>
+        {isMobile ? (
+          /* Mobile Card View */
+          <div className="divide-y divide-border">
+            {paginatedAgents.length > 0 ? (
+              paginatedAgents.map((agent) => (
+                <div key={agent.id} className="p-4 hover:bg-accent/50 transition-smooth">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-semibold text-primary">
+                          {agent.name.charAt(0)}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{agent.name}</p>
+                        <p className="text-sm text-muted-foreground">Ramal: {agent.extension}</p>
+                      </div>
+                    </div>
+                    {getStatusBadge(agent.status)}
+                  </div>
+                  <div className="flex items-center justify-between text-sm mb-3">
+                    <span className="text-muted-foreground">CallerID:</span>
+                    <span className="font-mono text-primary">{agent.callerId}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditAgent(agent)}>
+                      <Edit className="w-4 h-4 mr-1" />
+                      Editar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-destructive hover:text-destructive"
+                      onClick={() => handleDeleteAgent(agent.id)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Excluir
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-8 text-center text-muted-foreground">
+                Nenhum agente encontrado
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Desktop Table View */
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="text-left p-4 font-semibold text-sm">Agente</th>
+                  <th className="text-left p-4 font-semibold text-sm">Ramal</th>
+                  <th className="text-left p-4 font-semibold text-sm">CallerID</th>
+                  <th className="text-left p-4 font-semibold text-sm">Status</th>
+                  <th className="text-right p-4 font-semibold text-sm">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedAgents.length > 0 ? (
+                  paginatedAgents.map((agent) => (
+                    <tr
+                      key={agent.id}
+                      className="border-t border-border hover:bg-accent/50 transition-smooth"
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-xs font-semibold text-primary">
+                              {agent.name.charAt(0)}
+                            </span>
+                          </div>
+                          <span className="font-medium">{agent.name}</span>
                         </div>
-                        <span className="font-medium">{agent.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className="font-mono text-sm">{agent.extension}</span>
-                    </td>
-                    <td className="p-4">
-                      <span className="font-mono text-sm text-primary">{agent.callerId}</span>
-                    </td>
-                    <td className="p-4">{getStatusBadge(agent.status)}</td>
-                    <td className="p-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEditAgent(agent)}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => handleDeleteAgent(agent.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
+                      </td>
+                      <td className="p-4">
+                        <span className="font-mono text-sm">{agent.extension}</span>
+                      </td>
+                      <td className="p-4">
+                        <span className="font-mono text-sm text-primary">{agent.callerId}</span>
+                      </td>
+                      <td className="p-4">{getStatusBadge(agent.status)}</td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => handleEditAgent(agent)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => handleDeleteAgent(agent.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                      Nenhum agente encontrado
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                    Nenhum agente encontrado
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
         
         {totalPages > 1 && (
           <div className="border-t border-border p-4">

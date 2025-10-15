@@ -1,74 +1,176 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   LayoutDashboard,
   Users,
   Phone,
-  History,
-  AudioLines,
-  Settings,
   FileText,
-  CreditCard,
-  UserCog,
-  BarChart3,
+  Mic,
+  Settings,
   Activity,
+  BarChart3,
+  UserPlus,
+  Menu,
   LogOut,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
+// Navigation items by role
 const navItems = {
   user: [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: Users, label: 'Agentes', path: '/agents' },
     { icon: Phone, label: 'Chamadas Ativas', path: '/active-calls' },
-    { icon: History, label: 'Histórico CDR', path: '/cdr' },
-    { icon: AudioLines, label: 'Áudios', path: '/audios' },
+    { icon: FileText, label: 'CDR', path: '/cdr' },
+    { icon: Mic, label: 'Áudios', path: '/audios' },
+    { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ],
   admin: [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Users, label: 'Agentes', path: '/agents' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+    { icon: Users, label: 'Usuários', path: '/users' },
+    { icon: UserPlus, label: 'Agentes', path: '/agents' },
     { icon: Phone, label: 'Chamadas Ativas', path: '/active-calls' },
-    { icon: History, label: 'CDR Global', path: '/cdr' },
-    { icon: CreditCard, label: 'Planos', path: '/plans' },
-    { icon: UserCog, label: 'Usuários', path: '/users' },
-    { icon: BarChart3, label: 'Relatórios', path: '/reports' },
+    { icon: FileText, label: 'CDR', path: '/cdr' },
+    { icon: Mic, label: 'Áudios', path: '/audios' },
     { icon: Activity, label: 'Status Sistema', path: '/system-status' },
+    { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ],
   reseller: [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Users, label: 'Agentes', path: '/agents' },
-    { icon: Phone, label: 'Chamadas Ativas', path: '/active-calls' },
-    { icon: History, label: 'Histórico CDR', path: '/cdr' },
-    { icon: CreditCard, label: 'Planos', path: '/plans' },
-    { icon: UserCog, label: 'Clientes', path: '/users' },
-    { icon: FileText, label: 'Relatórios', path: '/reports' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+    { icon: Users, label: 'Clientes', path: '/users' },
+    { icon: UserPlus, label: 'Planos', path: '/plans' },
+    { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ],
 };
 
 export function Sidebar() {
   const { user, logout } = useAuth();
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const items = user ? navItems[user.role] : navItems.user;
+  const items = navItems[user?.role as keyof typeof navItems] || navItems.user;
 
+  const SidebarContent = () => (
+    <>
+      {/* Logo */}
+      <div className={`p-4 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
+            <Phone className="w-5 h-5 text-primary-foreground" />
+          </div>
+          {(!collapsed || isMobile) && (
+            <div className="flex-1 min-w-0">
+              <h1 className="font-bold text-lg truncate">PABX Online</h1>
+              <p className="text-xs text-muted-foreground truncate">Sistema de Chamadas</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-3 overflow-y-auto">
+        <ul className="space-y-1">
+          {items.map((item) => (
+            <li key={item.path}>
+              <NavLink
+                to={item.path}
+                onClick={() => isMobile && setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  } ${collapsed && !isMobile ? 'justify-center' : ''}`
+                }
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {(!collapsed || isMobile) && (
+                  <span className="font-medium text-sm">{item.label}</span>
+                )}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* User Section */}
+      <div className={`p-4 border-t border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
+        <div className={`flex items-center gap-3 ${collapsed && !isMobile ? 'flex-col' : ''}`}>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center flex-shrink-0">
+            <span className="text-sm font-bold text-accent-foreground">
+              {user?.name.charAt(0)}
+            </span>
+          </div>
+          {(!collapsed || isMobile) && (
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm truncate">{user?.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              <p className="text-xs text-primary font-medium mt-0.5">
+                {user?.role === 'admin' ? 'Administrador' : user?.role === 'reseller' ? 'Revenda' : 'Plano Profissional'}
+              </p>
+            </div>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          className={`w-full mt-3 justify-start text-destructive hover:text-destructive hover:bg-destructive/10 ${
+            collapsed && !isMobile ? 'px-2' : ''
+          }`}
+          onClick={logout}
+        >
+          <LogOut className="w-4 h-4" />
+          {(!collapsed || isMobile) && <span className="ml-2">Sair</span>}
+        </Button>
+      </div>
+    </>
+  );
+
+  // Mobile version with Sheet
+  if (isMobile) {
+    return (
+      <>
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="fixed top-4 left-4 z-50 md:hidden bg-card border border-border shadow-lg"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <div className="flex flex-col h-full">
+              <SidebarContent />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </>
+    );
+  }
+
+  // Desktop version
   return (
-    <aside className={cn(
-      "border-r border-border bg-card flex flex-col transition-all duration-300 ease-in-out relative",
-      collapsed ? "w-20" : "w-64"
-    )}>
-      {/* Toggle Button */}
+    <aside
+      className={`border-r border-border bg-card flex flex-col transition-all duration-300 ${
+        collapsed ? 'w-16' : 'w-64'
+      }`}
+    >
+      {/* Collapse Toggle */}
       <Button
         variant="ghost"
         size="icon"
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-6 z-10 h-6 w-6 rounded-full border border-border bg-card shadow-md hover:shadow-lg transition-smooth"
+        className="absolute -right-3 top-6 z-10 w-6 h-6 rounded-full border border-border bg-card shadow-sm"
       >
         {collapsed ? (
           <ChevronRight className="w-3 h-3" />
@@ -77,106 +179,7 @@ export function Sidebar() {
         )}
       </Button>
 
-      {/* Logo */}
-      <div className="p-6 border-b border-border">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-primary shrink-0">
-            <Phone className="w-5 h-5 text-primary-foreground" />
-          </div>
-          {!collapsed && (
-            <div className="overflow-hidden">
-              <span className="font-bold text-lg block whitespace-nowrap">PABX Online</span>
-              <span className="text-xs text-muted-foreground block whitespace-nowrap">Sistema de Chamadas</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {items.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              cn(
-                'flex items-center gap-3 px-3 py-3 rounded-xl transition-smooth text-sm font-medium group relative',
-                isActive
-                  ? 'bg-primary text-primary-foreground shadow-primary'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-              )
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <item.icon className={cn(
-                  "w-5 h-5 shrink-0 transition-transform group-hover:scale-110",
-                  collapsed ? "mx-auto" : ""
-                )} />
-                {!collapsed && (
-                  <span className="whitespace-nowrap">{item.label}</span>
-                )}
-                {collapsed && (
-                  <div className="absolute left-full ml-2 px-3 py-2 bg-popover text-popover-foreground rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-border">
-                    {item.label}
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-popover" />
-                  </div>
-                )}
-                {isActive && !collapsed && (
-                  <div className="ml-auto w-1 h-1 rounded-full bg-primary-foreground" />
-                )}
-              </>
-            )}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* User Section */}
-      <div className="p-4 border-t border-border">
-        {/* Plan Info */}
-        {!collapsed && (
-          <div className="mb-3 p-3 rounded-lg bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-muted-foreground">Plano Atual</span>
-              <CreditCard className="w-3 h-3 text-primary/60" />
-            </div>
-            <p className="text-sm font-semibold text-foreground mb-0.5">
-              {user?.plan || 'Profissional'}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Válido até 15/12/2025
-            </p>
-          </div>
-        )}
-        
-        <div className={cn(
-          "flex items-center gap-3 mb-3 px-3 py-2 rounded-xl hover:bg-accent transition-smooth cursor-pointer",
-          collapsed && "justify-center"
-        )}>
-          <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center shrink-0 shadow-primary">
-            <span className="text-sm font-bold text-primary-foreground">
-              {user?.name.charAt(0)}
-            </span>
-          </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{user?.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-            </div>
-          )}
-        </div>
-        <Button
-          onClick={logout}
-          variant="ghost"
-          className={cn(
-            "w-full justify-start gap-3 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-smooth",
-            collapsed && "justify-center px-0"
-          )}
-        >
-          <LogOut className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Sair</span>}
-        </Button>
-      </div>
+      <SidebarContent />
     </aside>
   );
 }
