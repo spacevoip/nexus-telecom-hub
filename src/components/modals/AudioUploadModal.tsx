@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -27,9 +27,30 @@ interface AudioUploadModalProps {
 }
 
 export function AudioUploadModal({ open, onOpenChange, onUpload }: AudioUploadModalProps) {
+  const initialState = {
+    name: "",
+    category: "ura",
+    file: null as File | null,
+  };
+
   const [name, setName] = useState("");
   const [category, setCategory] = useState("ura");
   const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setName("");
+      setCategory("ura");
+      setFile(null);
+    }
+  }, [open]);
+
+  const handleClose = () => {
+    setName("");
+    setCategory("ura");
+    setFile(null);
+    onOpenChange(false);
+  };
 
   const handleUpload = () => {
     if (!name || !file) {
@@ -42,10 +63,7 @@ export function AudioUploadModal({ open, onOpenChange, onUpload }: AudioUploadMo
     }
 
     onUpload({ name, category, file });
-    onOpenChange(false);
-    setName("");
-    setCategory("ura");
-    setFile(null);
+    handleClose();
     
     toast({
       title: "Sucesso",
@@ -54,7 +72,7 @@ export function AudioUploadModal({ open, onOpenChange, onUpload }: AudioUploadMo
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Upload de Áudio</DialogTitle>
@@ -110,7 +128,7 @@ export function AudioUploadModal({ open, onOpenChange, onUpload }: AudioUploadMo
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
           <Button onClick={handleUpload}>

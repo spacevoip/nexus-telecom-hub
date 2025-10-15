@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,17 @@ interface CallActionModalProps {
 export function CallActionModal({ open, onOpenChange, action, callId }: CallActionModalProps) {
   const [extension, setExtension] = useState("");
 
+  useEffect(() => {
+    if (!open) {
+      setExtension("");
+    }
+  }, [open]);
+
+  const handleClose = () => {
+    setExtension("");
+    onOpenChange(false);
+  };
+
   const handleAction = () => {
     if (action === "transfer" && !extension) {
       toast({
@@ -39,12 +50,11 @@ export function CallActionModal({ open, onOpenChange, action, callId }: CallActi
         : "Escuta ativada com sucesso",
     });
     
-    onOpenChange(false);
-    setExtension("");
+    handleClose();
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -72,7 +82,7 @@ export function CallActionModal({ open, onOpenChange, action, callId }: CallActi
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
           <Button onClick={handleAction}>

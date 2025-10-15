@@ -36,33 +36,36 @@ interface UserModalProps {
 }
 
 export function UserModal({ open, onOpenChange, user, onSave }: UserModalProps) {
-  const [formData, setFormData] = useState({
+  const initialState = {
     name: "",
     email: "",
     company: "",
     plan: "basico",
     status: "active" as User["status"],
-  });
+  };
+
+  const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name,
-        email: user.email,
-        company: user.company,
-        plan: user.plan,
-        status: user.status,
-      });
-    } else {
-      setFormData({
-        name: "",
-        email: "",
-        company: "",
-        plan: "basico",
-        status: "active",
-      });
+    if (open) {
+      if (user) {
+        setFormData({
+          name: user.name,
+          email: user.email,
+          company: user.company,
+          plan: user.plan,
+          status: user.status,
+        });
+      } else {
+        setFormData(initialState);
+      }
     }
   }, [user, open]);
+
+  const handleClose = () => {
+    setFormData(initialState);
+    onOpenChange(false);
+  };
 
   const handleSave = () => {
     if (!formData.name || !formData.email || !formData.company) {
@@ -75,7 +78,7 @@ export function UserModal({ open, onOpenChange, user, onSave }: UserModalProps) 
     }
 
     onSave(user ? { ...formData, id: user.id } : formData);
-    onOpenChange(false);
+    handleClose();
     toast({
       title: "Sucesso",
       description: user ? "Usuário atualizado com sucesso" : "Usuário criado com sucesso",
@@ -83,7 +86,7 @@ export function UserModal({ open, onOpenChange, user, onSave }: UserModalProps) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{user ? "Editar Usuário" : "Criar Novo Usuário"}</DialogTitle>
@@ -153,7 +156,7 @@ export function UserModal({ open, onOpenChange, user, onSave }: UserModalProps) 
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
           <Button onClick={handleSave}>

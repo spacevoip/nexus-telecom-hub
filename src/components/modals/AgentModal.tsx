@@ -10,21 +10,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 
 interface Agent {
   id: number;
   name: string;
   extension: string;
-  email: string;
-  status: "online" | "offline" | "paused";
+  password: string;
+  callerId: string;
 }
 
 interface AgentModalProps {
@@ -34,34 +27,45 @@ interface AgentModalProps {
   onSave: (agent: Omit<Agent, "id"> & { id?: number }) => void;
 }
 
+const generateExtension = () => {
+  return `${Math.floor(100 + Math.random() * 900)}`;
+};
+
 export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProps) {
-  const [formData, setFormData] = useState({
+  const initialState = {
     name: "",
     extension: "",
-    email: "",
-    status: "offline" as Agent["status"],
-  });
+    password: "",
+    callerId: "",
+  };
+
+  const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {
-    if (agent) {
-      setFormData({
-        name: agent.name,
-        extension: agent.extension,
-        email: agent.email,
-        status: agent.status,
-      });
-    } else {
-      setFormData({
-        name: "",
-        extension: "",
-        email: "",
-        status: "offline",
-      });
+    if (open) {
+      if (agent) {
+        setFormData({
+          name: agent.name,
+          extension: agent.extension,
+          password: agent.password,
+          callerId: agent.callerId,
+        });
+      } else {
+        setFormData({
+          ...initialState,
+          extension: generateExtension(),
+        });
+      }
     }
   }, [agent, open]);
 
+  const handleClose = () => {
+    setFormData(initialState);
+    onOpenChange(false);
+  };
+
   const handleSave = () => {
-    if (!formData.name || !formData.extension || !formData.email) {
+    if (!formData.name || !formData.password || !formData.callerId) {
       toast({
         title: "Erro",
         description: "Preencha todos os campos obrigatórios",
@@ -71,7 +75,7 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
     }
 
     onSave(agent ? { ...formData, id: agent.id } : formData);
-    onOpenChange(false);
+    handleClose();
     toast({
       title: "Sucesso",
       description: agent ? "Agente atualizado com sucesso" : "Agente criado com sucesso",
@@ -79,68 +83,86 @@ export function AgentModal({ open, onOpenChange, agent, onSave }: AgentModalProp
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{agent ? "Editar Agente" : "Criar Novo Agente"}</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            {agent ? "Editar Agente" : "Criar Novo Agente"}
+          </DialogTitle>
           <DialogDescription>
-            {agent ? "Atualize as informações do agente" : "Preencha os dados para criar um novo agente"}
+            {agent ? "Atualize as informações do agente" : "Configure um novo agente no sistema"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-5 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Nome *</Label>
+            <Label htmlFor="extension" className="text-sm font-medium">
+              Ramal
+            </Label>
+            <Input
+              id="extension"
+              value={formData.extension}
+              disabled
+              className="bg-muted cursor-not-allowed font-mono"
+            />
+            <p className="text-xs text-muted-foreground">
+              Ramal gerado automaticamente
+            </p>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="name" className="text-sm font-medium">
+              Nome do Agente *
+            </Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nome completo do agente"
+              placeholder="Ex: João Silva"
+              className="transition-smooth"
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="extension">Ramal *</Label>
+            <Label htmlFor="password" className="text-sm font-medium">
+              Senha *
+            </Label>
             <Input
-              id="extension"
-              value={formData.extension}
-              onChange={(e) => setFormData({ ...formData, extension: e.target.value })}
-              placeholder="Ex: 101"
+              id="password"
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              placeholder="Digite uma senha segura"
+              className="transition-smooth"
             />
+            <p className="text-xs text-muted-foreground">
+              Mínimo 6 caracteres
+            </p>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="callerId" className="text-sm font-medium">
+              Caller ID *
+            </Label>
             <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="agente@empresa.com"
+              id="callerId"
+              value={formData.callerId}
+              onChange={(e) => setFormData({ ...formData, callerId: e.target.value })}
+              placeholder="Ex: João Silva <101>"
+              className="transition-smooth"
             />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="status">Status</Label>
-            <Select value={formData.status} onValueChange={(value: Agent["status"]) => setFormData({ ...formData, status: value })}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="online">Online</SelectItem>
-                <SelectItem value="offline">Offline</SelectItem>
-                <SelectItem value="paused">Pausado</SelectItem>
-              </SelectContent>
-            </Select>
+            <p className="text-xs text-muted-foreground">
+              Identificação que aparecerá nas chamadas
+            </p>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="gap-2">
+          <Button variant="outline" onClick={handleClose} className="transition-smooth">
             Cancelar
           </Button>
-          <Button onClick={handleSave}>
-            {agent ? "Atualizar" : "Criar"}
+          <Button onClick={handleSave} className="transition-smooth">
+            {agent ? "Atualizar" : "Criar Agente"}
           </Button>
         </DialogFooter>
       </DialogContent>

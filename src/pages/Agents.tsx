@@ -62,8 +62,8 @@ export default function Agents() {
       id: parseInt(agent.id),
       name: agent.name,
       extension: agent.extension,
-      email: `${agent.name.toLowerCase().replace(' ', '.')}@empresa.com`,
-      status: agent.status as 'online' | 'offline' | 'paused',
+      password: "******",
+      callerId: `${agent.name} <${agent.extension}>`,
     });
     setIsAgentModalOpen(true);
   };

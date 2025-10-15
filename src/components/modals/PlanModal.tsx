@@ -31,36 +31,38 @@ interface PlanModalProps {
 }
 
 export function PlanModal({ open, onOpenChange, plan, onSave }: PlanModalProps) {
-  const [formData, setFormData] = useState({
+  const initialState = {
     name: "",
     price: 0,
     minutes: 0,
     agents: 0,
     concurrent: 0,
     features: "",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialState);
 
   useEffect(() => {
-    if (plan) {
-      setFormData({
-        name: plan.name,
-        price: plan.price,
-        minutes: plan.minutes,
-        agents: plan.agents,
-        concurrent: plan.concurrent,
-        features: plan.features.join("\n"),
-      });
-    } else {
-      setFormData({
-        name: "",
-        price: 0,
-        minutes: 0,
-        agents: 0,
-        concurrent: 0,
-        features: "",
-      });
+    if (open) {
+      if (plan) {
+        setFormData({
+          name: plan.name,
+          price: plan.price,
+          minutes: plan.minutes,
+          agents: plan.agents,
+          concurrent: plan.concurrent,
+          features: plan.features.join("\n"),
+        });
+      } else {
+        setFormData(initialState);
+      }
     }
   }, [plan, open]);
+
+  const handleClose = () => {
+    setFormData(initialState);
+    onOpenChange(false);
+  };
 
   const handleSave = () => {
     if (!formData.name || formData.price <= 0) {
@@ -84,7 +86,7 @@ export function PlanModal({ open, onOpenChange, plan, onSave }: PlanModalProps) 
       features,
     });
     
-    onOpenChange(false);
+    handleClose();
     toast({
       title: "Sucesso",
       description: plan ? "Plano atualizado com sucesso" : "Plano criado com sucesso",
@@ -92,7 +94,7 @@ export function PlanModal({ open, onOpenChange, plan, onSave }: PlanModalProps) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{plan ? "Editar Plano" : "Criar Novo Plano"}</DialogTitle>
@@ -173,7 +175,7 @@ export function PlanModal({ open, onOpenChange, plan, onSave }: PlanModalProps) 
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
           <Button onClick={handleSave}>
