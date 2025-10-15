@@ -1,17 +1,46 @@
 import { ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
+import { Bell, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Button } from '@/components/ui/button';
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <div className="flex min-h-screen w-full bg-background">
       <Sidebar />
-      <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col">
+        <div className="flex items-center justify-end gap-2 p-4 border-b border-border">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+          >
+            {theme === 'light' ? (
+              <Moon className="w-4 h-4" />
+            ) : (
+              <Sun className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+        <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
