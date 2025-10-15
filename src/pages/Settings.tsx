@@ -62,41 +62,25 @@ export default function Settings() {
           <Card className="p-6 shadow-card">
             <h2 className="text-xl font-semibold mb-6">Informações Pessoais</h2>
             <div className="space-y-4">
-              <div className="flex items-center gap-6 mb-6">
-                <div className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center shadow-primary">
-                  <span className="text-2xl font-bold text-primary-foreground">
-                    {user?.name.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <Button variant="outline" size="sm">Alterar Foto</Button>
-                  <p className="text-xs text-muted-foreground mt-2">JPG, PNG ou GIF (max. 2MB)</p>
-                </div>
-              </div>
-
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome Completo</Label>
-                  <Input id="name" defaultValue={user?.name} />
+                  <Input id="name" defaultValue={user?.name} disabled />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue={user?.email} />
+                  <Input id="email" type="email" defaultValue={user?.email} disabled />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Telefone</Label>
                   <Input id="phone" placeholder="(00) 00000-0000" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Cargo</Label>
-                  <Input id="role" defaultValue={user?.role} disabled />
                 </div>
               </div>
 
               {user?.company && (
                 <div className="space-y-2">
                   <Label htmlFor="company">Empresa</Label>
-                  <Input id="company" defaultValue={user.company} />
+                  <Input id="company" defaultValue={user.company} disabled />
                 </div>
               )}
 
