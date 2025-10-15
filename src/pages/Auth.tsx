@@ -179,6 +179,10 @@ export default function Auth() {
                   <span className="font-mono text-foreground">admin@pabx.com / admin123</span>
                 </div>
                 <div className="flex justify-between p-2 rounded-lg bg-muted/50">
+                  <span className="text-muted-foreground">Revenda:</span>
+                  <span className="font-mono text-foreground">revenda@telecom.com / reseller123</span>
+                </div>
+                <div className="flex justify-between p-2 rounded-lg bg-muted/50">
                   <span className="text-muted-foreground">User:</span>
                   <span className="font-mono text-foreground">usuario@empresa.com / user123</span>
                 </div>

@@ -24,10 +24,10 @@ const callsData = [
 ];
 
 const agents = [
-  { name: 'João Silva', status: 'online', avatar: 'JS', calls: 12 },
-  { name: 'Maria Santos', status: 'busy', avatar: 'MS', calls: 8 },
-  { name: 'Pedro Costa', status: 'online', avatar: 'PC', calls: 15 },
-  { name: 'Ana Lima', status: 'pause', avatar: 'AL', calls: 6 },
+  { name: 'João Silva', status: 'online', avatar: 'JS', calls: 12, callerId: '1001' },
+  { name: 'Maria Santos', status: 'busy', avatar: 'MS', calls: 8, callerId: '1002' },
+  { name: 'Pedro Costa', status: 'online', avatar: 'PC', calls: 15, callerId: '1003' },
+  { name: 'Ana Lima', status: 'pause', avatar: 'AL', calls: 6, callerId: '1004' },
 ];
 
 export default function Dashboard() {
@@ -153,9 +153,9 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </Card>
 
-      {/* Agentes Online */}
+      {/* Agentes Recentes */}
       <Card className="p-6 shadow-card">
-        <h3 className="font-semibold mb-4">Agentes Online</h3>
+        <h3 className="font-semibold mb-4">Agentes Recentes</h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {agents.map((agent, index) => (
             <div key={index} className="p-4 rounded-lg border border-border bg-card/50 hover:shadow-md transition-smooth">
@@ -173,15 +173,26 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{agent.name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">
-                    {agent.status === 'online' ? 'Disponível' : 
-                     agent.status === 'busy' ? 'Em chamada' : 'Em pausa'}
+                  <p className="text-xs text-muted-foreground">
+                    Ramal: {agent.callerId}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Chamadas hoje</span>
-                <span className="font-semibold text-primary">{agent.calls}</span>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className={`font-medium capitalize ${
+                    agent.status === 'online' ? 'text-success' : 
+                    agent.status === 'busy' ? 'text-destructive' : 'text-warning'
+                  }`}>
+                    {agent.status === 'online' ? 'Disponível' : 
+                     agent.status === 'busy' ? 'Em chamada' : 'Em pausa'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Chamadas hoje</span>
+                  <span className="font-semibold text-primary">{agent.calls}</span>
+                </div>
               </div>
             </div>
           ))}
