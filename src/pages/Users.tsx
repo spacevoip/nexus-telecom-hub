@@ -245,16 +245,15 @@ export default function Users() {
         ) : (
           /* Desktop Table View */
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1200px]">
-              <thead className="bg-muted/50">
+            <table className="w-full min-w-[1000px]">
+              <thead className="bg-muted/30">
                 <tr>
-                  <th className="text-left p-4 font-semibold text-sm">Usuário</th>
-                  <th className="text-left p-4 font-semibold text-sm">Empresa</th>
-                  <th className="text-left p-4 font-semibold text-sm">Plano</th>
-                  <th className="text-left p-4 font-semibold text-sm">Financeiro</th>
-                  <th className="text-left p-4 font-semibold text-sm">Dias Restantes</th>
-                  <th className="text-left p-4 font-semibold text-sm">Status</th>
-                  <th className="text-right p-4 font-semibold text-sm">Ações</th>
+                  <th className="text-left p-5 font-semibold text-sm text-muted-foreground">Usuário</th>
+                  <th className="text-left p-5 font-semibold text-sm text-muted-foreground">Empresa</th>
+                  <th className="text-left p-5 font-semibold text-sm text-muted-foreground">Plano</th>
+                  <th className="text-left p-5 font-semibold text-sm text-muted-foreground">Saldo</th>
+                  <th className="text-left p-5 font-semibold text-sm text-muted-foreground">Status</th>
+                  <th className="text-right p-5 font-semibold text-sm text-muted-foreground">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -263,55 +262,37 @@ export default function Users() {
                   return (
                     <tr
                       key={user.id}
-                      className="border-t border-border hover:bg-accent/50 transition-smooth"
+                      className="border-t border-border/50 hover:bg-accent/30 transition-smooth"
                     >
-                      <td className="p-4">
-                        <div className="max-w-[200px]">
-                          <p className="font-medium text-base truncate">{user.name}</p>
+                      <td className="p-5">
+                        <div className="max-w-[220px]">
+                          <p className="font-semibold text-base truncate mb-1">{user.name}</p>
                           <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                         </div>
                       </td>
-                      <td className="p-4">
-                        <p className="text-sm truncate max-w-[140px]">{user.company}</p>
+                      <td className="p-5">
+                        <p className="text-sm text-foreground/80 truncate max-w-[160px]">{user.company}</p>
                       </td>
-                      <td className="p-4">
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-sm whitespace-nowrap">
+                      <td className="p-5">
+                        <span className="text-sm font-medium text-foreground/90">
                           {user.plan}
-                        </Badge>
+                        </span>
                       </td>
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm text-muted-foreground">R$</span>
-                            <span className="font-semibold text-sm text-success">{user.balance.toFixed(2)}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm text-muted-foreground">Min:</span>
-                            <span className="font-semibold text-sm text-primary">{user.minuteBalance}</span>
-                          </div>
-                        </div>
+                      <td className="p-5">
+                        <p className="text-base font-semibold text-foreground">
+                          R$ {user.balance.toFixed(2)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {user.minuteBalance} min disponíveis
+                        </p>
                       </td>
-                      <td className="p-4">
-                        <Badge 
-                          variant="outline" 
-                          className={`text-sm whitespace-nowrap ${
-                            daysRemaining > 7 
-                              ? 'status-badge-active' 
-                              : daysRemaining > 0 
-                                ? 'bg-warning/10 text-warning border-warning/20' 
-                                : 'status-badge-error'
-                          }`}
-                        >
-                          {daysRemaining > 0 ? `${daysRemaining} dias` : 'Expirado'}
-                        </Badge>
-                      </td>
-                      <td className="p-4">{getStatusBadge(user.status)}</td>
-                      <td className="p-4">
+                      <td className="p-5">{getStatusBadge(user.status)}</td>
+                      <td className="p-5">
                         <div className="flex items-center justify-end gap-2">
                           <Button 
                             variant="default" 
                             size="icon" 
-                            className="gradient-primary shadow-primary h-9 w-9"
+                            className="gradient-primary h-9 w-9"
                             onClick={() => handleManageUser(user)}
                             title="Gerenciar"
                           >
@@ -321,7 +302,7 @@ export default function Users() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-destructive hover:text-destructive h-9 w-9"
+                              className="text-muted-foreground hover:text-destructive h-9 w-9"
                               onClick={() => handleDeleteUser(user.id)}
                               title="Excluir"
                             >
