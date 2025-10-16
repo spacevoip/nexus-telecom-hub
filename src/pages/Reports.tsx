@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, TrendingUp, TrendingDown, Users, Phone, DollarSign, Clock, BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon } from 'lucide-react';
+import { Download, TrendingUp, TrendingDown, Users, Phone, DollarSign, Clock, BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, UserPlus, PhoneCall, Star, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,12 +21,12 @@ import {
 import { ExportModal } from '@/components/modals/ExportModal';
 
 const monthlyData = [
-  { month: 'Jan', calls: 340, revenue: 12400 },
-  { month: 'Fev', calls: 420, revenue: 15200 },
-  { month: 'Mar', calls: 380, revenue: 14100 },
-  { month: 'Abr', calls: 510, revenue: 18300 },
-  { month: 'Mai', calls: 490, revenue: 17800 },
-  { month: 'Jun', calls: 560, revenue: 20500 },
+  { month: 'Jan', calls: 340, revenue: 12400, customers: 45 },
+  { month: 'Fev', calls: 420, revenue: 15200, customers: 52 },
+  { month: 'Mar', calls: 380, revenue: 14100, customers: 58 },
+  { month: 'Abr', calls: 510, revenue: 18300, customers: 67 },
+  { month: 'Mai', calls: 490, revenue: 17800, customers: 73 },
+  { month: 'Jun', calls: 560, revenue: 20500, customers: 82 },
 ];
 
 const planDistribution = [
@@ -57,9 +57,9 @@ export default function Reports() {
     },
     {
       icon: Users,
-      label: 'Novos Clientes',
-      value: '24',
-      change: '+15%',
+      label: 'Total de Clientes',
+      value: '377',
+      change: '+18%',
       trend: 'up',
       color: 'text-accent',
     },
@@ -70,6 +70,38 @@ export default function Reports() {
       change: '-3%',
       trend: 'down',
       color: 'text-warning',
+    },
+    {
+      icon: UserPlus,
+      label: 'Novos Clientes',
+      value: '24',
+      change: '+15%',
+      trend: 'up',
+      color: 'text-primary',
+    },
+    {
+      icon: PhoneCall,
+      label: 'Taxa de Sucesso',
+      value: '94.2%',
+      change: '+2.1%',
+      trend: 'up',
+      color: 'text-success',
+    },
+    {
+      icon: Star,
+      label: 'Satisfação Média',
+      value: '4.7',
+      change: '+0.3',
+      trend: 'up',
+      color: 'text-warning',
+    },
+    {
+      icon: Award,
+      label: 'Ticket Médio',
+      value: 'R$ 36,41',
+      change: '+5%',
+      trend: 'up',
+      color: 'text-accent',
     },
   ];
 
@@ -204,6 +236,39 @@ export default function Reports() {
                 </LineChart>
               </ResponsiveContainer>
             </Card>
+
+            {/* Customer Growth */}
+            <Card className="p-6 shadow-card md:col-span-2">
+              <h3 className="font-semibold mb-4">Crescimento de Clientes</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis
+                    dataKey="month"
+                    className="text-xs"
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis
+                    className="text-xs"
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="customers"
+                    stroke="hsl(var(--accent))"
+                    strokeWidth={2}
+                    dot={{ fill: 'hsl(var(--accent))', r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
           </div>
         </TabsContent>
 
@@ -234,10 +299,10 @@ export default function Reports() {
               </ResponsiveContainer>
             </Card>
 
-            {/* Top Performers */}
+            {/* Top Agents */}
             <Card className="p-6 shadow-card">
               <h3 className="font-semibold mb-4">Top Agentes</h3>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {[
                   { name: 'João Silva', calls: 245, duration: '18h 32m', rating: 4.9 },
                   { name: 'Maria Santos', calls: 198, duration: '15h 20m', rating: 4.8 },
@@ -247,7 +312,7 @@ export default function Reports() {
                 ].map((agent, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-muted/30 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center shadow-primary">
@@ -256,7 +321,7 @@ export default function Reports() {
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium">{agent.name}</p>
+                        <p className="font-medium text-sm">{agent.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {agent.calls} chamadas • {agent.duration}
                         </p>
@@ -266,6 +331,43 @@ export default function Reports() {
                       <span className="text-warning">★</span>
                       <span className="text-sm font-semibold">{agent.rating}</span>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Top Customers */}
+            <Card className="p-6 shadow-card md:col-span-2">
+              <h3 className="font-semibold mb-4">Top Clientes</h3>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                {[
+                  { name: 'Tech Solutions Ltda', calls: 156, revenue: 'R$ 8.450', plan: 'Empresarial' },
+                  { name: 'Comercial Varejo S.A', calls: 142, revenue: 'R$ 7.890', plan: 'Profissional' },
+                  { name: 'Indústria Global', calls: 128, revenue: 'R$ 6.920', plan: 'Empresarial' },
+                  { name: 'Serviços Express', calls: 115, revenue: 'R$ 5.780', plan: 'Profissional' },
+                  { name: 'Logística Prime', calls: 98, revenue: 'R$ 4.950', plan: 'Básico' },
+                ].map((customer, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-muted/30 rounded-lg border border-border hover:border-primary/50 transition-smooth"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-xs font-bold text-primary">
+                          #{index + 1}
+                        </span>
+                      </div>
+                      <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
+                        {customer.plan}
+                      </span>
+                    </div>
+                    <p className="font-medium text-sm mb-1">{customer.name}</p>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {customer.calls} chamadas
+                    </p>
+                    <p className="text-sm font-semibold text-success">
+                      {customer.revenue}
+                    </p>
                   </div>
                 ))}
               </div>
