@@ -22,14 +22,16 @@ interface User {
   registeredAt: string;
   balance: number;
   minuteBalance: number;
+  planActivationDate: string;
+  planExpirationDate: string;
 }
 
 const mockUsers: User[] = [
-  { id: '1', name: 'João Empresa Ltda', email: 'joao@empresa.com', company: 'Empresa Tech', plan: 'Profissional', status: 'active', registeredAt: '10/01/2025', balance: 150.00, minuteBalance: 300 },
-  { id: '2', name: 'Maria Tech SA', email: 'maria@tech.com', company: 'Tech Solutions', plan: 'Empresarial', status: 'active', registeredAt: '15/02/2025', balance: 280.50, minuteBalance: 500 },
-  { id: '3', name: 'Pedro Telecom', email: 'pedro@telecom.com', company: 'Telecom Brasil', plan: 'Básico', status: 'suspended', registeredAt: '20/03/2025', balance: 0.00, minuteBalance: 0 },
-  { id: '4', name: 'Ana Digital', email: 'ana@digital.com', company: 'Digital Corp', plan: 'Profissional', status: 'active', registeredAt: '05/04/2025', balance: 95.75, minuteBalance: 180 },
-  { id: '5', name: 'Carlos Services', email: 'carlos@services.com', company: 'Services Inc', plan: 'Básico', status: 'active', registeredAt: '12/05/2025', balance: 210.00, minuteBalance: 420 },
+  { id: '1', name: 'João Empresa Ltda', email: 'joao@empresa.com', company: 'Empresa Tech', plan: 'Profissional', status: 'active', registeredAt: '10/01/2025', balance: 150.00, minuteBalance: 300, planActivationDate: '10/01/2025', planExpirationDate: '10/02/2025' },
+  { id: '2', name: 'Maria Tech SA', email: 'maria@tech.com', company: 'Tech Solutions', plan: 'Empresarial', status: 'active', registeredAt: '15/02/2025', balance: 280.50, minuteBalance: 500, planActivationDate: '15/02/2025', planExpirationDate: '15/03/2025' },
+  { id: '3', name: 'Pedro Telecom', email: 'pedro@telecom.com', company: 'Telecom Brasil', plan: 'Básico', status: 'suspended', registeredAt: '20/03/2025', balance: 0.00, minuteBalance: 0, planActivationDate: '20/03/2025', planExpirationDate: '20/04/2025' },
+  { id: '4', name: 'Ana Digital', email: 'ana@digital.com', company: 'Digital Corp', plan: 'Profissional', status: 'active', registeredAt: '05/04/2025', balance: 95.75, minuteBalance: 180, planActivationDate: '05/04/2025', planExpirationDate: '05/05/2025' },
+  { id: '5', name: 'Carlos Services', email: 'carlos@services.com', company: 'Services Inc', plan: 'Básico', status: 'active', registeredAt: '12/05/2025', balance: 210.00, minuteBalance: 420, planActivationDate: '12/05/2025', planExpirationDate: '12/06/2025' },
 ];
 
 export default function Users() {
@@ -58,6 +60,14 @@ export default function Users() {
     ) : (
       <Badge variant="outline" className="status-badge-error">Suspenso</Badge>
     );
+  };
+
+  const getDaysRemaining = (expirationDate: string) => {
+    const today = new Date();
+    const expiration = new Date(expirationDate.split('/').reverse().join('-'));
+    const diffTime = expiration.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
   const stats = useMemo(() => ({
@@ -160,146 +170,166 @@ export default function Users() {
         {isMobile ? (
           /* Mobile Card View */
           <div className="divide-y divide-border">
-            {filteredUsers.map((user) => (
-              <div key={user.id} className="p-4 hover:bg-accent/50 transition-smooth">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{user.name}</p>
-                    <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+            {filteredUsers.map((user) => {
+              const daysRemaining = getDaysRemaining(user.planExpirationDate);
+              return (
+                <div key={user.id} className="p-4 hover:bg-accent/50 transition-smooth">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold truncate">{user.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    {getStatusBadge(user.status)}
                   </div>
-                  {getStatusBadge(user.status)}
-                </div>
-                <div className="space-y-2 text-sm mb-3">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Empresa:</span>
-                    <span className="font-medium">{user.company}</span>
+                  
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <Card className="p-2 bg-muted/30">
+                      <p className="text-xs text-muted-foreground mb-1">Saldo</p>
+                      <p className="text-sm font-semibold text-success">R$ {user.balance.toFixed(2)}</p>
+                    </Card>
+                    <Card className="p-2 bg-muted/30">
+                      <p className="text-xs text-muted-foreground mb-1">Minutos</p>
+                      <p className="text-sm font-semibold text-primary">{user.minuteBalance} min</p>
+                    </Card>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Plano:</span>
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                      {user.plan}
-                    </Badge>
+
+                  <div className="space-y-1.5 text-xs mb-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Empresa:</span>
+                      <span className="font-medium">{user.company}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Plano:</span>
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                        {user.plan}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Ativação:</span>
+                      <span className="font-medium">{user.planActivationDate}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Dias restantes:</span>
+                      <Badge variant="outline" className={daysRemaining > 7 ? 'status-badge-active' : daysRemaining > 0 ? 'bg-warning/10 text-warning border-warning/20' : 'status-badge-error'}>
+                        {daysRemaining > 0 ? `${daysRemaining} dias` : 'Expirado'}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Cadastro:</span>
-                    <span>{user.registeredAt}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Saldo:</span>
-                    <span className="font-medium text-primary">R$ {user.balance.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Minutos:</span>
-                    <span className="font-medium text-primary">{user.minuteBalance} min</span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="default" size="sm" className="flex-1 gradient-primary shadow-primary" onClick={() => handleManageUser(user)}>
-                    <Settings className="w-4 h-4 mr-1" />
-                    Gerenciar
-                  </Button>
-                  {isAdmin && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-destructive hover:text-destructive"
-                      onClick={() => handleDeleteUser(user.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
+                  
+                  <div className="flex gap-2">
+                    <Button variant="default" size="sm" className="flex-1 gradient-primary shadow-primary" onClick={() => handleManageUser(user)}>
+                      <Settings className="w-3 h-3 mr-1" />
+                      Gerenciar
                     </Button>
-                  )}
+                    {isAdmin && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteUser(user.id)}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           /* Desktop Table View */
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[1200px]">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-4 font-semibold text-sm">Usuário</th>
-                  <th className="text-left p-4 font-semibold text-sm">Empresa</th>
-                  <th className="text-left p-4 font-semibold text-sm">Plano</th>
-                  <th className="text-left p-4 font-semibold text-sm">Saldo</th>
-                  <th className="text-left p-4 font-semibold text-sm">Minutos</th>
-                  <th className="text-left p-4 font-semibold text-sm">Status</th>
-                  <th className="text-left p-4 font-semibold text-sm">Data Cadastro</th>
-                  <th className="text-right p-4 font-semibold text-sm">Ações</th>
+                  <th className="text-left p-3 font-semibold text-xs">Usuário</th>
+                  <th className="text-left p-3 font-semibold text-xs">Empresa</th>
+                  <th className="text-left p-3 font-semibold text-xs">Plano</th>
+                  <th className="text-left p-3 font-semibold text-xs">Financeiro</th>
+                  <th className="text-left p-3 font-semibold text-xs">Ativação</th>
+                  <th className="text-left p-3 font-semibold text-xs">Dias Restantes</th>
+                  <th className="text-left p-3 font-semibold text-xs">Status</th>
+                  <th className="text-right p-3 font-semibold text-xs">Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="border-t border-border hover:bg-accent/50 transition-smooth"
-                  >
-                    <td className="p-4">
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm">{user.company}</td>
-                    <td className="p-4">
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                        {user.plan}
-                      </Badge>
-                    </td>
-                    <td className="p-4">
-                      <span className="font-medium text-success">R$ {user.balance.toFixed(2)}</span>
-                    </td>
-                    <td className="p-4">
-                      <span className="font-medium text-primary">{user.minuteBalance} min</span>
-                    </td>
-                    <td className="p-4">{getStatusBadge(user.status)}</td>
-                    <td className="p-4 text-sm text-muted-foreground">{user.registeredAt}</td>
-                    <td className="p-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button 
-                          variant="default" 
-                          size="sm" 
-                          className="gradient-primary shadow-primary"
-                          onClick={() => handleManageUser(user)}
+                {filteredUsers.map((user) => {
+                  const daysRemaining = getDaysRemaining(user.planExpirationDate);
+                  return (
+                    <tr
+                      key={user.id}
+                      className="border-t border-border hover:bg-accent/50 transition-smooth"
+                    >
+                      <td className="p-3">
+                        <div className="max-w-[180px]">
+                          <p className="font-medium text-sm truncate">{user.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <p className="text-xs truncate max-w-[120px]">{user.company}</p>
+                      </td>
+                      <td className="p-3">
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs whitespace-nowrap">
+                          {user.plan}
+                        </Badge>
+                      </td>
+                      <td className="p-3">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs text-muted-foreground">R$</span>
+                            <span className="font-semibold text-xs text-success">{user.balance.toFixed(2)}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs text-muted-foreground">Min:</span>
+                            <span className="font-semibold text-xs text-primary">{user.minuteBalance}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3">
+                        <p className="text-xs whitespace-nowrap">{user.planActivationDate}</p>
+                      </td>
+                      <td className="p-3">
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs whitespace-nowrap ${
+                            daysRemaining > 7 
+                              ? 'status-badge-active' 
+                              : daysRemaining > 0 
+                                ? 'bg-warning/10 text-warning border-warning/20' 
+                                : 'status-badge-error'
+                          }`}
                         >
-                          <Settings className="w-4 h-4 mr-1" />
-                          Gerenciar
-                        </Button>
-                        {isAdmin && (
-                          <>
-                            {user.status === 'active' ? (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                title="Suspender"
-                                className="text-warning hover:text-warning"
-                              >
-                                <Ban className="w-4 h-4" />
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                title="Ativar"
-                                className="text-success hover:text-success"
-                              >
-                                <CheckCircle className="w-4 h-4" />
-                              </Button>
-                            )}
+                          {daysRemaining > 0 ? `${daysRemaining} dias` : 'Expirado'}
+                        </Badge>
+                      </td>
+                      <td className="p-3">{getStatusBadge(user.status)}</td>
+                      <td className="p-3">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            className="gradient-primary shadow-primary h-8 text-xs"
+                            onClick={() => handleManageUser(user)}
+                          >
+                            <Settings className="w-3 h-3 mr-1" />
+                            Gerenciar
+                          </Button>
+                          {isAdmin && (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-destructive hover:text-destructive"
+                              className="text-destructive hover:text-destructive h-8 w-8"
                               onClick={() => handleDeleteUser(user.id)}
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-3 h-3" />
                             </Button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
