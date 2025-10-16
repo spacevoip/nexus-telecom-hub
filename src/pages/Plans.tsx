@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Edit, Eye, Trash2, Users } from 'lucide-react';
+import { Plus, Edit, Eye, Trash2, Users, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { PlanModal } from '@/components/modals/PlanModal';
 import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
 import { toast } from '@/hooks/use-toast';
+import { Navigate } from 'react-router-dom';
 
 interface Plan {
   id: string;
@@ -63,6 +64,11 @@ export default function Plans() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [planToDelete, setPlanToDelete] = useState<string | null>(null);
+
+  // Controle de acesso: apenas admin e reseller
+  if (user?.role !== 'admin' && user?.role !== 'reseller') {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const isReseller = user?.role === 'reseller';
 

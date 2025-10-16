@@ -16,6 +16,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -38,6 +39,7 @@ const navItems = {
     { icon: Phone, label: 'Chamadas Ativas', path: '/active-calls' },
     { icon: FileText, label: 'CDR', path: '/cdr' },
     { icon: Mic, label: 'Áudios', path: '/audios' },
+    { icon: CreditCard, label: 'Planos', path: '/plans' },
     { icon: Activity, label: 'Status Sistema', path: '/system-status' },
     { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
@@ -45,7 +47,7 @@ const navItems = {
   reseller: [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: Users, label: 'Clientes', path: '/users' },
-    { icon: UserPlus, label: 'Planos', path: '/plans' },
+    { icon: CreditCard, label: 'Planos', path: '/plans' },
     { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ],
