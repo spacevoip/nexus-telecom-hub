@@ -16,6 +16,7 @@ import Settings from "./pages/Settings";
 import Plans from "./pages/Plans";
 import Users from "./pages/Users";
 import Reports from "./pages/Reports";
+import Performance from "./pages/Performance";
 import SystemStatus from "./pages/SystemStatus";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => (
                         <Route path="/plans" element={<Plans />} />
                         <Route path="/users" element={<Users />} />
                         <Route path="/reports" element={<Reports />} />
+                        <Route path="/performance" element={<Performance />} />
                         <Route path="/system-status" element={<SystemStatus />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>

@@ -30,7 +30,7 @@ const navItems = {
     { icon: FileText, label: 'CDR', path: '/cdr' },
     { icon: Mic, label: 'Áudios', path: '/audios' },
     { icon: CreditCard, label: 'Planos', path: '/plans' },
-    { icon: BarChart3, label: 'Relatórios', path: '/reports' },
+    { icon: BarChart3, label: 'Desempenho', path: '/performance' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ],
   admin: [

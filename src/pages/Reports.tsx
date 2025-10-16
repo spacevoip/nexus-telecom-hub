@@ -19,6 +19,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { ExportModal } from '@/components/modals/ExportModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const monthlyData = [
   { month: 'Jan', calls: 340, revenue: 12400, customers: 45 },
@@ -36,7 +38,13 @@ const planDistribution = [
 ];
 
 export default function Reports() {
+  const { user } = useAuth();
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
+  // Controle de acesso: apenas admin e reseller
+  if (user?.role !== 'admin' && user?.role !== 'reseller') {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const metrics = [
     {
@@ -110,9 +118,9 @@ export default function Reports() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Relatórios e Analytics</h1>
+          <h1 className="text-3xl font-bold">Relatórios Gerais</h1>
           <p className="text-muted-foreground mt-1">
-            Análise consolidada do desempenho
+            Análise consolidada do desempenho geral
           </p>
         </div>
         <Button className="gradient-primary shadow-primary" onClick={() => setIsExportModalOpen(true)}>
