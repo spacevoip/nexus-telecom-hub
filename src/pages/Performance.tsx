@@ -1,9 +1,19 @@
 import { useState } from 'react';
-import { Phone, PhoneOff, Clock, TrendingUp, Users, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Phone, PhoneOff, Clock, TrendingUp, Users, CheckCircle, XCircle, AlertCircle, Search } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import {
   BarChart,
   Bar,
@@ -70,10 +80,31 @@ const agentPerformance = [
 ];
 
 export default function Performance() {
+  const [searchAgent, setSearchAgent] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const totalCalls = 926;
   const successfulCalls = 866;
   const failedCalls = 60;
   const successRate = ((successfulCalls / totalCalls) * 100).toFixed(1);
+
+  // Filter agents based on search
+  const filteredAgents = agentPerformance.filter(agent =>
+    agent.name.toLowerCase().includes(searchAgent.toLowerCase())
+  );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAgents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedAgents = filteredAgents.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search changes
+  const handleSearchChange = (value: string) => {
+    setSearchAgent(value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="space-y-6 animate-in">
@@ -267,8 +298,27 @@ export default function Performance() {
 
         {/* Agents Performance Tab */}
         <TabsContent value="agents" className="space-y-6">
+          {/* Search */}
+          <Card className="p-4 shadow-card">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar agente por nome..."
+                value={searchAgent}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </Card>
+
+          {/* Agents List */}
           <div className="grid gap-4">
-            {agentPerformance.map((agent, index) => (
+            {paginatedAgents.length === 0 ? (
+              <Card className="p-6 shadow-card text-center">
+                <p className="text-muted-foreground">Nenhum agente encontrado</p>
+              </Card>
+            ) : (
+              paginatedAgents.map((agent, index) => (
               <Card key={index} className="p-6 shadow-card hover:shadow-lg transition-smooth">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   {/* Agent Info */}
@@ -331,8 +381,59 @@ export default function Performance() {
                   <Progress value={agent.successRate} className="h-2" />
                 </div>
               </Card>
-            ))}
+              ))
+            )}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+                
+                {[...Array(totalPages)].map((_, i) => {
+                  const pageNumber = i + 1;
+                  // Show first, last, current, and adjacent pages
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(pageNumber)}
+                          isActive={currentPage === pageNumber}
+                          className="cursor-pointer"
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  } else if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+                  return null;
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </TabsContent>
       </Tabs>
     </div>
