@@ -39,6 +39,8 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
     amount: '',
     description: '',
   });
+  const [financialPage, setFinancialPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     if (user) {
@@ -456,32 +458,75 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
             <div>
               <h3 className="font-semibold mb-3 text-sm sm:text-base">Histórico Financeiro</h3>
               <Card className="divide-y divide-border">
-                {[
-                  { type: 'add', description: 'Recarga manual', amount: 100.00, date: '10/10/2025 14:30', balance: true },
-                  { type: 'debit', description: 'Chamadas consumidas', amount: -25.50, date: '09/10/2025 16:45', balance: true },
-                  { type: 'add', description: 'Adição de minutos', amount: 120, date: '08/10/2025 10:15', balance: false },
-                  { type: 'debit', description: 'Minutos consumidos', amount: -45, date: '07/10/2025 18:20', balance: false },
-                  { type: 'total', description: 'Ajuste total', amount: 150.00, date: '05/10/2025 09:00', balance: true },
-                ].map((item, index) => (
-                  <div key={index} className="p-3 hover:bg-accent/50 transition-smooth">
-                    <div className="flex justify-between items-start mb-1">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{item.description}</p>
-                        <p className="text-xs text-muted-foreground">{item.date}</p>
-                      </div>
-                      <div className="text-right ml-2">
-                        <p className={`font-semibold text-sm ${
-                          item.amount > 0 ? 'text-success' : 'text-destructive'
-                        }`}>
-                          {item.amount > 0 ? '+' : ''}{item.balance ? `R$ ${item.amount.toFixed(2)}` : `${item.amount} min`}
+                {(() => {
+                  const allTransactions = [
+                    { type: 'add', description: 'Recarga manual', amount: 100.00, date: '10/10/2025 14:30', balance: true },
+                    { type: 'debit', description: 'Chamadas consumidas', amount: -25.50, date: '09/10/2025 16:45', balance: true },
+                    { type: 'add', description: 'Adição de minutos', amount: 120, date: '08/10/2025 10:15', balance: false },
+                    { type: 'debit', description: 'Minutos consumidos', amount: -45, date: '07/10/2025 18:20', balance: false },
+                    { type: 'total', description: 'Ajuste total', amount: 150.00, date: '05/10/2025 09:00', balance: true },
+                    { type: 'add', description: 'Recarga via PIX', amount: 200.00, date: '04/10/2025 11:20', balance: true },
+                    { type: 'debit', description: 'Consumo de chamadas', amount: -35.80, date: '03/10/2025 15:30', balance: true },
+                    { type: 'add', description: 'Bônus de minutos', amount: 60, date: '02/10/2025 09:45', balance: false },
+                    { type: 'debit', description: 'Uso de minutos', amount: -30, date: '01/10/2025 17:10', balance: false },
+                    { type: 'add', description: 'Recarga manual', amount: 75.00, date: '30/09/2025 13:25', balance: true },
+                  ];
+                  
+                  const startIndex = (financialPage - 1) * itemsPerPage;
+                  const endIndex = startIndex + itemsPerPage;
+                  const paginatedTransactions = allTransactions.slice(startIndex, endIndex);
+                  const totalPages = Math.ceil(allTransactions.length / itemsPerPage);
+                  
+                  return (
+                    <>
+                      {paginatedTransactions.map((item, index) => (
+                        <div key={startIndex + index} className="p-3 hover:bg-accent/50 transition-smooth">
+                          <div className="flex justify-between items-start mb-1">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm truncate">{item.description}</p>
+                              <p className="text-xs text-muted-foreground">{item.date}</p>
+                            </div>
+                            <div className="text-right ml-2">
+                              <p className={`font-semibold text-sm ${
+                                item.amount > 0 ? 'text-success' : 'text-destructive'
+                              }`}>
+                                {item.amount > 0 ? '+' : ''}{item.balance ? `R$ ${item.amount.toFixed(2)}` : `${item.amount} min`}
+                              </p>
+                              <Badge variant="outline" className="text-xs mt-1">
+                                {item.type === 'add' ? 'Crédito' : item.type === 'debit' ? 'Débito' : 'Ajuste'}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Pagination */}
+                      <div className="p-3 bg-muted/30 flex items-center justify-between">
+                        <p className="text-xs text-muted-foreground">
+                          Mostrando {startIndex + 1}-{Math.min(endIndex, allTransactions.length)} de {allTransactions.length}
                         </p>
-                        <Badge variant="outline" className="text-xs mt-1">
-                          {item.type === 'add' ? 'Crédito' : item.type === 'debit' ? 'Débito' : 'Ajuste'}
-                        </Badge>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFinancialPage(prev => Math.max(1, prev - 1))}
+                            disabled={financialPage === 1}
+                          >
+                            Anterior
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFinancialPage(prev => Math.min(totalPages, prev + 1))}
+                            disabled={financialPage === totalPages}
+                          >
+                            Próximo
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                    </>
+                  );
+                })()}
               </Card>
             </div>
           </TabsContent>
