@@ -90,7 +90,7 @@ const mockClientAgents: ClientAgent[] = [
   },
 ];
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 export default function ClientAgents() {
   const [searchTerm, setSearchTerm] = useState('');
