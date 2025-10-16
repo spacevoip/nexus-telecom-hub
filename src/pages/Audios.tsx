@@ -77,12 +77,6 @@ export default function Audios() {
     );
   };
 
-  const categories = [
-    { key: 'greeting', label: 'Saudações', count: audios.filter(a => a.category === 'greeting').length },
-    { key: 'ivr', label: 'URA', count: audios.filter(a => a.category === 'ivr').length },
-    { key: 'hold', label: 'Espera', count: audios.filter(a => a.category === 'hold').length },
-    { key: 'announcement', label: 'Anúncios', count: audios.filter(a => a.category === 'announcement').length },
-  ];
 
   const handleUpload = (audio: any) => {
     console.log('Upload:', audio);
@@ -118,15 +112,6 @@ export default function Audios() {
         </Button>
       </div>
 
-      {/* Categories */}
-      <div className="grid gap-4 md:grid-cols-4">
-        {categories.map((cat) => (
-          <Card key={cat.key} className="p-4 shadow-card hover:shadow-lg transition-smooth cursor-pointer">
-            <p className="text-sm text-muted-foreground">{cat.label}</p>
-            <p className="text-2xl font-bold mt-1">{cat.count}</p>
-          </Card>
-        ))}
-      </div>
 
       {/* Search */}
       <Card className="p-4 shadow-card">
