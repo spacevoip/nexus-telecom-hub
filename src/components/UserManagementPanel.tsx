@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, User, Mail, Building, CreditCard, Shield, Calendar, Phone, UserCog, TrendingUp, Ban, CheckCircle } from 'lucide-react';
+import { Save, User, Mail, Building, CreditCard, Shield, Calendar, Phone, UserCog, TrendingUp, Ban, CheckCircle, DollarSign, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
@@ -28,8 +28,17 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
     phone: '',
     notes: '',
     role: 'user',
+    balance: 0,
+    minuteBalance: 0,
   });
   const [showSuspendDialog, setShowSuspendDialog] = useState(false);
+  const [showRechargeDialog, setShowRechargeDialog] = useState(false);
+  const [rechargeType, setRechargeType] = useState<'balance' | 'minutes'>('balance');
+  const [rechargeData, setRechargeData] = useState({
+    operation: 'add',
+    amount: '',
+    description: '',
+  });
 
   useEffect(() => {
     if (user) {
@@ -42,6 +51,8 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
         phone: user.phone || '',
         notes: user.notes || '',
         role: user.role || 'user',
+        balance: user.balance || 0,
+        minuteBalance: user.minuteBalance || 0,
       });
     }
   }, [user]);
@@ -78,6 +89,71 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
     });
   };
 
+  const handleRecharge = (type: 'balance' | 'minutes') => {
+    setRechargeType(type);
+    setRechargeData({
+      operation: 'add',
+      amount: '',
+      description: '',
+    });
+    setShowRechargeDialog(true);
+  };
+
+  const handleConfirmRecharge = () => {
+    if (!rechargeData.amount || !rechargeData.description) {
+      toast({
+        title: 'Campos obrigatórios',
+        description: 'Preencha o valor e a descrição',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const amount = parseFloat(rechargeData.amount);
+    let newValue = 0;
+
+    if (rechargeType === 'balance') {
+      switch (rechargeData.operation) {
+        case 'add':
+          newValue = formData.balance + amount;
+          break;
+        case 'debit':
+          newValue = formData.balance - amount;
+          break;
+        case 'zero':
+          newValue = 0;
+          break;
+        case 'total':
+          newValue = amount;
+          break;
+      }
+      setFormData({ ...formData, balance: Math.max(0, newValue) });
+    } else {
+      switch (rechargeData.operation) {
+        case 'add':
+          newValue = formData.minuteBalance + amount;
+          break;
+        case 'debit':
+          newValue = formData.minuteBalance - amount;
+          break;
+        case 'zero':
+          newValue = 0;
+          break;
+        case 'total':
+          newValue = amount;
+          break;
+      }
+      setFormData({ ...formData, minuteBalance: Math.max(0, newValue) });
+    }
+
+    toast({
+      title: 'Recarga realizada',
+      description: `${rechargeType === 'balance' ? 'Saldo' : 'Minutos'} atualizado com sucesso`,
+    });
+
+    setShowRechargeDialog(false);
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -94,8 +170,9 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
       <div className="flex-1 overflow-y-auto">
         <Tabs defaultValue="info" className="w-full">
           <div className="px-4 sm:px-6 pt-4">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="info" className="text-xs sm:text-sm">Informações</TabsTrigger>
+              <TabsTrigger value="financial" className="text-xs sm:text-sm">Financeiro</TabsTrigger>
               <TabsTrigger value="plan" className="text-xs sm:text-sm">Plano</TabsTrigger>
               <TabsTrigger value="activity" className="text-xs sm:text-sm">Atividade</TabsTrigger>
             </TabsList>
@@ -211,6 +288,29 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
                 </Select>
               </div>
 
+              <Separator />
+
+              {/* Balance Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-sm">Saldos</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <Card className="p-3 bg-muted/30">
+                    <div className="flex items-center gap-2 mb-1">
+                      <DollarSign className="w-4 h-4 text-success" />
+                      <span className="text-xs text-muted-foreground">Saldo (R$)</span>
+                    </div>
+                    <p className="text-lg font-bold text-success">R$ {formData.balance.toFixed(2)}</p>
+                  </Card>
+                  <Card className="p-3 bg-muted/30">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Clock className="w-4 h-4 text-primary" />
+                      <span className="text-xs text-muted-foreground">Minutos</span>
+                    </div>
+                    <p className="text-lg font-bold text-primary">{formData.minuteBalance} min</p>
+                  </Card>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="notes">Observações</Label>
                 <Textarea
@@ -221,6 +321,76 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
                   rows={4}
                 />
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="financial" className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+            {/* Balance Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="p-4 bg-gradient-to-br from-success/10 to-success/5 border-success/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <DollarSign className="w-5 h-5 text-success" />
+                  <h3 className="font-semibold text-sm">Saldo (R$)</h3>
+                </div>
+                <p className="text-2xl font-bold text-success mb-3">R$ {formData.balance.toFixed(2)}</p>
+                <Button
+                  size="sm"
+                  className="w-full gradient-primary shadow-primary"
+                  onClick={() => handleRecharge('balance')}
+                >
+                  Recarga
+                </Button>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold text-sm">Minutos</h3>
+                </div>
+                <p className="text-2xl font-bold text-primary mb-3">{formData.minuteBalance} min</p>
+                <Button
+                  size="sm"
+                  className="w-full gradient-primary shadow-primary"
+                  onClick={() => handleRecharge('minutes')}
+                >
+                  Recarga
+                </Button>
+              </Card>
+            </div>
+
+            <Separator />
+
+            {/* Financial History */}
+            <div>
+              <h3 className="font-semibold mb-3 text-sm sm:text-base">Histórico Financeiro</h3>
+              <Card className="divide-y divide-border">
+                {[
+                  { type: 'add', description: 'Recarga manual', amount: 100.00, date: '10/10/2025 14:30', balance: true },
+                  { type: 'debit', description: 'Chamadas consumidas', amount: -25.50, date: '09/10/2025 16:45', balance: true },
+                  { type: 'add', description: 'Adição de minutos', amount: 120, date: '08/10/2025 10:15', balance: false },
+                  { type: 'debit', description: 'Minutos consumidos', amount: -45, date: '07/10/2025 18:20', balance: false },
+                  { type: 'total', description: 'Ajuste total', amount: 150.00, date: '05/10/2025 09:00', balance: true },
+                ].map((item, index) => (
+                  <div key={index} className="p-3 hover:bg-accent/50 transition-smooth">
+                    <div className="flex justify-between items-start mb-1">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{item.description}</p>
+                        <p className="text-xs text-muted-foreground">{item.date}</p>
+                      </div>
+                      <div className="text-right ml-2">
+                        <p className={`font-semibold text-sm ${
+                          item.amount > 0 ? 'text-success' : 'text-destructive'
+                        }`}>
+                          {item.amount > 0 ? '+' : ''}{item.balance ? `R$ ${item.amount.toFixed(2)}` : `${item.amount} min`}
+                        </p>
+                        <Badge variant="outline" className="text-xs mt-1">
+                          {item.type === 'add' ? 'Crédito' : item.type === 'debit' ? 'Débito' : 'Ajuste'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Card>
             </div>
           </TabsContent>
 
@@ -403,6 +573,68 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
               className={formData.status === 'active' ? 'bg-destructive hover:bg-destructive/90' : ''}
             >
               {formData.status === 'active' ? 'Suspender' : 'Reativar'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Recharge Dialog */}
+      <AlertDialog open={showRechargeDialog} onOpenChange={setShowRechargeDialog}>
+        <AlertDialogContent className="sm:max-w-[500px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Recarga de {rechargeType === 'balance' ? 'Saldo' : 'Minutos'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Realize operações de crédito, débito ou ajuste no {rechargeType === 'balance' ? 'saldo' : 'saldo de minutos'} do usuário
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="operation">Operação</Label>
+              <Select value={rechargeData.operation} onValueChange={(value) => setRechargeData({ ...rechargeData, operation: value })}>
+                <SelectTrigger id="operation">
+                  <SelectValue placeholder="Selecione a operação" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="add">Adicionar</SelectItem>
+                  <SelectItem value="debit">Debitar</SelectItem>
+                  <SelectItem value="zero">Zerar</SelectItem>
+                  <SelectItem value="total">Ajuste Total</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {rechargeData.operation !== 'zero' && (
+              <div className="space-y-2">
+                <Label htmlFor="amount">
+                  {rechargeData.operation === 'total' ? 'Valor Total' : 'Valor'}
+                  {rechargeType === 'balance' ? ' (R$)' : ' (minutos)'}
+                </Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step={rechargeType === 'balance' ? '0.01' : '1'}
+                  placeholder={rechargeType === 'balance' ? '0.00' : '0'}
+                  value={rechargeData.amount}
+                  onChange={(e) => setRechargeData({ ...rechargeData, amount: e.target.value })}
+                />
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="description">Descrição *</Label>
+              <Textarea
+                id="description"
+                placeholder="Descreva o motivo da operação"
+                value={rechargeData.description}
+                onChange={(e) => setRechargeData({ ...rechargeData, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmRecharge} className="gradient-primary shadow-primary">
+              Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

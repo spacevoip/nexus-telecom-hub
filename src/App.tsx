@@ -19,6 +19,7 @@ import Reports from "./pages/Reports";
 import Performance from "./pages/Performance";
 import SystemStatus from "./pages/SystemStatus";
 import ClientAgents from "./pages/ClientAgents";
+import Rates from "./pages/Rates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => (
                         <Route path="/performance" element={<Performance />} />
                         <Route path="/system-status" element={<SystemStatus />} />
                         <Route path="/client-agents" element={<ClientAgents />} />
+                        <Route path="/rates" element={<Rates />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </DashboardLayout>

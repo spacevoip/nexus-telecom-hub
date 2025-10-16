@@ -20,14 +20,16 @@ interface User {
   plan: string;
   status: 'active' | 'suspended';
   registeredAt: string;
+  balance: number;
+  minuteBalance: number;
 }
 
 const mockUsers: User[] = [
-  { id: '1', name: 'João Empresa Ltda', email: 'joao@empresa.com', company: 'Empresa Tech', plan: 'Profissional', status: 'active', registeredAt: '10/01/2025' },
-  { id: '2', name: 'Maria Tech SA', email: 'maria@tech.com', company: 'Tech Solutions', plan: 'Empresarial', status: 'active', registeredAt: '15/02/2025' },
-  { id: '3', name: 'Pedro Telecom', email: 'pedro@telecom.com', company: 'Telecom Brasil', plan: 'Básico', status: 'suspended', registeredAt: '20/03/2025' },
-  { id: '4', name: 'Ana Digital', email: 'ana@digital.com', company: 'Digital Corp', plan: 'Profissional', status: 'active', registeredAt: '05/04/2025' },
-  { id: '5', name: 'Carlos Services', email: 'carlos@services.com', company: 'Services Inc', plan: 'Básico', status: 'active', registeredAt: '12/05/2025' },
+  { id: '1', name: 'João Empresa Ltda', email: 'joao@empresa.com', company: 'Empresa Tech', plan: 'Profissional', status: 'active', registeredAt: '10/01/2025', balance: 150.00, minuteBalance: 300 },
+  { id: '2', name: 'Maria Tech SA', email: 'maria@tech.com', company: 'Tech Solutions', plan: 'Empresarial', status: 'active', registeredAt: '15/02/2025', balance: 280.50, minuteBalance: 500 },
+  { id: '3', name: 'Pedro Telecom', email: 'pedro@telecom.com', company: 'Telecom Brasil', plan: 'Básico', status: 'suspended', registeredAt: '20/03/2025', balance: 0.00, minuteBalance: 0 },
+  { id: '4', name: 'Ana Digital', email: 'ana@digital.com', company: 'Digital Corp', plan: 'Profissional', status: 'active', registeredAt: '05/04/2025', balance: 95.75, minuteBalance: 180 },
+  { id: '5', name: 'Carlos Services', email: 'carlos@services.com', company: 'Services Inc', plan: 'Básico', status: 'active', registeredAt: '12/05/2025', balance: 210.00, minuteBalance: 420 },
 ];
 
 export default function Users() {
@@ -182,6 +184,14 @@ export default function Users() {
                     <span className="text-muted-foreground">Cadastro:</span>
                     <span>{user.registeredAt}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Saldo:</span>
+                    <span className="font-medium text-primary">R$ {user.balance.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Minutos:</span>
+                    <span className="font-medium text-primary">{user.minuteBalance} min</span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="default" size="sm" className="flex-1 gradient-primary shadow-primary" onClick={() => handleManageUser(user)}>
@@ -211,6 +221,8 @@ export default function Users() {
                   <th className="text-left p-4 font-semibold text-sm">Usuário</th>
                   <th className="text-left p-4 font-semibold text-sm">Empresa</th>
                   <th className="text-left p-4 font-semibold text-sm">Plano</th>
+                  <th className="text-left p-4 font-semibold text-sm">Saldo</th>
+                  <th className="text-left p-4 font-semibold text-sm">Minutos</th>
                   <th className="text-left p-4 font-semibold text-sm">Status</th>
                   <th className="text-left p-4 font-semibold text-sm">Data Cadastro</th>
                   <th className="text-right p-4 font-semibold text-sm">Ações</th>
@@ -233,6 +245,12 @@ export default function Users() {
                       <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                         {user.plan}
                       </Badge>
+                    </td>
+                    <td className="p-4">
+                      <span className="font-medium text-success">R$ {user.balance.toFixed(2)}</span>
+                    </td>
+                    <td className="p-4">
+                      <span className="font-medium text-primary">{user.minuteBalance} min</span>
                     </td>
                     <td className="p-4">{getStatusBadge(user.status)}</td>
                     <td className="p-4 text-sm text-muted-foreground">{user.registeredAt}</td>
