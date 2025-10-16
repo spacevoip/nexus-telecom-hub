@@ -121,10 +121,10 @@ export default function Users() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">
+          <h1 className="text-3xl sm:text-4xl font-bold">
             {isReseller ? 'Meus Clientes' : 'Gerenciar Usuários'}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          <p className="text-muted-foreground mt-1 text-base sm:text-lg">
             {isReseller
               ? 'Gerencie os clientes da sua revenda'
               : 'Visualize e gerencie todos os usuários do sistema'}
@@ -138,17 +138,17 @@ export default function Users() {
 
       {/* Stats */}
       <div className="grid gap-3 sm:gap-4 grid-cols-3">
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Total</p>
-          <p className="text-2xl font-bold mt-1">{stats.total}</p>
+        <Card className="p-5 shadow-card">
+          <p className="text-base text-muted-foreground">Total</p>
+          <p className="text-3xl font-bold mt-1">{stats.total}</p>
         </Card>
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Ativos</p>
-          <p className="text-2xl font-bold text-success mt-1">{stats.active}</p>
+        <Card className="p-5 shadow-card">
+          <p className="text-base text-muted-foreground">Ativos</p>
+          <p className="text-3xl font-bold text-success mt-1">{stats.active}</p>
         </Card>
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Suspensos</p>
-          <p className="text-2xl font-bold text-destructive mt-1">{stats.suspended}</p>
+        <Card className="p-5 shadow-card">
+          <p className="text-base text-muted-foreground">Suspensos</p>
+          <p className="text-3xl font-bold text-destructive mt-1">{stats.suspended}</p>
         </Card>
       </div>
 
@@ -248,13 +248,13 @@ export default function Users() {
             <table className="w-full min-w-[1200px]">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-3 font-semibold text-xs">Usuário</th>
-                  <th className="text-left p-3 font-semibold text-xs">Empresa</th>
-                  <th className="text-left p-3 font-semibold text-xs">Plano</th>
-                  <th className="text-left p-3 font-semibold text-xs">Financeiro</th>
-                  <th className="text-left p-3 font-semibold text-xs">Dias Restantes</th>
-                  <th className="text-left p-3 font-semibold text-xs">Status</th>
-                  <th className="text-right p-3 font-semibold text-xs">Ações</th>
+                  <th className="text-left p-4 font-semibold text-sm">Usuário</th>
+                  <th className="text-left p-4 font-semibold text-sm">Empresa</th>
+                  <th className="text-left p-4 font-semibold text-sm">Plano</th>
+                  <th className="text-left p-4 font-semibold text-sm">Financeiro</th>
+                  <th className="text-left p-4 font-semibold text-sm">Dias Restantes</th>
+                  <th className="text-left p-4 font-semibold text-sm">Status</th>
+                  <th className="text-right p-4 font-semibold text-sm">Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,36 +265,36 @@ export default function Users() {
                       key={user.id}
                       className="border-t border-border hover:bg-accent/50 transition-smooth"
                     >
-                      <td className="p-3">
-                        <div className="max-w-[180px]">
-                          <p className="font-medium text-sm truncate">{user.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                      <td className="p-4">
+                        <div className="max-w-[200px]">
+                          <p className="font-medium text-base truncate">{user.name}</p>
+                          <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                         </div>
                       </td>
-                      <td className="p-3">
-                        <p className="text-xs truncate max-w-[120px]">{user.company}</p>
+                      <td className="p-4">
+                        <p className="text-sm truncate max-w-[140px]">{user.company}</p>
                       </td>
-                      <td className="p-3">
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs whitespace-nowrap">
+                      <td className="p-4">
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-sm whitespace-nowrap">
                           {user.plan}
                         </Badge>
                       </td>
-                      <td className="p-3">
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-muted-foreground">R$</span>
-                            <span className="font-semibold text-xs text-success">{user.balance.toFixed(2)}</span>
+                      <td className="p-4">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm text-muted-foreground">R$</span>
+                            <span className="font-semibold text-sm text-success">{user.balance.toFixed(2)}</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-muted-foreground">Min:</span>
-                            <span className="font-semibold text-xs text-primary">{user.minuteBalance}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm text-muted-foreground">Min:</span>
+                            <span className="font-semibold text-sm text-primary">{user.minuteBalance}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="p-3">
+                      <td className="p-4">
                         <Badge 
                           variant="outline" 
-                          className={`text-xs whitespace-nowrap ${
+                          className={`text-sm whitespace-nowrap ${
                             daysRemaining > 7 
                               ? 'status-badge-active' 
                               : daysRemaining > 0 
@@ -305,13 +305,13 @@ export default function Users() {
                           {daysRemaining > 0 ? `${daysRemaining} dias` : 'Expirado'}
                         </Badge>
                       </td>
-                      <td className="p-3">{getStatusBadge(user.status)}</td>
-                      <td className="p-3">
-                        <div className="flex items-center justify-end gap-1.5">
+                      <td className="p-4">{getStatusBadge(user.status)}</td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-end gap-2">
                           <Button 
                             variant="default" 
                             size="icon" 
-                            className="gradient-primary shadow-primary h-8 w-8"
+                            className="gradient-primary shadow-primary h-9 w-9"
                             onClick={() => handleManageUser(user)}
                             title="Gerenciar"
                           >
@@ -321,7 +321,7 @@ export default function Users() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-destructive hover:text-destructive h-8 w-8"
+                              className="text-destructive hover:text-destructive h-9 w-9"
                               onClick={() => handleDeleteUser(user.id)}
                               title="Excluir"
                             >
