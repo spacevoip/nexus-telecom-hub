@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  UserCog,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -37,6 +38,7 @@ const navItems = {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: Users, label: 'Usuários', path: '/users' },
     { icon: UserPlus, label: 'Agentes', path: '/agents' },
+    { icon: UserCog, label: 'Agentes Clientes', path: '/client-agents' },
     { icon: Phone, label: 'Chamadas Ativas', path: '/active-calls' },
     { icon: FileText, label: 'CDR', path: '/cdr' },
     { icon: Mic, label: 'Áudios', path: '/audios' },
@@ -48,6 +50,7 @@ const navItems = {
   reseller: [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: Users, label: 'Clientes', path: '/users' },
+    { icon: UserCog, label: 'Agentes Clientes', path: '/client-agents' },
     { icon: CreditCard, label: 'Planos', path: '/plans' },
     { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
