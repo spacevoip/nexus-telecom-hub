@@ -115,59 +115,100 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Chart - Chamadas x Atendidas */}
-      <Card className="p-6 shadow-card">
-        <h3 className="font-semibold mb-4">Chamadas x Atendidas (Últimas 24h)</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={callsData}>
-            <defs>
-              <linearGradient id="colorChamadas" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorAtendidas" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-            <XAxis
-              dataKey="time"
-              className="text-xs"
-              tick={{ fill: 'hsl(var(--muted-foreground))' }}
-            />
-            <YAxis
-              className="text-xs"
-              tick={{ fill: 'hsl(var(--muted-foreground))' }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px',
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey="chamadas"
-              name="Chamadas"
-              stroke="hsl(var(--primary))"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorChamadas)"
-            />
-            <Area
-              type="monotone"
-              dataKey="atendidas"
-              name="Atendidas"
-              stroke="hsl(var(--success))"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorAtendidas)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </Card>
+      {/* Chart - Chamadas x Atendidas + Stats */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card className="p-6 shadow-card lg:col-span-2">
+          <h3 className="font-semibold mb-4">Chamadas x Atendidas (Últimas 24h)</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={callsData}>
+              <defs>
+                <linearGradient id="colorChamadas" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorAtendidas" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <XAxis
+                dataKey="time"
+                className="text-xs"
+                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+              />
+              <YAxis
+                className="text-xs"
+                tick={{ fill: 'hsl(var(--muted-foreground))' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px',
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="chamadas"
+                name="Chamadas"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorChamadas)"
+              />
+              <Area
+                type="monotone"
+                dataKey="atendidas"
+                name="Atendidas"
+                stroke="hsl(var(--success))"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorAtendidas)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Card>
+
+        <Card className="p-6 shadow-card">
+          <h3 className="font-semibold mb-4">Estatísticas</h3>
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-muted-foreground">Taxa de Atendimento</span>
+                <span className="text-lg font-bold text-success">89.3%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-success h-2 rounded-full transition-smooth" style={{ width: '89.3%' }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Tempo Médio</span>
+                <span className="text-lg font-bold">3m 24s</span>
+              </div>
+              <p className="text-xs text-muted-foreground">de espera</p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Chamadas Perdidas</span>
+                <span className="text-lg font-bold text-destructive">16</span>
+              </div>
+              <p className="text-xs text-muted-foreground">últimas 24h</p>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Duração Média</span>
+                <span className="text-lg font-bold">8m 12s</span>
+              </div>
+              <p className="text-xs text-muted-foreground">por chamada</p>
+            </div>
+          </div>
+        </Card>
+      </div>
 
       {/* Clientes Recentes - Admin e Reseller */}
       {(user?.role === 'admin' || user?.role === 'reseller') && (
