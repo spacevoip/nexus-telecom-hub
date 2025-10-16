@@ -19,7 +19,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Search, Users, Building2, Phone } from 'lucide-react';
+import { Search, Users, Building2, Phone, Pencil, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ClientAgent {
   id: string;
@@ -28,8 +29,7 @@ interface ClientAgent {
   clientName: string;
   clientCompany: string;
   status: 'online' | 'offline' | 'busy';
-  totalCalls: number;
-  lastCall: string;
+  callerId: string;
 }
 
 // Mock data - em produção virá do backend
@@ -41,8 +41,7 @@ const mockClientAgents: ClientAgent[] = [
     clientName: 'João Silva',
     clientCompany: 'Empresa Tech Ltda',
     status: 'online',
-    totalCalls: 145,
-    lastCall: '2024-01-15 14:30',
+    callerId: '11 98765-4321',
   },
   {
     id: '2',
@@ -51,8 +50,7 @@ const mockClientAgents: ClientAgent[] = [
     clientName: 'João Silva',
     clientCompany: 'Empresa Tech Ltda',
     status: 'busy',
-    totalCalls: 98,
-    lastCall: '2024-01-15 14:25',
+    callerId: '11 97654-3210',
   },
   {
     id: '3',
@@ -61,8 +59,7 @@ const mockClientAgents: ClientAgent[] = [
     clientName: 'Maria Oliveira',
     clientCompany: 'Comercial ABC',
     status: 'offline',
-    totalCalls: 203,
-    lastCall: '2024-01-15 12:15',
+    callerId: '11 96543-2109',
   },
   {
     id: '4',
@@ -71,8 +68,7 @@ const mockClientAgents: ClientAgent[] = [
     clientName: 'Maria Oliveira',
     clientCompany: 'Comercial ABC',
     status: 'online',
-    totalCalls: 187,
-    lastCall: '2024-01-15 14:20',
+    callerId: '11 95432-1098',
   },
   {
     id: '5',
@@ -81,8 +77,7 @@ const mockClientAgents: ClientAgent[] = [
     clientName: 'Paulo Costa',
     clientCompany: 'Telecom Service',
     status: 'online',
-    totalCalls: 234,
-    lastCall: '2024-01-15 14:28',
+    callerId: '11 94321-0987',
   },
   {
     id: '6',
@@ -91,8 +86,7 @@ const mockClientAgents: ClientAgent[] = [
     clientName: 'Paulo Costa',
     clientCompany: 'Telecom Service',
     status: 'offline',
-    totalCalls: 156,
-    lastCall: '2024-01-15 11:45',
+    callerId: '11 93210-9876',
   },
 ];
 
@@ -101,6 +95,7 @@ const ITEMS_PER_PAGE = 5;
 export default function ClientAgents() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const { toast } = useToast();
 
   const filteredAgents = mockClientAgents.filter(
     (agent) =>
@@ -113,6 +108,21 @@ export default function ClientAgents() {
   const totalPages = Math.ceil(filteredAgents.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedAgents = filteredAgents.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handleEdit = (agent: ClientAgent) => {
+    toast({
+      title: 'Editar Agente',
+      description: `Editando ${agent.name}`,
+    });
+  };
+
+  const handleDelete = (agent: ClientAgent) => {
+    toast({
+      title: 'Agente Excluído',
+      description: `${agent.name} foi excluído com sucesso`,
+      variant: 'destructive',
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: any; label: string }> = {
@@ -208,8 +218,8 @@ export default function ClientAgents() {
                 <TableHead>Cliente</TableHead>
                 <TableHead>Empresa</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Total Chamadas</TableHead>
-                <TableHead>Última Chamada</TableHead>
+                <TableHead>Caller ID</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -227,8 +237,27 @@ export default function ClientAgents() {
                     <TableCell>{agent.clientName}</TableCell>
                     <TableCell>{agent.clientCompany}</TableCell>
                     <TableCell>{getStatusBadge(agent.status)}</TableCell>
-                    <TableCell className="text-right">{agent.totalCalls}</TableCell>
-                    <TableCell className="text-muted-foreground">{agent.lastCall}</TableCell>
+                    <TableCell>{agent.callerId}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(agent)}
+                          className="h-8 w-8"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(agent)}
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
