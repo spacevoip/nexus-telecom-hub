@@ -217,18 +217,24 @@ export default function Users() {
                   </div>
                   
                   <div className="flex gap-2">
-                    <Button variant="default" size="sm" className="flex-1 gradient-primary shadow-primary" onClick={() => handleManageUser(user)}>
-                      <Settings className="w-3 h-3 mr-1" />
-                      Gerenciar
+                    <Button 
+                      variant="default" 
+                      size="icon" 
+                      className="gradient-primary shadow-primary h-8 w-8" 
+                      onClick={() => handleManageUser(user)}
+                      title="Gerenciar"
+                    >
+                      <Settings className="w-4 h-4" />
                     </Button>
                     {isAdmin && (
                       <Button
                         variant="outline"
-                        size="sm"
-                        className="text-destructive hover:text-destructive"
+                        size="icon"
+                        className="text-destructive hover:text-destructive h-8 w-8"
                         onClick={() => handleDeleteUser(user.id)}
+                        title="Excluir"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     )}
                   </div>
@@ -308,12 +314,12 @@ export default function Users() {
                         <div className="flex items-center justify-end gap-1.5">
                           <Button 
                             variant="default" 
-                            size="sm" 
-                            className="gradient-primary shadow-primary h-8 text-xs"
+                            size="icon" 
+                            className="gradient-primary shadow-primary h-8 w-8"
                             onClick={() => handleManageUser(user)}
+                            title="Gerenciar"
                           >
-                            <Settings className="w-3 h-3 mr-1" />
-                            Gerenciar
+                            <Settings className="w-4 h-4" />
                           </Button>
                           {isAdmin && (
                             <Button
@@ -321,8 +327,9 @@ export default function Users() {
                               size="icon"
                               className="text-destructive hover:text-destructive h-8 w-8"
                               onClick={() => handleDeleteUser(user.id)}
+                              title="Excluir"
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <Trash2 className="w-4 h-4" />
                             </Button>
                           )}
                         </div>
