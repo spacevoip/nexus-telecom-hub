@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Edit, Eye, Trash2, Users, ShieldAlert } from 'lucide-react';
+import { Plus, Edit, Eye, Trash2, Users, TrendingUp, TrendingDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +7,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { PlanModal } from '@/components/modals/PlanModal';
 import { DeleteConfirmModal } from '@/components/modals/DeleteConfirmModal';
 import { toast } from '@/hooks/use-toast';
-import { Navigate } from 'react-router-dom';
 
 interface Plan {
   id: string;
@@ -65,12 +64,11 @@ export default function Plans() {
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [planToDelete, setPlanToDelete] = useState<string | null>(null);
 
-  // Controle de acesso: apenas admin e reseller
-  if (user?.role !== 'admin' && user?.role !== 'reseller') {
-    return <Navigate to="/dashboard" replace />;
-  }
-
+  const isAdmin = user?.role === 'admin';
   const isReseller = user?.role === 'reseller';
+  const isUser = user?.role === 'user';
+  
+  const currentUserPlan = user?.plan || 'Básico';
 
   const handleCreatePlan = () => {
     setSelectedPlan(null);
@@ -108,49 +106,86 @@ export default function Plans() {
     console.log('Salvando plano:', plan);
   };
 
+  const handleContractPlan = (planName: string) => {
+    toast({
+      title: 'Plano contratado',
+      description: `Você contratou o plano ${planName} com sucesso!`,
+    });
+  };
+
+  const handleUpgrade = (planName: string) => {
+    toast({
+      title: 'Upgrade realizado',
+      description: `Seu plano foi atualizado para ${planName} com sucesso!`,
+    });
+  };
+
+  const handleDowngrade = (planName: string) => {
+    toast({
+      title: 'Downgrade realizado',
+      description: `Seu plano foi alterado para ${planName}.`,
+    });
+  };
+
+  const getPlanComparison = (planName: string) => {
+    const planOrder = ['Básico', 'Profissional', 'Empresarial'];
+    const currentIndex = planOrder.indexOf(currentUserPlan);
+    const targetIndex = planOrder.indexOf(planName);
+    
+    if (currentIndex === targetIndex) return 'current';
+    if (targetIndex > currentIndex) return 'upgrade';
+    return 'downgrade';
+  };
+
   return (
     <div className="space-y-6 animate-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">
-            {isReseller ? 'Meus Planos' : 'Gerenciar Planos'}
+            {isUser ? 'Planos Disponíveis' : isReseller ? 'Meus Planos' : 'Gerenciar Planos'}
           </h1>
           <p className="text-muted-foreground mt-1">
-            {isReseller
+            {isUser
+              ? `Seu plano atual: ${currentUserPlan}. Escolha o melhor plano para você.`
+              : isReseller
               ? 'Visualize e customize planos para seus clientes'
               : 'Crie e gerencie os planos disponíveis'}
           </p>
         </div>
-        <Button className="gradient-primary shadow-primary" onClick={handleCreatePlan}>
-          <Plus className="w-4 h-4 mr-2" />
-          {isReseller ? 'Criar Plano Customizado' : 'Novo Plano'}
-        </Button>
+        {!isUser && (
+          <Button className="gradient-primary shadow-primary" onClick={handleCreatePlan}>
+            <Plus className="w-4 h-4 mr-2" />
+            {isReseller ? 'Criar Plano Customizado' : 'Novo Plano'}
+          </Button>
+        )}
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Total de Planos</p>
-          <p className="text-2xl font-bold mt-1">{plans.length}</p>
-        </Card>
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Planos Ativos</p>
-          <p className="text-2xl font-bold text-success mt-1">
-            {plans.filter(p => p.active).length}
-          </p>
-        </Card>
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Total de Clientes</p>
-          <p className="text-2xl font-bold text-primary mt-1">
-            {plans.reduce((acc, plan) => acc + plan.clients, 0)}
-          </p>
-        </Card>
-        <Card className="p-4 shadow-card">
-          <p className="text-sm text-muted-foreground">Receita Estimada</p>
-          <p className="text-2xl font-bold text-accent mt-1">R$ 12.4k</p>
-        </Card>
-      </div>
+      {/* Stats - Only for Admin and Reseller */}
+      {!isUser && (
+        <div className="grid gap-4 md:grid-cols-4">
+          <Card className="p-4 shadow-card">
+            <p className="text-sm text-muted-foreground">Total de Planos</p>
+            <p className="text-2xl font-bold mt-1">{plans.length}</p>
+          </Card>
+          <Card className="p-4 shadow-card">
+            <p className="text-sm text-muted-foreground">Planos Ativos</p>
+            <p className="text-2xl font-bold text-success mt-1">
+              {plans.filter(p => p.active).length}
+            </p>
+          </Card>
+          <Card className="p-4 shadow-card">
+            <p className="text-sm text-muted-foreground">Total de Clientes</p>
+            <p className="text-2xl font-bold text-primary mt-1">
+              {plans.reduce((acc, plan) => acc + plan.clients, 0)}
+            </p>
+          </Card>
+          <Card className="p-4 shadow-card">
+            <p className="text-sm text-muted-foreground">Receita Estimada</p>
+            <p className="text-2xl font-bold text-accent mt-1">R$ 12.4k</p>
+          </Card>
+        </div>
+      )}
 
       {/* Plans Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -214,30 +249,60 @@ export default function Plans() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex-1" size="sm">
-                <Eye className="w-3 h-3 mr-1" />
-                Ver
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => handleEditPlan(plan)}>
-                <Edit className="w-3 h-3" />
-              </Button>
-              {user?.role === 'admin' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-destructive hover:text-destructive"
-                  onClick={() => handleDeletePlan(plan.id)}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              )}
-            </div>
-
-            {isReseller && (
-              <div className="mt-3 p-2 bg-accent/10 rounded text-xs text-center">
-                Sua margem: <span className="font-semibold text-accent">R$ 50</span>
+            {isUser ? (
+              <div className="space-y-2">
+                {getPlanComparison(plan.name) === 'current' ? (
+                  <div className="flex items-center justify-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary">
+                    <Check className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-primary">Plano Atual</span>
+                  </div>
+                ) : getPlanComparison(plan.name) === 'upgrade' ? (
+                  <Button 
+                    className="w-full gradient-primary shadow-primary" 
+                    onClick={() => handleUpgrade(plan.name)}
+                  >
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    Fazer Upgrade
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => handleDowngrade(plan.name)}
+                  >
+                    <TrendingDown className="w-4 h-4 mr-2" />
+                    Fazer Downgrade
+                  </Button>
+                )}
               </div>
+            ) : (
+              <>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" size="sm">
+                    <Eye className="w-3 h-3 mr-1" />
+                    Ver
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handleEditPlan(plan)}>
+                    <Edit className="w-3 h-3" />
+                  </Button>
+                  {isAdmin && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => handleDeletePlan(plan.id)}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  )}
+                </div>
+
+                {isReseller && (
+                  <div className="mt-3 p-2 bg-accent/10 rounded text-xs text-center">
+                    Sua margem: <span className="font-semibold text-accent">R$ 50</span>
+                  </div>
+                )}
+              </>
             )}
           </Card>
         ))}

@@ -29,6 +29,7 @@ const navItems = {
     { icon: Phone, label: 'Chamadas Ativas', path: '/active-calls' },
     { icon: FileText, label: 'CDR', path: '/cdr' },
     { icon: Mic, label: 'Áudios', path: '/audios' },
+    { icon: CreditCard, label: 'Planos', path: '/plans' },
     { icon: BarChart3, label: 'Relatórios', path: '/reports' },
     { icon: Settings, label: 'Configurações', path: '/settings' },
   ],
