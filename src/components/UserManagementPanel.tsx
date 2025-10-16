@@ -170,8 +170,9 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
       <div className="flex-1 overflow-y-auto">
         <Tabs defaultValue="info" className="w-full">
           <div className="px-4 sm:px-6 pt-4">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="info" className="text-xs sm:text-sm">Informações</TabsTrigger>
+              <TabsTrigger value="details" className="text-xs sm:text-sm">Detalhes</TabsTrigger>
               <TabsTrigger value="financial" className="text-xs sm:text-sm">Financeiro</TabsTrigger>
               <TabsTrigger value="plan" className="text-xs sm:text-sm">Plano</TabsTrigger>
               <TabsTrigger value="activity" className="text-xs sm:text-sm">Atividade</TabsTrigger>
@@ -322,6 +323,97 @@ export function UserManagementPanel({ user, onClose, onSave }: UserManagementPan
                 />
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="details" className="p-4 sm:p-6 space-y-4">
+            {/* Registration Details */}
+            <Card className="p-4 space-y-3">
+              <h3 className="font-semibold text-sm sm:text-base flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-primary" />
+                Informações de Cadastro
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Data de cadastro:</span>
+                  <span className="font-medium">{user?.registeredAt || '10/01/2025'} às 14:30</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Cadastrado por:</span>
+                  <span className="font-medium">Admin Master</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Última atualização:</span>
+                  <span className="font-medium">15/10/2025 às 16:45</span>
+                </div>
+              </div>
+            </Card>
+
+            {/* Plan Details */}
+            <Card className="p-4 space-y-3">
+              <h3 className="font-semibold text-sm sm:text-base flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-primary" />
+                Detalhes do Plano
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Data de ativação:</span>
+                  <span className="font-medium">{user?.planActivationDate || '10/01/2025'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Data de expiração:</span>
+                  <span className="font-medium">{user?.planExpirationDate || '10/02/2025'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Dias restantes:</span>
+                  <Badge 
+                    variant="outline" 
+                    className={
+                      (() => {
+                        const today = new Date();
+                        const expiration = new Date((user?.planExpirationDate || '10/02/2025').split('/').reverse().join('-'));
+                        const diffTime = expiration.getTime() - today.getTime();
+                        const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        return daysRemaining > 7 
+                          ? 'status-badge-active' 
+                          : daysRemaining > 0 
+                            ? 'bg-warning/10 text-warning border-warning/20' 
+                            : 'status-badge-error';
+                      })()
+                    }
+                  >
+                    {(() => {
+                      const today = new Date();
+                      const expiration = new Date((user?.planExpirationDate || '10/02/2025').split('/').reverse().join('-'));
+                      const diffTime = expiration.getTime() - today.getTime();
+                      const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      return daysRemaining > 0 ? `${daysRemaining} dias` : 'Expirado';
+                    })()}
+                  </Badge>
+                </div>
+              </div>
+            </Card>
+
+            {/* System Info */}
+            <Card className="p-4 space-y-3">
+              <h3 className="font-semibold text-sm sm:text-base flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Informações do Sistema
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">ID do usuário:</span>
+                  <span className="font-mono text-xs">{user?.id || '1'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Último login:</span>
+                  <span className="font-medium">15/10/2025 às 18:20</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">IP do último acesso:</span>
+                  <span className="font-mono text-xs">192.168.1.100</span>
+                </div>
+              </div>
+            </Card>
           </TabsContent>
 
           <TabsContent value="financial" className="p-4 sm:p-6 space-y-4 sm:space-y-6">
