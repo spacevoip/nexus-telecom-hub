@@ -252,7 +252,6 @@ export default function Users() {
                   <th className="text-left p-3 font-semibold text-xs">Empresa</th>
                   <th className="text-left p-3 font-semibold text-xs">Plano</th>
                   <th className="text-left p-3 font-semibold text-xs">Financeiro</th>
-                  <th className="text-left p-3 font-semibold text-xs">Ativação</th>
                   <th className="text-left p-3 font-semibold text-xs">Dias Restantes</th>
                   <th className="text-left p-3 font-semibold text-xs">Status</th>
                   <th className="text-right p-3 font-semibold text-xs">Ações</th>
@@ -291,9 +290,6 @@ export default function Users() {
                             <span className="font-semibold text-xs text-primary">{user.minuteBalance}</span>
                           </div>
                         </div>
-                      </td>
-                      <td className="p-3">
-                        <p className="text-xs whitespace-nowrap">{user.planActivationDate}</p>
                       </td>
                       <td className="p-3">
                         <Badge 
