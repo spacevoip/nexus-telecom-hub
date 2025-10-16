@@ -54,20 +54,20 @@ export default function Auth() {
     <div className="min-h-screen flex flex-col lg:flex-row bg-background">
       {/* Left Side - Form */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-[420px] space-y-6 animate-in">
+        <div className="w-full max-w-[420px] space-y-6 animate-fade-in">
           {/* Logo */}
-          <div className="flex justify-center lg:justify-start">
-            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-primary">
+          <div className="flex justify-center lg:justify-start animate-scale-in" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
+            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-primary transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/50">
               <Phone className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
 
           {/* Title */}
-          <div className="text-center lg:text-left">
-            <h2 className="text-3xl font-bold mb-2">
+          <div className="text-center lg:text-left animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+            <h2 className="text-3xl font-bold mb-2 transition-all duration-300">
               {isLogin ? 'Welcome Back!' : 'Create Account'}
             </h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm transition-all duration-300">
               {isLogin
                 ? 'Please Sign In to continue'
                 : 'Fill in the details to get started'}
@@ -75,19 +75,19 @@ export default function Auth() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
             {!isLogin && (
-              <div className="space-y-2">
+              <div className="space-y-2 animate-fade-in">
                 <Label htmlFor="name" className="text-foreground">Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <div className="relative group">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                   <Input
                     id="name"
                     type="text"
                     placeholder="Your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="pl-10 h-11"
+                    className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
                     required
                   />
                 </div>
@@ -96,15 +96,15 @@ export default function Auth() {
 
             <div className="space-y-2">
               <Label htmlFor="email" className="text-foreground">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <div className="relative group">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="example@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-11"
+                  className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
                   required
                 />
               </div>
@@ -112,15 +112,15 @@ export default function Auth() {
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-foreground">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-11"
+                  className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
                   required
                 />
               </div>
@@ -146,7 +146,7 @@ export default function Auth() {
 
             <Button
               type="submit"
-              className="w-full h-12 gradient-primary shadow-primary text-base font-semibold"
+              className="w-full h-12 gradient-primary shadow-primary text-base font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/50 active:scale-[0.98]"
               disabled={loading}
             >
               {loading ? 'Loading...' : isLogin ? 'Login' : 'Create Account'}
@@ -154,14 +154,14 @@ export default function Auth() {
           </form>
 
           {/* Toggle */}
-          <div className="text-center text-sm pt-2">
+          <div className="text-center text-sm pt-2 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
             <span className="text-muted-foreground">
               {isLogin ? 'Not a member?' : 'Already have an account?'}
             </span>{' '}
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline font-semibold"
+              className="text-primary hover:underline font-semibold transition-all duration-200 hover:scale-105 inline-block"
             >
               {isLogin ? 'Register Now' : 'Sign In'}
             </button>
@@ -169,20 +169,20 @@ export default function Auth() {
 
           {/* Demo credentials - only show on login */}
           {isLogin && (
-            <div className="pt-6 border-t border-border">
+            <div className="pt-6 border-t border-border animate-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'both' }}>
               <p className="text-xs text-muted-foreground mb-3 font-medium">
                 Demo credentials:
               </p>
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between p-2 rounded-lg bg-muted/50">
+                <div className="flex justify-between p-2 rounded-lg bg-muted/50 transition-all duration-200 hover:bg-muted hover:scale-[1.01] cursor-pointer">
                   <span className="text-muted-foreground">Admin:</span>
                   <span className="font-mono text-foreground">admin@pabx.com / admin123</span>
                 </div>
-                <div className="flex justify-between p-2 rounded-lg bg-muted/50">
+                <div className="flex justify-between p-2 rounded-lg bg-muted/50 transition-all duration-200 hover:bg-muted hover:scale-[1.01] cursor-pointer">
                   <span className="text-muted-foreground">Revenda:</span>
                   <span className="font-mono text-foreground">revenda@telecom.com / reseller123</span>
                 </div>
-                <div className="flex justify-between p-2 rounded-lg bg-muted/50">
+                <div className="flex justify-between p-2 rounded-lg bg-muted/50 transition-all duration-200 hover:bg-muted hover:scale-[1.01] cursor-pointer">
                   <span className="text-muted-foreground">User:</span>
                   <span className="font-mono text-foreground">usuario@empresa.com / user123</span>
                 </div>
@@ -214,11 +214,11 @@ export default function Auth() {
                   </div>
                   
                   {/* Floating elements */}
-                  <div className="absolute -top-6 -right-6 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-pulse">
+                  <div className="absolute -top-6 -right-6 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]">
                     <Phone className="w-8 h-8 text-white" />
                   </div>
                   
-                  <div className="absolute -bottom-4 -left-8 w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center" style={{ animationDelay: '0.5s' }}>
+                  <div className="absolute -bottom-4 -left-8 w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}>
                     <div className="text-2xl">🔒</div>
                   </div>
                 </div>
