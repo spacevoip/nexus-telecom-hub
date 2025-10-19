@@ -76,7 +76,7 @@ export function Sidebar() {
     <>
       {/* Logo */}
       <div className={`p-4 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
             <Phone className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -86,31 +86,6 @@ export function Sidebar() {
               <p className="text-xs text-muted-foreground truncate">Sistema de Chamadas</p>
             </div>
           )}
-        </div>
-        
-        {/* Action Buttons */}
-        <div className={`flex gap-2 ${collapsed && !isMobile ? 'flex-col items-center' : 'justify-end'}`}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative h-8 w-8"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-destructive rounded-full" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="h-8 w-8"
-          >
-            {theme === 'light' ? (
-              <Moon className="w-4 h-4" />
-            ) : (
-              <Sun className="w-4 h-4" />
-            )}
-          </Button>
         </div>
       </div>
 
@@ -142,7 +117,7 @@ export function Sidebar() {
 
       {/* User Section */}
       <div className={`p-4 border-t border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className={`flex items-center gap-3 ${collapsed && !isMobile ? 'flex-col' : ''}`}>
+        <div className={`flex items-start gap-3 mb-3 ${collapsed && !isMobile ? 'flex-col' : ''}`}>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center flex-shrink-0">
             <span className="text-sm font-bold text-accent-foreground">
               {user?.name.charAt(0)}
@@ -155,6 +130,31 @@ export function Sidebar() {
               <p className="text-xs text-primary font-medium mt-0.5">
                 {user?.role === 'admin' ? 'Administrador' : user?.role === 'reseller' ? 'Revenda' : 'Plano Profissional'}
               </p>
+            </div>
+          )}
+          {(!collapsed || isMobile) && (
+            <div className="flex gap-1 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative h-7 w-7"
+              >
+                <Bell className="w-3.5 h-3.5" />
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-destructive rounded-full" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="h-7 w-7"
+              >
+                {theme === 'light' ? (
+                  <Moon className="w-3.5 h-3.5" />
+                ) : (
+                  <Sun className="w-3.5 h-3.5" />
+                )}
+              </Button>
             </div>
           )}
         </div>
