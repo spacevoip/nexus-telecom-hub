@@ -75,15 +75,15 @@ export function Sidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className={`p-4 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
+      <div className={`p-6 pb-8 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
-            <Phone className="w-5 h-5 text-primary-foreground" />
+          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
+            <Phone className="w-6 h-6 text-primary-foreground" />
           </div>
           {(!collapsed || isMobile) && (
             <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-lg truncate">PABX Online</h1>
-              <p className="text-xs text-muted-foreground truncate">Sistema de Chamadas</p>
+              <h1 className="font-bold text-xl truncate">PABX Online</h1>
+              <p className="text-sm text-muted-foreground truncate">Sistema de Chamadas</p>
             </div>
           )}
         </div>
