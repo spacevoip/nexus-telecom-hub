@@ -74,43 +74,42 @@ export function Sidebar() {
 
   const SidebarContent = () => (
     <>
-      {/* Logo */}
-      <div className={`py-4 px-4 border-b border-border/50 ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center flex-shrink-0 shadow-sm">
-            <Phone className="w-4.5 h-4.5 text-primary-foreground" />
+      {/* Logo - Compacta */}
+      <div className={`py-3 px-3 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+            <Phone className="w-4 h-4 text-primary-foreground" />
           </div>
           {(!collapsed || isMobile) && (
             <div className="flex-1 min-w-0">
-              <h1 className="font-semibold text-base truncate text-foreground">PABX Online</h1>
-              <p className="text-[11px] text-muted-foreground/80 truncate">Sistema de Chamadas</p>
+              <h1 className="font-bold text-sm text-foreground">PABX Online</h1>
             </div>
           )}
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 py-4 px-2 overflow-y-auto">
-        <ul className="space-y-0.5">
+      {/* Navigation - Compacta */}
+      <nav className="flex-1 py-2 px-2 overflow-y-auto">
+        <ul className="space-y-1">
           {items.map((item, index) => {
             const showDivider = user?.role === 'admin' && (index === 4 || index === 7 || index === 9);
             return (
               <li key={item.path}>
-                {showDivider && <div className="h-px bg-border/40 my-2 mx-2" />}
+                {showDivider && <div className="h-px bg-border my-2 mx-2" />}
                 <NavLink
                   to={item.path}
                   onClick={() => isMobile && setMobileOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2 rounded-md transition-all duration-200 group ${
+                    `flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 group ${
                       isActive
-                        ? 'bg-primary text-primary-foreground shadow-sm'
-                        : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                        ? 'bg-primary text-primary-foreground font-medium'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     } ${collapsed && !isMobile ? 'justify-center px-2' : ''}`
                   }
                 >
-                  <item.icon className="w-[18px] h-[18px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
                   {(!collapsed || isMobile) && (
-                    <span className="font-medium text-[13px] tracking-wide">{item.label}</span>
+                    <span className="text-sm">{item.label}</span>
                   )}
                 </NavLink>
               </li>
@@ -119,39 +118,32 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      {/* User Section */}
-      <div className={`p-3 border-t border-border/50 bg-muted/20 ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className={`flex items-start gap-2.5 mb-2 ${collapsed && !isMobile ? 'flex-col' : ''}`}>
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 flex items-center justify-center flex-shrink-0 shadow-sm">
-            <span className="text-[13px] font-semibold text-primary-foreground">
-              {user?.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          {(!collapsed || isMobile) && (
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-[13px] truncate text-foreground">{user?.name}</p>
-              <p className="text-[11px] text-muted-foreground/80 truncate">{user?.email}</p>
-              <p className="text-[11px] text-primary font-medium mt-0.5">
-                {user?.role === 'admin' ? 'Administrador' : user?.role === 'reseller' ? 'Revenda' : 'Plano Profissional'}
-              </p>
+      {/* User Section - Compacta */}
+      <div className={`p-3 border-t border-border space-y-2 ${collapsed && !isMobile ? 'px-2' : ''}`}>
+        {(!collapsed || isMobile) && (
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-semibold text-primary-foreground">
+                {user?.name.charAt(0).toUpperCase()}
+              </span>
             </div>
-          )}
-          {(!collapsed || isMobile) && (
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-xs text-foreground truncate">{user?.name}</p>
+              <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
+            </div>
+            <div className="flex gap-1">
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-7 w-7 hover:bg-background/80"
+                className="h-7 w-7"
               >
                 <Bell className="w-3.5 h-3.5" />
-                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
               </Button>
-
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="h-7 w-7 hover:bg-background/80"
+                className="h-7 w-7"
               >
                 {theme === 'light' ? (
                   <Moon className="w-3.5 h-3.5" />
@@ -160,8 +152,33 @@ export function Sidebar() {
                 )}
               </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+        
+        {(collapsed && !isMobile) && (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="w-full h-8"
+            >
+              <Bell className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="w-full h-8"
+            >
+              {theme === 'light' ? (
+                <Moon className="w-4 h-4" />
+              ) : (
+                <Sun className="w-4 h-4" />
+              )}
+            </Button>
+          </>
+        )}
+
         <Button
           variant="ghost"
           size="sm"
@@ -170,8 +187,8 @@ export function Sidebar() {
           }`}
           onClick={logout}
         >
-          <LogOut className="w-3.5 h-3.5" />
-          {(!collapsed || isMobile) && <span className="ml-2 text-[13px]">Sair</span>}
+          <LogOut className="w-4 h-4" />
+          {(!collapsed || isMobile) && <span className="ml-2 text-sm">Sair</span>}
         </Button>
       </div>
     </>
