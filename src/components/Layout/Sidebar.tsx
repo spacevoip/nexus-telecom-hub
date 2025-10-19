@@ -72,30 +72,30 @@ export function Sidebar() {
 
   const FloatingContent = () => (
     <TooltipProvider delayDuration={0}>
-      <div className="flex flex-col h-full py-4 px-2">
+      <div className="flex flex-col h-full py-6 px-3">
         {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+        <div className="flex justify-center mb-8">
+          <div className="w-11 h-11 rounded-2xl bg-primary/90 flex items-center justify-center shadow-lg">
             <Phone className="w-5 h-5 text-primary-foreground" />
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-2">
+        <nav className="flex-1 space-y-3">
           {items.map((item, index) => {
             const showDivider = user?.role === 'admin' && (index === 4 || index === 7 || index === 9);
             return (
               <div key={item.path}>
-                {showDivider && <div className="h-px bg-border/40 my-4" />}
+                {showDivider && <div className="h-px bg-border/30 my-6" />}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `flex items-center justify-center w-10 h-10 mx-auto rounded-xl transition-all duration-200 ${
+                        `flex items-center justify-center w-11 h-11 mx-auto rounded-2xl transition-all duration-200 ${
                           isActive
-                            ? 'bg-primary text-primary-foreground shadow-lg'
-                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                            ? 'bg-primary text-primary-foreground shadow-lg scale-105'
+                            : 'text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground hover:scale-105'
                         }`
                       }
                     >
@@ -112,14 +112,14 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom Actions */}
-        <div className="space-y-2 mt-4 pt-4 border-t border-border">
+        <div className="space-y-3 pt-6 border-t border-border/30">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="w-10 h-10 rounded-xl mx-auto"
+                className="w-11 h-11 rounded-2xl mx-auto hover:scale-105 transition-transform"
               >
                 {theme === 'light' ? (
                   <Moon className="w-5 h-5" />
@@ -138,7 +138,7 @@ export function Sidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="w-10 h-10 rounded-xl mx-auto"
+                className="w-11 h-11 rounded-2xl mx-auto hover:scale-105 transition-transform"
               >
                 <User className="w-5 h-5" />
               </Button>
@@ -261,7 +261,7 @@ export function Sidebar() {
 
   // Desktop floating sidebar
   return (
-    <aside className="fixed left-4 top-4 bottom-4 z-40 w-16 bg-card/80 backdrop-blur-lg border border-border rounded-3xl shadow-2xl flex flex-col">
+    <aside className="fixed left-6 top-6 bottom-6 z-40 w-[72px] bg-card/95 backdrop-blur-xl border border-border/50 rounded-[28px] shadow-2xl flex flex-col">
       <FloatingContent />
     </aside>
   );
