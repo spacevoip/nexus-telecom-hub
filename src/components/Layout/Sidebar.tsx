@@ -74,42 +74,42 @@ export function Sidebar() {
 
   const SidebarContent = () => (
     <>
-      {/* Logo - Compacta */}
-      <div className={`py-3 px-3 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-            <Phone className="w-4 h-4 text-primary-foreground" />
+      {/* Logo */}
+      <div className={`py-6 px-4 border-b border-border ${collapsed && !isMobile ? 'px-3' : ''}`}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+            <Phone className="w-5 h-5 text-primary-foreground" />
           </div>
           {(!collapsed || isMobile) && (
             <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-sm text-foreground">PABX Online</h1>
+              <h1 className="font-bold text-base text-foreground">PABX Online</h1>
             </div>
           )}
         </div>
       </div>
 
-      {/* Navigation - Compacta */}
-      <nav className="flex-1 py-2 px-2 overflow-y-auto">
-        <ul className="space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 py-4 px-3 overflow-y-auto">
+        <ul className="space-y-1.5">
           {items.map((item, index) => {
             const showDivider = user?.role === 'admin' && (index === 4 || index === 7 || index === 9);
             return (
               <li key={item.path}>
-                {showDivider && <div className="h-px bg-border my-2 mx-2" />}
+                {showDivider && <div className="h-px bg-border/60 my-3 mx-2" />}
                 <NavLink
                   to={item.path}
                   onClick={() => isMobile && setMobileOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 group ${
+                    `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                       isActive
-                        ? 'bg-primary text-primary-foreground font-medium'
+                        ? 'bg-primary text-primary-foreground font-medium shadow-sm'
                         : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     } ${collapsed && !isMobile ? 'justify-center px-2' : ''}`
                   }
                 >
-                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
                   {(!collapsed || isMobile) && (
-                    <span className="text-sm">{item.label}</span>
+                    <span className="text-sm font-medium">{item.label}</span>
                   )}
                 </NavLink>
               </li>
@@ -222,7 +222,7 @@ export function Sidebar() {
   return (
     <aside
       className={`border-r border-border bg-card flex flex-col transition-all duration-300 ${
-        collapsed ? 'w-16' : 'w-64'
+        collapsed ? 'w-16' : 'w-72'
       }`}
     >
       {/* Collapse Toggle */}
