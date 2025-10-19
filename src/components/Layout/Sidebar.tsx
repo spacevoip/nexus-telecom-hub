@@ -75,7 +75,7 @@ export function Sidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className={`py-6 px-4 border-b border-border ${collapsed && !isMobile ? 'px-3' : ''}`}>
+      <div className={`pt-6 pb-8 px-4 border-b border-border ${collapsed && !isMobile ? 'px-3' : ''}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
             <Phone className="w-5 h-5 text-primary-foreground" />
