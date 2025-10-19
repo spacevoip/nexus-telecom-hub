@@ -75,59 +75,63 @@ export function Sidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className={`p-6 pb-8 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
-            <Phone className="w-6 h-6 text-primary-foreground" />
+      <div className={`py-4 px-4 border-b border-border/50 ${collapsed && !isMobile ? 'px-2' : ''}`}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary via-primary to-primary/80 flex items-center justify-center flex-shrink-0 shadow-sm">
+            <Phone className="w-4.5 h-4.5 text-primary-foreground" />
           </div>
           {(!collapsed || isMobile) && (
             <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-xl truncate">PABX Online</h1>
-              <p className="text-sm text-muted-foreground truncate">Sistema de Chamadas</p>
+              <h1 className="font-semibold text-base truncate text-foreground">PABX Online</h1>
+              <p className="text-[11px] text-muted-foreground/80 truncate">Sistema de Chamadas</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 overflow-y-auto">
-        <ul className="space-y-1">
-          {items.map((item) => (
-            <li key={item.path}>
-              <NavLink
-                to={item.path}
-                onClick={() => isMobile && setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                    isActive
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  } ${collapsed && !isMobile ? 'justify-center' : ''}`
-                }
-              >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                {(!collapsed || isMobile) && (
-                  <span className="font-medium text-sm">{item.label}</span>
-                )}
-              </NavLink>
-            </li>
-          ))}
+      <nav className="flex-1 py-4 px-2 overflow-y-auto">
+        <ul className="space-y-0.5">
+          {items.map((item, index) => {
+            const showDivider = user?.role === 'admin' && (index === 4 || index === 7 || index === 9);
+            return (
+              <li key={item.path}>
+                {showDivider && <div className="h-px bg-border/40 my-2 mx-2" />}
+                <NavLink
+                  to={item.path}
+                  onClick={() => isMobile && setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 px-3 py-2 rounded-md transition-all duration-200 group ${
+                      isActive
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                    } ${collapsed && !isMobile ? 'justify-center px-2' : ''}`
+                  }
+                >
+                  <item.icon className="w-[18px] h-[18px] flex-shrink-0 transition-transform duration-200 group-hover:scale-110" />
+                  {(!collapsed || isMobile) && (
+                    <span className="font-medium text-[13px] tracking-wide">{item.label}</span>
+                  )}
+                </NavLink>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
       {/* User Section */}
-      <div className={`p-4 border-t border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className={`flex items-start gap-3 mb-3 ${collapsed && !isMobile ? 'flex-col' : ''}`}>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center flex-shrink-0">
-            <span className="text-sm font-bold text-accent-foreground">
-              {user?.name.charAt(0)}
+      <div className={`p-3 border-t border-border/50 bg-muted/20 ${collapsed && !isMobile ? 'px-2' : ''}`}>
+        <div className={`flex items-start gap-2.5 mb-2 ${collapsed && !isMobile ? 'flex-col' : ''}`}>
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/70 flex items-center justify-center flex-shrink-0 shadow-sm">
+            <span className="text-[13px] font-semibold text-primary-foreground">
+              {user?.name.charAt(0).toUpperCase()}
             </span>
           </div>
           {(!collapsed || isMobile) && (
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm truncate">{user?.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-              <p className="text-xs text-primary font-medium mt-0.5">
+              <p className="font-semibold text-[13px] truncate text-foreground">{user?.name}</p>
+              <p className="text-[11px] text-muted-foreground/80 truncate">{user?.email}</p>
+              <p className="text-[11px] text-primary font-medium mt-0.5">
                 {user?.role === 'admin' ? 'Administrador' : user?.role === 'reseller' ? 'Revenda' : 'Plano Profissional'}
               </p>
             </div>
@@ -137,17 +141,17 @@ export function Sidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-7 w-7"
+                className="relative h-7 w-7 hover:bg-background/80"
               >
                 <Bell className="w-3.5 h-3.5" />
-                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-destructive rounded-full" />
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-destructive rounded-full animate-pulse" />
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="h-7 w-7"
+                className="h-7 w-7 hover:bg-background/80"
               >
                 {theme === 'light' ? (
                   <Moon className="w-3.5 h-3.5" />
@@ -160,13 +164,14 @@ export function Sidebar() {
         </div>
         <Button
           variant="ghost"
-          className={`w-full mt-3 justify-start text-destructive hover:text-destructive hover:bg-destructive/10 ${
+          size="sm"
+          className={`w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 h-8 ${
             collapsed && !isMobile ? 'px-2' : ''
           }`}
           onClick={logout}
         >
-          <LogOut className="w-4 h-4" />
-          {(!collapsed || isMobile) && <span className="ml-2">Sair</span>}
+          <LogOut className="w-3.5 h-3.5" />
+          {(!collapsed || isMobile) && <span className="ml-2 text-[13px]">Sair</span>}
         </Button>
       </div>
     </>
