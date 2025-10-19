@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +19,9 @@ import {
   ChevronRight,
   CreditCard,
   UserCog,
+  Bell,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -61,6 +65,7 @@ const navItems = {
 
 export function Sidebar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,7 +76,7 @@ export function Sidebar() {
     <>
       {/* Logo */}
       <div className={`p-4 border-b border-border ${collapsed && !isMobile ? 'px-2' : ''}`}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center flex-shrink-0">
             <Phone className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -81,6 +86,31 @@ export function Sidebar() {
               <p className="text-xs text-muted-foreground truncate">Sistema de Chamadas</p>
             </div>
           )}
+        </div>
+        
+        {/* Action Buttons */}
+        <div className={`flex gap-2 ${collapsed && !isMobile ? 'flex-col items-center' : 'justify-end'}`}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-8 w-8"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-destructive rounded-full" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-8 w-8"
+          >
+            {theme === 'light' ? (
+              <Moon className="w-4 h-4" />
+            ) : (
+              <Sun className="w-4 h-4" />
+            )}
+          </Button>
         </div>
       </div>
 
