@@ -81,18 +81,18 @@ export function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-3">
+        <nav className="flex-1 space-y-5">
           {items.map((item, index) => {
             const showDivider = user?.role === 'admin' && (index === 4 || index === 7 || index === 9);
             return (
-              <div key={item.path}>
+              <div key={item.path} className="flex justify-center">
                 {showDivider && <div className="h-px bg-border/30 my-6" />}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `flex items-center justify-center w-11 h-11 mx-auto rounded-2xl transition-all duration-200 ${
+                        `flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-200 ${
                           isActive
                             ? 'bg-primary shadow-lg scale-105'
                             : 'hover:bg-primary/10 hover:scale-105'
@@ -101,8 +101,7 @@ export function Sidebar() {
                     >
                       {({ isActive }) => (
                         <item.icon 
-                          className="w-5 h-5"
-                          style={{ color: isActive ? 'hsl(0 0% 100%)' : 'hsl(239 84% 67%)' }}
+                          className={isActive ? "w-5 h-5 text-primary-foreground" : "w-5 h-5 text-foreground"}
                         />
                       )}
                     </NavLink>
@@ -117,41 +116,45 @@ export function Sidebar() {
         </nav>
 
         {/* Bottom Actions */}
-        <div className="space-y-3 pt-6 border-t border-border/30">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="w-11 h-11 rounded-2xl mx-auto hover:scale-105 transition-transform hover:bg-primary/10 [&>svg]:!text-primary"
-              >
-                {theme === 'light' ? (
-                  <Moon className="w-5 h-5" />
-                ) : (
-                  <Sun className="w-5 h-5" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="ml-2">
-              <p>Tema</p>
-            </TooltipContent>
-          </Tooltip>
+        <div className="space-y-5 pt-6 border-t border-border/30">
+          <div className="flex justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  className="w-11 h-11 rounded-2xl hover:scale-105 transition-transform hover:bg-primary/10 [&>svg]:text-foreground"
+                >
+                  {theme === 'light' ? (
+                    <Moon className="w-5 h-5" />
+                  ) : (
+                    <Sun className="w-5 h-5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="ml-2">
+                <p>Tema</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-11 h-11 rounded-2xl mx-auto hover:scale-105 transition-transform hover:bg-primary/10 [&>svg]:!text-primary"
-              >
-                <User className="w-5 h-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="ml-2">
-              <p>{user?.name}</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="flex justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-11 h-11 rounded-2xl hover:scale-105 transition-transform hover:bg-primary/10 [&>svg]:text-foreground"
+                >
+                  <User className="w-5 h-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="ml-2">
+                <p>{user?.name}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
     </TooltipProvider>
