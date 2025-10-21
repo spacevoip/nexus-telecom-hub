@@ -99,12 +99,10 @@ export function Sidebar() {
                         }`
                       }
                     >
-                      {({ isActive }) => (
-                        <item.icon 
-                          className="w-5 h-5" 
-                          style={{ color: isActive ? undefined : 'hsl(239 84% 67%)' }}
-                        />
-                      )}
+                      <item.icon 
+                        className="w-5 h-5" 
+                        style={{ color: 'hsl(239 84% 67%)' }}
+                      />
                     </NavLink>
                   </TooltipTrigger>
                   <TooltipContent side="right" className="ml-2">
