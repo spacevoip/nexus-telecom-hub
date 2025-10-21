@@ -99,7 +99,7 @@ export function Sidebar() {
                         }`
                       }
                     >
-                      <item.icon className="w-5 h-5" />
+                      <item.icon className="w-5 h-5" style={{ color: 'currentColor' }} />
                     </NavLink>
                   </TooltipTrigger>
                   <TooltipContent side="right" className="ml-2">
