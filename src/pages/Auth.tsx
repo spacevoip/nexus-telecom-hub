@@ -311,63 +311,135 @@ export default function Auth() {
         {/* Pattern overlay */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djEyaDEyVjM0SDM2em0wLTEyVjEwaDEydjEySDM2eiIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
         
-        {/* Content */}
-        <div className="relative z-10 flex items-center justify-center w-full p-12 text-white">
-          <div className="max-w-md space-y-8 text-center">
-            {/* Icon/Illustration placeholder */}
-            <div className="relative w-full aspect-square max-w-sm mx-auto">
-              <div className="absolute inset-0 flex items-center justify-center">
-                {/* Lock shield illustration - simplified */}
-                <div className="relative">
-                  {/* Shield background */}
-                  <div className="w-48 h-56 rounded-[40px] bg-gradient-to-br from-[hsl(262,83%,25%)] to-[hsl(239,84%,35%)] shadow-2xl flex items-center justify-center border-4 border-[hsl(45,100%,60%)]">
-                    {/* Lock icon */}
-                    <div className="w-24 h-32 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <Lock className="w-14 h-14 text-white" />
+        {/* Content - Login View */}
+        {isLogin && (
+          <div className="relative z-10 flex items-center justify-center w-full p-12 text-white animate-fade-in">
+            <div className="max-w-md space-y-8 text-center">
+              {/* Icon/Illustration placeholder */}
+              <div className="relative w-full aspect-square max-w-sm mx-auto">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {/* Lock shield illustration - simplified */}
+                  <div className="relative">
+                    {/* Shield background */}
+                    <div className="w-48 h-56 rounded-[40px] bg-gradient-to-br from-[hsl(262,83%,25%)] to-[hsl(239,84%,35%)] shadow-2xl flex items-center justify-center border-4 border-[hsl(45,100%,60%)]">
+                      {/* Lock icon */}
+                      <div className="w-24 h-32 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <Lock className="w-14 h-14 text-white" />
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Floating elements */}
-                  <div className="absolute -top-6 -right-6 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]">
-                    <Phone className="w-8 h-8 text-white" />
-                  </div>
-                  
-                  <div className="absolute -bottom-4 -left-8 w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}>
-                    <div className="text-2xl">🔒</div>
+                    
+                    {/* Floating elements */}
+                    <div className="absolute -top-6 -right-6 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]">
+                      <Phone className="w-8 h-8 text-white" />
+                    </div>
+                    
+                    <div className="absolute -bottom-4 -left-8 w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}>
+                      <div className="text-2xl">🔒</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Text content */}
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold leading-tight">
-                Secure Access to Your PABX System
-              </h2>
-              <p className="text-lg text-white/80">
-                Manage your calls, agents, and reports with enterprise-grade security and reliability.
-              </p>
-            </div>
+              {/* Text content */}
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold leading-tight">
+                  Secure Access to Your PABX System
+                </h2>
+                <p className="text-lg text-white/80">
+                  Manage your calls, agents, and reports with enterprise-grade security and reliability.
+                </p>
+              </div>
 
-            {/* Stats */}
-            <div className="flex items-center justify-center gap-8 pt-4">
-              <div className="text-center">
-                <div className="text-3xl font-bold">99.9%</div>
-                <div className="text-sm text-white/70">Uptime</div>
-              </div>
-              <div className="w-px h-12 bg-white/30" />
-              <div className="text-center">
-                <div className="text-3xl font-bold">24/7</div>
-                <div className="text-sm text-white/70">Support</div>
-              </div>
-              <div className="w-px h-12 bg-white/30" />
-              <div className="text-center">
-                <div className="text-3xl font-bold">500+</div>
-                <div className="text-sm text-white/70">Clients</div>
+              {/* Stats */}
+              <div className="flex items-center justify-center gap-8 pt-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold">99.9%</div>
+                  <div className="text-sm text-white/70">Uptime</div>
+                </div>
+                <div className="w-px h-12 bg-white/30" />
+                <div className="text-center">
+                  <div className="text-3xl font-bold">24/7</div>
+                  <div className="text-sm text-white/70">Support</div>
+                </div>
+                <div className="w-px h-12 bg-white/30" />
+                <div className="text-center">
+                  <div className="text-3xl font-bold">500+</div>
+                  <div className="text-sm text-white/70">Clients</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Content - Register View */}
+        {!isLogin && (
+          <div className="relative z-10 flex items-center justify-center w-full p-12 text-white animate-fade-in">
+            <div className="max-w-md space-y-8 text-center">
+              {/* Icon/Illustration placeholder */}
+              <div className="relative w-full aspect-square max-w-sm mx-auto">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {/* User creation illustration */}
+                  <div className="relative">
+                    {/* Circle background */}
+                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[hsl(262,83%,25%)] to-[hsl(239,84%,35%)] shadow-2xl flex items-center justify-center border-4 border-[hsl(45,100%,60%)]">
+                      {/* User icon */}
+                      <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <User className="w-14 h-14 text-white" />
+                      </div>
+                    </div>
+                    
+                    {/* Floating elements */}
+                    <div className="absolute -top-4 -right-4 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]">
+                      <Mail className="w-8 h-8 text-white" />
+                    </div>
+                    
+                    <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}>
+                      <Phone className="w-8 h-8 text-white" />
+                    </div>
+
+                    <div className="absolute top-1/2 -right-8 w-14 h-14 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Text content */}
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold leading-tight">
+                  Join Our PABX Platform
+                </h2>
+                <p className="text-lg text-white/80">
+                  Create your account and start managing your communications with powerful tools and features.
+                </p>
+              </div>
+
+              {/* Benefits */}
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
+                  <div className="text-2xl mb-2">⚡</div>
+                  <div className="text-sm font-medium">Fast Setup</div>
+                  <div className="text-xs text-white/70">Ready in minutes</div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
+                  <div className="text-2xl mb-2">🔐</div>
+                  <div className="text-sm font-medium">Secure</div>
+                  <div className="text-xs text-white/70">Bank-level security</div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
+                  <div className="text-2xl mb-2">📊</div>
+                  <div className="text-sm font-medium">Analytics</div>
+                  <div className="text-xs text-white/70">Real-time insights</div>
+                </div>
+                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
+                  <div className="text-2xl mb-2">💬</div>
+                  <div className="text-sm font-medium">Support</div>
+                  <div className="text-xs text-white/70">24/7 assistance</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
