@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, ArrowRight, Mail, Lock, User } from 'lucide-react';
+import { Phone, ArrowRight, Mail, Lock, User, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,12 +11,39 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [document, setDocument] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const getPasswordStrength = (password: string): { strength: number; label: string; color: string } => {
+    if (!password) return { strength: 0, label: '', color: '' };
+    
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+    const levels = [
+      { strength: 0, label: '', color: '' },
+      { strength: 1, label: 'Muito Fraca', color: 'bg-destructive' },
+      { strength: 2, label: 'Fraca', color: 'bg-orange-500' },
+      { strength: 3, label: 'Média', color: 'bg-yellow-500' },
+      { strength: 4, label: 'Forte', color: 'bg-blue-500' },
+      { strength: 5, label: 'Muito Forte', color: 'bg-green-500' },
+    ];
+
+    return levels[strength];
+  };
+
+  const passwordStrength = getPasswordStrength(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +66,16 @@ export default function Auth() {
           });
         }
       } else {
+        if (password !== confirmPassword) {
+          toast({
+            title: 'Erro no cadastro',
+            description: 'As senhas não coincidem.',
+            variant: 'destructive',
+          });
+          setLoading(false);
+          return;
+        }
+        
         toast({
           title: 'Cadastro realizado!',
           description: 'Sua conta foi criada com sucesso.',
@@ -77,21 +114,55 @@ export default function Auth() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5 animate-fade-in" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
             {!isLogin && (
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="name" className="text-foreground">Name</Label>
-                <div className="relative group">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Your full name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
-                    required
-                  />
+              <>
+                <div className="space-y-2 animate-fade-in">
+                  <Label htmlFor="name" className="text-foreground">Name</Label>
+                  <div className="relative group">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Your full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div className="space-y-2 animate-fade-in">
+                  <Label htmlFor="document" className="text-foreground">Documento</Label>
+                  <div className="relative group">
+                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="document"
+                      type="text"
+                      placeholder="CPF ou CNPJ"
+                      value={document}
+                      onChange={(e) => setDocument(e.target.value)}
+                      className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 animate-fade-in">
+                  <Label htmlFor="phone" className="text-foreground">Telefone</Label>
+                  <div className="relative group">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="(00) 00000-0000"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             <div className="space-y-2">
@@ -124,7 +195,50 @@ export default function Auth() {
                   required
                 />
               </div>
+              
+              {!isLogin && password && (
+                <div className="space-y-1 pt-1">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((level) => (
+                      <div
+                        key={level}
+                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                          level <= passwordStrength.strength
+                            ? passwordStrength.color
+                            : 'bg-muted'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  {passwordStrength.label && (
+                    <p className="text-xs text-muted-foreground">
+                      Força: <span className="font-medium">{passwordStrength.label}</span>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
+
+            {!isLogin && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="confirmPassword" className="text-foreground">Repetir Senha</Label>
+                <div className="relative group">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirme sua senha"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
+                    required
+                  />
+                </div>
+                {confirmPassword && password !== confirmPassword && (
+                  <p className="text-xs text-destructive">As senhas não coincidem</p>
+                )}
+              </div>
+            )}
 
             {isLogin && (
               <div className="flex items-center justify-between">
