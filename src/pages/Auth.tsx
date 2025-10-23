@@ -315,26 +315,86 @@ export default function Auth() {
         {isLogin && (
           <div className="relative z-10 flex items-center justify-center w-full p-12 text-white animate-fade-in">
             <div className="max-w-md space-y-8 text-center">
-              {/* Icon/Illustration placeholder */}
+              {/* VOIP Illustration */}
               <div className="relative w-full aspect-square max-w-sm mx-auto">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  {/* Lock shield illustration - simplified */}
-                  <div className="relative">
-                    {/* Shield background */}
-                    <div className="w-48 h-56 rounded-[40px] bg-gradient-to-br from-[hsl(262,83%,25%)] to-[hsl(239,84%,35%)] shadow-2xl flex items-center justify-center border-4 border-[hsl(45,100%,60%)]">
-                      {/* Lock icon */}
-                      <div className="w-24 h-32 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                        <Lock className="w-14 h-14 text-white" />
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    
+                    {/* Central Phone Icon */}
+                    <div className="relative z-10">
+                      <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border-2 border-white/30 shadow-2xl">
+                        <Phone className="w-16 h-16 text-white" />
+                      </div>
+                      
+                      {/* Pulse rings */}
+                      <div className="absolute inset-0 rounded-3xl border-2 border-white/40 animate-ping" style={{ animationDuration: '2s' }} />
+                      <div className="absolute inset-0 rounded-3xl border-2 border-white/20 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
+                    </div>
+
+                    {/* Floating Phone Icons in Circle */}
+                    {[0, 72, 144, 216, 288].map((angle, i) => {
+                      const radius = 110;
+                      const x = Math.cos((angle * Math.PI) / 180) * radius;
+                      const y = Math.sin((angle * Math.PI) / 180) * radius;
+                      
+                      return (
+                        <div
+                          key={i}
+                          className="absolute w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 animate-[bounce_3s_ease-in-out_infinite]"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+                            animationDelay: `${i * 0.3}s`
+                          }}
+                        >
+                          <Phone className="w-7 h-7 text-white/90" />
+                        </div>
+                      );
+                    })}
+
+                    {/* Connection Lines */}
+                    {[0, 72, 144, 216, 288].map((angle, i) => {
+                      const radius = 110;
+                      const x = Math.cos((angle * Math.PI) / 180) * radius;
+                      const y = Math.sin((angle * Math.PI) / 180) * radius;
+                      const lineLength = Math.sqrt(x * x + y * y);
+                      const lineAngle = Math.atan2(y, x) * (180 / Math.PI);
+                      
+                      return (
+                        <div
+                          key={`line-${i}`}
+                          className="absolute h-0.5 bg-gradient-to-r from-white/40 via-white/20 to-transparent origin-left"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            width: `${lineLength - 64}px`,
+                            transform: `rotate(${lineAngle}deg)`,
+                            opacity: 0.6
+                          }}
+                        />
+                      );
+                    })}
+
+                    {/* Floating Signal Icons */}
+                    <div className="absolute top-4 right-8 animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.2s' }}>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4].map((bar) => (
+                          <div 
+                            key={bar}
+                            className="w-1.5 bg-white/80 rounded-full"
+                            style={{ height: `${bar * 4 + 4}px` }}
+                          />
+                        ))}
                       </div>
                     </div>
-                    
-                    {/* Floating elements */}
-                    <div className="absolute -top-6 -right-6 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]">
-                      <Phone className="w-8 h-8 text-white" />
+
+                    <div className="absolute bottom-8 left-8 text-4xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>
+                      📞
                     </div>
-                    
-                    <div className="absolute -bottom-4 -left-8 w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}>
-                      <div className="text-2xl">🔒</div>
+
+                    <div className="absolute top-12 left-12 text-3xl animate-[bounce_3.2s_ease-in-out_infinite]" style={{ animationDelay: '0.8s' }}>
+                      🎧
                     </div>
                   </div>
                 </div>
@@ -343,28 +403,28 @@ export default function Auth() {
               {/* Text content */}
               <div className="space-y-4">
                 <h2 className="text-3xl font-bold leading-tight">
-                  Secure Access to Your PABX System
+                  Plataforma VOIP Inteligente
                 </h2>
                 <p className="text-lg text-white/80">
-                  Manage your calls, agents, and reports with enterprise-grade security and reliability.
+                  Conecte, gerencie e monitore suas chamadas em tempo real com tecnologia de ponta.
                 </p>
               </div>
 
               {/* Stats */}
               <div className="flex items-center justify-center gap-8 pt-4">
                 <div className="text-center">
+                  <div className="text-3xl font-bold">10k+</div>
+                  <div className="text-sm text-white/70">Chamadas/dia</div>
+                </div>
+                <div className="w-px h-12 bg-white/30" />
+                <div className="text-center">
                   <div className="text-3xl font-bold">99.9%</div>
-                  <div className="text-sm text-white/70">Uptime</div>
+                  <div className="text-sm text-white/70">Qualidade</div>
                 </div>
                 <div className="w-px h-12 bg-white/30" />
                 <div className="text-center">
                   <div className="text-3xl font-bold">24/7</div>
-                  <div className="text-sm text-white/70">Support</div>
-                </div>
-                <div className="w-px h-12 bg-white/30" />
-                <div className="text-center">
-                  <div className="text-3xl font-bold">500+</div>
-                  <div className="text-sm text-white/70">Clients</div>
+                  <div className="text-sm text-white/70">Disponível</div>
                 </div>
               </div>
             </div>
