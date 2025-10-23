@@ -315,47 +315,65 @@ export default function Auth() {
         {isLogin && (
           <div className="relative z-10 flex items-center justify-center w-full p-12 text-white animate-fade-in">
             <div className="max-w-md space-y-8 text-center">
-              {/* VOIP Illustration */}
+              {/* VOIP Network Illustration */}
               <div className="relative w-full aspect-square max-w-sm mx-auto">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="relative w-full h-full flex items-center justify-center">
                     
-                    {/* Central Phone Icon */}
+                    {/* Central Server/Hub */}
                     <div className="relative z-10">
-                      <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border-2 border-white/30 shadow-2xl">
-                        <Phone className="w-16 h-16 text-white" />
+                      <div className="w-40 h-40 rounded-3xl bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-lg flex items-center justify-center border-2 border-white/40 shadow-2xl">
+                        <div className="relative">
+                          <Phone className="w-20 h-20 text-white" />
+                          {/* Rotating signal rings */}
+                          <div className="absolute inset-0 border-2 border-white/30 rounded-full animate-spin" style={{ animationDuration: '8s' }} />
+                          <div className="absolute inset-2 border-2 border-white/20 rounded-full animate-spin" style={{ animationDuration: '6s', animationDirection: 'reverse' }} />
+                        </div>
                       </div>
                       
-                      {/* Pulse rings */}
-                      <div className="absolute inset-0 rounded-3xl border-2 border-white/40 animate-ping" style={{ animationDuration: '2s' }} />
-                      <div className="absolute inset-0 rounded-3xl border-2 border-white/20 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
+                      {/* Multiple Pulse rings with different speeds */}
+                      <div className="absolute inset-0 rounded-3xl border-2 border-white/50 animate-ping" style={{ animationDuration: '2s' }} />
+                      <div className="absolute -inset-2 rounded-3xl border-2 border-white/30 animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.3s' }} />
+                      <div className="absolute -inset-4 rounded-3xl border-2 border-white/20 animate-ping" style={{ animationDuration: '3s', animationDelay: '0.6s' }} />
                     </div>
 
-                    {/* Floating Phone Icons in Circle */}
-                    {[0, 72, 144, 216, 288].map((angle, i) => {
-                      const radius = 110;
+                    {/* Orbiting Devices around the center */}
+                    {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+                      const radius = 130;
                       const x = Math.cos((angle * Math.PI) / 180) * radius;
                       const y = Math.sin((angle * Math.PI) / 180) * radius;
+                      
+                      const icons = [Phone, Phone, Phone, Phone, Phone, Phone];
+                      const IconComponent = icons[i];
                       
                       return (
                         <div
                           key={i}
-                          className="absolute w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 animate-[bounce_3s_ease-in-out_infinite]"
+                          className="absolute"
                           style={{
                             left: '50%',
                             top: '50%',
                             transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                            animationDelay: `${i * 0.3}s`
                           }}
                         >
-                          <Phone className="w-7 h-7 text-white/90" />
+                          <div 
+                            className="w-14 h-14 rounded-xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-lg animate-[bounce_3s_ease-in-out_infinite]"
+                            style={{ animationDelay: `${i * 0.2}s` }}
+                          >
+                            <IconComponent className="w-6 h-6 text-white" />
+                          </div>
+                          {/* Individual pulse for each device */}
+                          <div 
+                            className="absolute inset-0 rounded-xl border border-white/40 animate-ping"
+                            style={{ animationDuration: '2s', animationDelay: `${i * 0.3}s` }}
+                          />
                         </div>
                       );
                     })}
 
-                    {/* Connection Lines */}
-                    {[0, 72, 144, 216, 288].map((angle, i) => {
-                      const radius = 110;
+                    {/* Animated Connection Lines */}
+                    {[0, 60, 120, 180, 240, 300].map((angle, i) => {
+                      const radius = 130;
                       const x = Math.cos((angle * Math.PI) / 180) * radius;
                       const y = Math.sin((angle * Math.PI) / 180) * radius;
                       const lineLength = Math.sqrt(x * x + y * y);
@@ -364,37 +382,64 @@ export default function Auth() {
                       return (
                         <div
                           key={`line-${i}`}
-                          className="absolute h-0.5 bg-gradient-to-r from-white/40 via-white/20 to-transparent origin-left"
+                          className="absolute"
                           style={{
                             left: '50%',
                             top: '50%',
-                            width: `${lineLength - 64}px`,
-                            transform: `rotate(${lineAngle}deg)`,
-                            opacity: 0.6
                           }}
-                        />
+                        >
+                          <div
+                            className="h-0.5 bg-gradient-to-r from-white/50 via-white/30 to-transparent origin-left"
+                            style={{
+                              width: `${lineLength - 70}px`,
+                              transform: `rotate(${lineAngle}deg)`,
+                            }}
+                          >
+                            {/* Animated dot traveling along the line */}
+                            <div 
+                              className="w-2 h-2 bg-white rounded-full absolute top-1/2 -translate-y-1/2 shadow-lg shadow-white/50"
+                              style={{
+                                animation: `slideRight 2s ease-in-out infinite`,
+                                animationDelay: `${i * 0.3}s`
+                              }}
+                            />
+                          </div>
+                        </div>
                       );
                     })}
 
-                    {/* Floating Signal Icons */}
-                    <div className="absolute top-4 right-8 animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.2s' }}>
-                      <div className="flex gap-0.5">
+                    {/* Floating Signal Strength Indicators */}
+                    <div className="absolute top-2 right-4 animate-[bounce_2.5s_ease-in-out_infinite]" style={{ animationDelay: '0.2s' }}>
+                      <div className="flex gap-1 bg-white/10 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/20">
                         {[1, 2, 3, 4].map((bar) => (
                           <div 
                             key={bar}
-                            className="w-1.5 bg-white/80 rounded-full"
-                            style={{ height: `${bar * 4 + 4}px` }}
+                            className="w-1 bg-gradient-to-t from-green-400 to-green-200 rounded-full animate-pulse"
+                            style={{ 
+                              height: `${bar * 3 + 6}px`,
+                              animationDelay: `${bar * 0.1}s`,
+                              animationDuration: '1.5s'
+                            }}
                           />
                         ))}
                       </div>
                     </div>
 
-                    <div className="absolute bottom-8 left-8 text-4xl animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>
-                      📞
+                    {/* Floating Quality Badge */}
+                    <div className="absolute bottom-4 left-4 animate-[bounce_2.8s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>
+                      <div className="bg-white/15 backdrop-blur-md px-3 py-2 rounded-xl border border-white/30 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs font-medium">HD Quality</span>
+                      </div>
                     </div>
 
-                    <div className="absolute top-12 left-12 text-3xl animate-[bounce_3.2s_ease-in-out_infinite]" style={{ animationDelay: '0.8s' }}>
+                    {/* Floating Icons */}
+                    <div className="absolute top-8 left-6 text-3xl animate-[bounce_3.2s_ease-in-out_infinite] opacity-90" style={{ animationDelay: '0.8s' }}>
                       🎧
+                    </div>
+
+                    <div className="absolute bottom-12 right-8 text-2xl animate-[bounce_2.6s_ease-in-out_infinite] opacity-80" style={{ animationDelay: '1.1s' }}>
+                      📞
                     </div>
                   </div>
                 </div>
@@ -402,29 +447,27 @@ export default function Auth() {
 
               {/* Text content */}
               <div className="space-y-4">
-                <h2 className="text-3xl font-bold leading-tight">
+                <h2 className="text-4xl font-bold leading-tight">
                   Plataforma VOIP Inteligente
                 </h2>
-                <p className="text-lg text-white/80">
-                  Conecte, gerencie e monitore suas chamadas em tempo real com tecnologia de ponta.
+                <p className="text-lg text-white/90 leading-relaxed">
+                  Conecte, gerencie e monitore suas chamadas em tempo real com tecnologia de ponta e qualidade HD.
                 </p>
               </div>
 
-              {/* Stats */}
-              <div className="flex items-center justify-center gap-8 pt-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold">10k+</div>
-                  <div className="text-sm text-white/70">Chamadas/dia</div>
+              {/* Enhanced Stats */}
+              <div className="grid grid-cols-3 gap-4 pt-4">
+                <div className="text-center p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+                  <div className="text-3xl font-bold mb-1">10k+</div>
+                  <div className="text-xs text-white/70">Chamadas/dia</div>
                 </div>
-                <div className="w-px h-12 bg-white/30" />
-                <div className="text-center">
-                  <div className="text-3xl font-bold">99.9%</div>
-                  <div className="text-sm text-white/70">Qualidade</div>
+                <div className="text-center p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+                  <div className="text-3xl font-bold mb-1">99.9%</div>
+                  <div className="text-xs text-white/70">Qualidade HD</div>
                 </div>
-                <div className="w-px h-12 bg-white/30" />
-                <div className="text-center">
-                  <div className="text-3xl font-bold">24/7</div>
-                  <div className="text-sm text-white/70">Disponível</div>
+                <div className="text-center p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+                  <div className="text-3xl font-bold mb-1">24/7</div>
+                  <div className="text-xs text-white/70">Disponível</div>
                 </div>
               </div>
             </div>
@@ -435,30 +478,134 @@ export default function Auth() {
         {!isLogin && (
           <div className="relative z-10 flex items-center justify-center w-full p-12 text-white animate-fade-in">
             <div className="max-w-md space-y-8 text-center">
-              {/* Icon/Illustration placeholder */}
+              {/* Network Building Illustration */}
               <div className="relative w-full aspect-square max-w-sm mx-auto">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  {/* User creation illustration */}
-                  <div className="relative">
-                    {/* Circle background */}
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[hsl(262,83%,25%)] to-[hsl(239,84%,35%)] shadow-2xl flex items-center justify-center border-4 border-[hsl(45,100%,60%)]">
-                      {/* User icon */}
-                      <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                        <User className="w-14 h-14 text-white" />
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    
+                    {/* Central User Avatar Being Created */}
+                    <div className="relative z-10">
+                      <div className="w-32 h-32 rounded-full bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-lg flex items-center justify-center border-2 border-white/40 shadow-2xl">
+                        <User className="w-16 h-16 text-white" />
                       </div>
-                    </div>
-                    
-                    {/* Floating elements */}
-                    <div className="absolute -top-4 -right-4 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]">
-                      <Mail className="w-8 h-8 text-white" />
-                    </div>
-                    
-                    <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '1s' }}>
-                      <Phone className="w-8 h-8 text-white" />
+                      
+                      {/* Assembly animation rings */}
+                      <div className="absolute inset-0 rounded-full border-2 border-dashed border-white/40 animate-spin" style={{ animationDuration: '10s' }} />
+                      <div className="absolute -inset-4 rounded-full border-2 border-dotted border-white/30 animate-spin" style={{ animationDuration: '8s', animationDirection: 'reverse' }} />
+                      
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse" />
                     </div>
 
-                    <div className="absolute top-1/2 -right-8 w-14 h-14 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '0.5s' }}>
-                      <FileText className="w-6 h-6 text-white" />
+                    {/* Form Elements Orbiting */}
+                    {[
+                      { icon: Mail, angle: 0, emoji: '📧' },
+                      { icon: Phone, angle: 72, emoji: '📱' },
+                      { icon: FileText, angle: 144, emoji: '📄' },
+                      { icon: Lock, angle: 216, emoji: '🔐' },
+                      { icon: User, angle: 288, emoji: '👤' },
+                    ].map((item, i) => {
+                      const radius = 110;
+                      const x = Math.cos((item.angle * Math.PI) / 180) * radius;
+                      const y = Math.sin((item.angle * Math.PI) / 180) * radius;
+                      const IconComponent = item.icon;
+                      
+                      return (
+                        <div
+                          key={i}
+                          className="absolute"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+                          }}
+                        >
+                          {/* Icon container */}
+                          <div 
+                            className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-lg animate-[bounce_3s_ease-in-out_infinite]"
+                            style={{ animationDelay: `${i * 0.3}s` }}
+                          >
+                            <IconComponent className="w-7 h-7 text-white" />
+                            
+                            {/* Check mark appearing animation */}
+                            <div 
+                              className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-xs animate-[scale-in_0.5s_ease-out_infinite]"
+                              style={{ 
+                                animationDelay: `${i * 0.5 + 2}s`,
+                                animationIterationCount: 'infinite'
+                              }}
+                            >
+                              ✓
+                            </div>
+                          </div>
+                          
+                          {/* Pulse effect */}
+                          <div 
+                            className="absolute inset-0 rounded-2xl border border-white/40 animate-ping"
+                            style={{ animationDuration: '2s', animationDelay: `${i * 0.4}s` }}
+                          />
+                          
+                          {/* Emoji floating above */}
+                          <div 
+                            className="absolute -top-8 left-1/2 -translate-x-1/2 text-2xl animate-[bounce_2s_ease-in-out_infinite]"
+                            style={{ animationDelay: `${i * 0.25}s` }}
+                          >
+                            {item.emoji}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Connection Lines forming */}
+                    {[0, 72, 144, 216, 288].map((angle, i) => {
+                      const radius = 110;
+                      const x = Math.cos((angle * Math.PI) / 180) * radius;
+                      const y = Math.sin((angle * Math.PI) / 180) * radius;
+                      const lineLength = Math.sqrt(x * x + y * y);
+                      const lineAngle = Math.atan2(y, x) * (180 / Math.PI);
+                      
+                      return (
+                        <div
+                          key={`line-${i}`}
+                          className="absolute"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                          }}
+                        >
+                          {/* Building line animation */}
+                          <div
+                            className="h-1 bg-gradient-to-r from-white/60 via-white/40 to-transparent origin-left"
+                            style={{
+                              width: `${lineLength - 64}px`,
+                              transform: `rotate(${lineAngle}deg)`,
+                              animation: 'expandWidth 2s ease-out infinite',
+                              animationDelay: `${i * 0.4}s`
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+
+                    {/* Building Progress Indicator */}
+                    <div className="absolute top-4 right-4 animate-fade-in">
+                      <div className="bg-white/15 backdrop-blur-md px-3 py-2 rounded-xl border border-white/30 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                        <span className="text-xs font-medium">Criando conta...</span>
+                      </div>
+                    </div>
+
+                    {/* Feature badges floating */}
+                    <div className="absolute bottom-6 left-6 animate-[bounce_3s_ease-in-out_infinite]" style={{ animationDelay: '0.3s' }}>
+                      <div className="bg-green-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-green-400/30 text-xs font-medium flex items-center gap-1">
+                        ⚡ Setup Rápido
+                      </div>
+                    </div>
+
+                    <div className="absolute top-8 left-8 animate-[bounce_2.7s_ease-in-out_infinite]" style={{ animationDelay: '0.6s' }}>
+                      <div className="bg-purple-500/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-purple-400/30 text-xs font-medium flex items-center gap-1">
+                        🔐 Seguro
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -466,35 +613,35 @@ export default function Auth() {
 
               {/* Text content */}
               <div className="space-y-4">
-                <h2 className="text-3xl font-bold leading-tight">
-                  Join Our PABX Platform
+                <h2 className="text-4xl font-bold leading-tight">
+                  Junte-se à Revolução VOIP
                 </h2>
-                <p className="text-lg text-white/80">
-                  Create your account and start managing your communications with powerful tools and features.
+                <p className="text-lg text-white/90 leading-relaxed">
+                  Crie sua conta e comece a gerenciar suas comunicações com ferramentas poderosas e recursos avançados.
                 </p>
               </div>
 
-              {/* Benefits */}
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <div className="text-2xl mb-2">⚡</div>
-                  <div className="text-sm font-medium">Fast Setup</div>
-                  <div className="text-xs text-white/70">Ready in minutes</div>
+              {/* Enhanced Benefits Grid */}
+              <div className="grid grid-cols-2 gap-3 pt-4">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm border border-white/20 hover:scale-105 transition-transform duration-300">
+                  <div className="text-3xl mb-2">⚡</div>
+                  <div className="text-sm font-semibold mb-1">Setup Instantâneo</div>
+                  <div className="text-xs text-white/70">Pronto em 2 minutos</div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <div className="text-2xl mb-2">🔐</div>
-                  <div className="text-sm font-medium">Secure</div>
-                  <div className="text-xs text-white/70">Bank-level security</div>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm border border-white/20 hover:scale-105 transition-transform duration-300">
+                  <div className="text-3xl mb-2">🔐</div>
+                  <div className="text-sm font-semibold mb-1">Ultra Seguro</div>
+                  <div className="text-xs text-white/70">Criptografia total</div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <div className="text-2xl mb-2">📊</div>
-                  <div className="text-sm font-medium">Analytics</div>
-                  <div className="text-xs text-white/70">Real-time insights</div>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm border border-white/20 hover:scale-105 transition-transform duration-300">
+                  <div className="text-3xl mb-2">📊</div>
+                  <div className="text-sm font-semibold mb-1">Analytics Pro</div>
+                  <div className="text-xs text-white/70">Insights em tempo real</div>
                 </div>
-                <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <div className="text-2xl mb-2">💬</div>
-                  <div className="text-sm font-medium">Support</div>
-                  <div className="text-xs text-white/70">24/7 assistance</div>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-sm border border-white/20 hover:scale-105 transition-transform duration-300">
+                  <div className="text-3xl mb-2">💬</div>
+                  <div className="text-sm font-semibold mb-1">Suporte VIP</div>
+                  <div className="text-xs text-white/70">Assistência 24/7</div>
                 </div>
               </div>
             </div>
