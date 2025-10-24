@@ -102,12 +102,12 @@ export default function Auth() {
           {/* Title */}
           <div className="text-center lg:text-left animate-fade-in" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
             <h2 className="text-3xl font-bold mb-2 transition-all duration-300">
-              {isLogin ? 'Welcome Back!' : 'Create Account'}
+              {isLogin ? 'Bem-vindo de Volta!' : 'Criar Conta'}
             </h2>
             <p className="text-muted-foreground text-sm transition-all duration-300">
               {isLogin
-                ? 'Please Sign In to continue'
-                : 'Fill in the details to get started'}
+                ? 'Por favor, faça login para continuar'
+                : 'Preencha os detalhes para começar'}
             </p>
           </div>
 
@@ -116,13 +116,13 @@ export default function Auth() {
             {!isLogin && (
               <>
                 <div className="space-y-2 animate-fade-in">
-                  <Label htmlFor="name" className="text-foreground">Name</Label>
+                  <Label htmlFor="name" className="text-foreground">Nome</Label>
                   <div className="relative group">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                     <Input
                       id="name"
                       type="text"
-                      placeholder="Your full name"
+                      placeholder="Seu nome completo"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
@@ -172,7 +172,7 @@ export default function Auth() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="example@gmail.com"
+                  placeholder="exemplo@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
@@ -182,13 +182,13 @@ export default function Auth() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">Password</Label>
+              <Label htmlFor="password" className="text-foreground">Senha</Label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Password"
+                  placeholder="Senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 h-11 transition-all duration-300 focus:scale-[1.01]"
@@ -247,13 +247,13 @@ export default function Auth() {
                     type="checkbox" 
                     className="w-4 h-4 rounded border-input text-primary focus:ring-primary focus:ring-offset-0 focus:ring-2" 
                   />
-                  <span className="text-sm text-muted-foreground">Remember me</span>
+                  <span className="text-sm text-muted-foreground">Lembrar-me</span>
                 </label>
                 <button
                   type="button"
                   className="text-sm text-primary hover:underline font-medium"
                 >
-                  Forgot Password
+                  Esqueci a Senha
                 </button>
               </div>
             )}
@@ -263,21 +263,21 @@ export default function Auth() {
               className="w-full h-12 gradient-primary shadow-primary text-base font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/50 active:scale-[0.98]"
               disabled={loading}
             >
-              {loading ? 'Loading...' : isLogin ? 'Login' : 'Create Account'}
+              {loading ? 'Carregando...' : isLogin ? 'Entrar' : 'Criar Conta'}
             </Button>
           </form>
 
           {/* Toggle */}
           <div className="text-center text-sm pt-2 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
             <span className="text-muted-foreground">
-              {isLogin ? 'Not a member?' : 'Already have an account?'}
+              {isLogin ? 'Não é membro?' : 'Já tem uma conta?'}
             </span>{' '}
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
               className="text-primary hover:underline font-semibold transition-all duration-200 hover:scale-105 inline-block"
             >
-              {isLogin ? 'Register Now' : 'Sign In'}
+              {isLogin ? 'Cadastre-se Agora' : 'Entrar'}
             </button>
           </div>
 
@@ -285,7 +285,7 @@ export default function Auth() {
           {isLogin && (
             <div className="pt-6 border-t border-border animate-fade-in" style={{ animationDelay: '0.5s', animationFillMode: 'both' }}>
               <p className="text-xs text-muted-foreground mb-3 font-medium">
-                Demo credentials:
+                Credenciais de demonstração:
               </p>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between p-2 rounded-lg bg-muted/50 transition-all duration-200 hover:bg-muted hover:scale-[1.01] cursor-pointer">
