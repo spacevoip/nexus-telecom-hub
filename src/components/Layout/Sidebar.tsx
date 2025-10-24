@@ -142,13 +142,14 @@ export function Sidebar() {
               <Button
                 variant="ghost"
                 size="icon"
+                onClick={logout}
                 className="w-11 h-11 rounded-2xl mx-auto hover:scale-105 transition-transform hover:bg-primary/10 [&>svg]:text-foreground"
               >
-                <User className="w-5 h-5" />
+                <LogOut className="w-5 h-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" className="ml-2">
-              <p>{user?.name}</p>
+              <p>Sair</p>
             </TooltipContent>
           </Tooltip>
         </div>
