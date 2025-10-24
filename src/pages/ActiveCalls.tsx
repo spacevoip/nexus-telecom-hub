@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Phone, Headphones, PhoneOff, ArrowRightLeft, Settings, Mic, Hash, X } from 'lucide-react';
+import { Phone, Headphones, PhoneOff, ArrowRightLeft, Settings, Mic, Hash, ArrowLeft, Trash2, Download, Play, Pause, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CallActionModal } from '@/components/modals/CallActionModal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 
 interface ActiveCall {
@@ -23,12 +23,17 @@ const mockCalls: ActiveCall[] = [
   { id: '4', extension: '104', agent: 'Ana Lima', callerId: '1004', destination: '(11) 93456-7890', duration: 5, status: 'ringing' },
 ];
 
+type ActionView = 'actions' | 'inject' | 'inject-predefined' | 'inject-tts' | 'capture' | 'transfer' | 'listen' | 'listen-mode' | 'record';
+
 export default function ActiveCalls() {
   const [calls, setCalls] = useState<ActiveCall[]>(mockCalls);
-  const [isCallModalOpen, setIsCallModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<'transfer' | 'listen' | null>(null);
-  const [selectedCallId, setSelectedCallId] = useState<number | null>(null);
   const [managingCallId, setManagingCallId] = useState<string | null>(null);
+  const [currentAction, setCurrentAction] = useState<ActionView>('actions');
+  const [capturedDigits, setCapturedDigits] = useState('');
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [transferTarget, setTransferTarget] = useState('');
+  const [spyExtension, setSpyExtension] = useState('');
+  const [listenMode, setListenMode] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,18 +68,6 @@ export default function ActiveCalls() {
     );
   };
 
-  const handleTransfer = (callId: string) => {
-    setSelectedCallId(parseInt(callId));
-    setModalAction('transfer');
-    setIsCallModalOpen(true);
-  };
-
-  const handleListen = (callId: string) => {
-    setSelectedCallId(parseInt(callId));
-    setModalAction('listen');
-    setIsCallModalOpen(true);
-  };
-
   const handleEndCall = () => {
     toast({
       title: 'Chamada encerrada',
@@ -83,21 +76,68 @@ export default function ActiveCalls() {
   };
 
   const handleManageCall = (callId: string) => {
-    setManagingCallId(managingCallId === callId ? null : callId);
+    if (managingCallId === callId) {
+      setManagingCallId(null);
+      setCurrentAction('actions');
+    } else {
+      setManagingCallId(callId);
+      setCurrentAction('actions');
+    }
   };
 
-  const handleInjectAudio = (callId: string) => {
+  const handleBackToActions = () => {
+    setCurrentAction('actions');
+    setCapturedDigits('');
+    setIsCapturing(false);
+    setTransferTarget('');
+    setSpyExtension('');
+    setListenMode('');
+  };
+
+  const handleDownloadDigits = () => {
+    const blob = new Blob([capturedDigits], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'digitos-capturados.txt';
+    a.click();
+    URL.revokeObjectURL(url);
     toast({
-      title: 'Injetar Áudio',
-      description: 'Iniciando injeção de áudio na chamada...',
+      title: 'Download iniciado',
+      description: 'Os dígitos foram salvos em arquivo txt',
     });
   };
 
-  const handleCaptureDigits = (callId: string) => {
+  const handleConfirmTransfer = () => {
+    if (!transferTarget) {
+      toast({
+        title: 'Erro',
+        description: 'Selecione um destino para transferência',
+        variant: 'destructive',
+      });
+      return;
+    }
     toast({
-      title: 'Capturar Dígitos',
-      description: 'Iniciando captura de dígitos...',
+      title: 'Transferência iniciada',
+      description: `Transferindo chamada para ${transferTarget}`,
     });
+    handleBackToActions();
+  };
+
+  const handleConfirmListen = () => {
+    if (!listenMode) {
+      toast({
+        title: 'Erro',
+        description: 'Selecione um modo de escuta',
+        variant: 'destructive',
+      });
+      return;
+    }
+    toast({
+      title: 'Escuta iniciada',
+      description: `Modo: ${listenMode === 'listen' ? 'Só Ouvir' : 'Participar'}`,
+    });
+    handleBackToActions();
   };
 
   return (
@@ -201,8 +241,8 @@ export default function ActiveCalls() {
                 </div>
               </div>
 
-              {/* Actions - Fixed Height Container */}
-              <div className="h-[72px]">
+              {/* Actions - Dynamic Height Container */}
+              <div className="min-h-[72px]">
                 {!isManaging ? (
                   <div className="grid grid-cols-2 gap-2 animate-fade-in">
                     <Button 
@@ -225,66 +265,323 @@ export default function ActiveCalls() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-2 animate-fade-in">
-                    <div className="grid grid-cols-3 gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full" 
-                        onClick={() => handleInjectAudio(call.id)}
-                      >
-                        <Mic className="w-3.5 h-3.5 mr-1.5" />
-                        <span className="text-xs">Injetar</span>
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full" 
-                        onClick={() => handleCaptureDigits(call.id)}
-                      >
-                        <Hash className="w-3.5 h-3.5 mr-1.5" />
-                        <span className="text-xs">Captura</span>
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full" 
-                        onClick={() => handleTransfer(call.id)}
-                      >
-                        <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" />
-                        <span className="text-xs">Transfer</span>
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full" 
-                        onClick={() => handleListen(call.id)}
-                      >
-                        <Headphones className="w-3.5 h-3.5 mr-1.5" />
-                        <span className="text-xs">Escutar</span>
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" 
-                        onClick={handleEndCall}
-                      >
-                        <PhoneOff className="w-3.5 h-3.5 mr-1.5" />
-                        <span className="text-xs">Encerrar</span>
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full" 
-                        onClick={() => handleManageCall(call.id)}
-                      >
-                        <X className="w-3.5 h-3.5 mr-1.5" />
-                        <span className="text-xs">Voltar</span>
-                      </Button>
-                    </div>
-                  </div>
+                  <>
+                    {/* AÇÕES PRINCIPAIS */}
+                    {currentAction === 'actions' && (
+                      <div className="space-y-2 animate-scale-in">
+                        <div className="grid grid-cols-4 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('inject')}
+                          >
+                            <Mic className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Injetar</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('capture')}
+                          >
+                            <Hash className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Captura</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('transfer')}
+                          >
+                            <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Transfer</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('listen')}
+                          >
+                            <Headphones className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Escutar</span>
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('record')}
+                          >
+                            <Radio className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Gravar</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" 
+                            onClick={handleEndCall}
+                          >
+                            <PhoneOff className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Encerrar</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => handleManageCall(call.id)}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* INJETAR ÁUDIO - OPÇÕES */}
+                    {currentAction === 'inject' && (
+                      <div className="space-y-2 animate-scale-in">
+                        <p className="text-xs font-semibold text-center mb-2">Injetar Áudio</p>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full" 
+                          onClick={() => {
+                            toast({ title: 'Áudio Predefinido', description: 'Selecionando áudio predefinido...' });
+                            handleBackToActions();
+                          }}
+                        >
+                          <Mic className="w-3.5 h-3.5 mr-1.5" />
+                          <span className="text-xs">Injetar Áudio Predefinido</span>
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full" 
+                          onClick={() => {
+                            toast({ title: 'Texto para Áudio (TTS)', description: 'Abrindo conversor TTS...' });
+                            handleBackToActions();
+                          }}
+                        >
+                          <Mic className="w-3.5 h-3.5 mr-1.5" />
+                          <span className="text-xs">Injetar Áudio a partir de Texto (TTS)</span>
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full" 
+                          onClick={handleBackToActions}
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                          <span className="text-xs">Voltar</span>
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* CAPTURAR DÍGITOS */}
+                    {currentAction === 'capture' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Capturar Dígitos</p>
+                        <div className="bg-muted/30 rounded-lg p-4 min-h-[80px] flex items-center justify-center border-2 border-dashed border-primary/20">
+                          <p className="text-2xl font-mono font-bold text-primary tracking-wider">
+                            {capturedDigits || '---'}
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant={isCapturing ? "default" : "outline"}
+                            className="w-full" 
+                            onClick={() => {
+                              setIsCapturing(!isCapturing);
+                              if (!isCapturing) {
+                                toast({ title: 'Captura iniciada', description: 'Capturando dígitos...' });
+                                // Simulação de captura
+                                setTimeout(() => setCapturedDigits(prev => prev + Math.floor(Math.random() * 10)), 1000);
+                              } else {
+                                toast({ title: 'Captura pausada' });
+                              }
+                            }}
+                          >
+                            {isCapturing ? <Pause className="w-3.5 h-3.5 mr-1" /> : <Play className="w-3.5 h-3.5 mr-1" />}
+                            <span className="text-xs">{isCapturing ? 'Pausar' : 'Iniciar'}</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => {
+                              setCapturedDigits('');
+                              toast({ title: 'Dígitos limpos' });
+                            }}
+                          >
+                            <Trash2 className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Limpar</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={handleDownloadDigits}
+                            disabled={!capturedDigits}
+                          >
+                            <Download className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Baixar</span>
+                          </Button>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full" 
+                          onClick={handleBackToActions}
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                          <span className="text-xs">Voltar</span>
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* TRANSFERIR */}
+                    {currentAction === 'transfer' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Você deseja transferir para quem a chamada?</p>
+                        <Select value={transferTarget} onValueChange={setTransferTarget}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione o destino" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="101">Ramal 101 - João Silva</SelectItem>
+                            <SelectItem value="102">Ramal 102 - Maria Santos</SelectItem>
+                            <SelectItem value="103">Ramal 103 - Pedro Costa</SelectItem>
+                            <SelectItem value="104">Ramal 104 - Ana Lima</SelectItem>
+                            <SelectItem value="suporte">Grupo Suporte</SelectItem>
+                            <SelectItem value="vendas">Grupo Vendas</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="w-full" 
+                            onClick={handleConfirmTransfer}
+                          >
+                            <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Confirmar Transferência</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={handleBackToActions}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Voltar</span>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ESCUTAR - RAMAL ESPIÃO */}
+                    {currentAction === 'listen' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Qual é seu ramal espião?</p>
+                        <Select value={spyExtension} onValueChange={(value) => {
+                          setSpyExtension(value);
+                          setTimeout(() => setCurrentAction('listen-mode'), 300);
+                        }}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione seu ramal" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="201">Ramal 201</SelectItem>
+                            <SelectItem value="202">Ramal 202</SelectItem>
+                            <SelectItem value="203">Ramal 203</SelectItem>
+                            <SelectItem value="204">Ramal 204</SelectItem>
+                            <SelectItem value="205">Ramal 205</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full" 
+                          onClick={handleBackToActions}
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                          <span className="text-xs">Voltar</span>
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* ESCUTAR - MODO */}
+                    {currentAction === 'listen-mode' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Qual modo usar?</p>
+                        <Select value={listenMode} onValueChange={setListenMode}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione o modo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="listen">Só Ouvir</SelectItem>
+                            <SelectItem value="participate">Participar</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="w-full" 
+                            onClick={handleConfirmListen}
+                          >
+                            <Headphones className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Iniciar Escuta</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={handleBackToActions}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Voltar</span>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* GRAVAR */}
+                    {currentAction === 'record' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Gravação de Chamada</p>
+                        <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center gap-2">
+                          <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
+                          <p className="text-sm font-semibold">Gravando...</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="w-full" 
+                            onClick={() => {
+                              toast({ title: 'Gravação salva', description: 'A gravação foi salva com sucesso' });
+                              handleBackToActions();
+                            }}
+                          >
+                            <Download className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Salvar Gravação</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={handleBackToActions}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Voltar</span>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </Card>
@@ -305,12 +602,6 @@ export default function ActiveCalls() {
         </Card>
       )}
 
-      <CallActionModal
-        open={isCallModalOpen}
-        onOpenChange={setIsCallModalOpen}
-        action={modalAction}
-        callId={selectedCallId || undefined}
-      />
     </div>
   );
 }
