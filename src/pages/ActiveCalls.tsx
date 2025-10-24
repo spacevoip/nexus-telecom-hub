@@ -34,6 +34,10 @@ export default function ActiveCalls() {
   const [transferTarget, setTransferTarget] = useState('');
   const [spyExtension, setSpyExtension] = useState('');
   const [listenMode, setListenMode] = useState('');
+  const [selectedAudio, setSelectedAudio] = useState('');
+  const [injectMode, setInjectMode] = useState('');
+  const [ttsText, setTtsText] = useState('');
+  const [ttsMode, setTtsMode] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -92,6 +96,10 @@ export default function ActiveCalls() {
     setTransferTarget('');
     setSpyExtension('');
     setListenMode('');
+    setSelectedAudio('');
+    setInjectMode('');
+    setTtsText('');
+    setTtsMode('');
   };
 
   const handleDownloadDigits = () => {
@@ -342,30 +350,26 @@ export default function ActiveCalls() {
                     {currentAction === 'inject' && (
                       <div className="space-y-2 animate-scale-in">
                         <p className="text-xs font-semibold text-center mb-2">Injetar Áudio</p>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="w-full" 
-                          onClick={() => {
-                            toast({ title: 'Áudio Predefinido', description: 'Selecionando áudio predefinido...' });
-                            handleBackToActions();
-                          }}
-                        >
-                          <Mic className="w-3.5 h-3.5 mr-1.5" />
-                          <span className="text-xs">Injetar Áudio Predefinido</span>
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="w-full" 
-                          onClick={() => {
-                            toast({ title: 'Texto para Áudio (TTS)', description: 'Abrindo conversor TTS...' });
-                            handleBackToActions();
-                          }}
-                        >
-                          <Mic className="w-3.5 h-3.5 mr-1.5" />
-                          <span className="text-xs">Injetar Áudio a partir de Texto (TTS)</span>
-                        </Button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('inject-predefined')}
+                          >
+                            <Mic className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Áudio Predefinido</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('inject-tts')}
+                          >
+                            <Mic className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Áudio a partir de Texto (TTS)</span>
+                          </Button>
+                        </div>
                         <Button 
                           size="sm" 
                           variant="outline" 
@@ -375,6 +379,149 @@ export default function ActiveCalls() {
                           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                           <span className="text-xs">Voltar</span>
                         </Button>
+                      </div>
+                    )}
+
+                    {/* INJETAR ÁUDIO PREDEFINIDO */}
+                    {currentAction === 'inject-predefined' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Áudio Predefinido</p>
+                        
+                        <Select value={selectedAudio} onValueChange={setSelectedAudio}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione um áudio" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="aguarde">Aguarde um momento</SelectItem>
+                            <SelectItem value="transferindo">Transferindo chamada</SelectItem>
+                            <SelectItem value="horario">Fora do horário</SelectItem>
+                            <SelectItem value="pausa">Música em espera</SelectItem>
+                            <SelectItem value="satisfacao">Pesquisa de satisfação</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <div className="space-y-2">
+                          <p className="text-xs text-muted-foreground">Modo de Injeção</p>
+                          <Select value={injectMode} onValueChange={setInjectMode}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione o modo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="client">Cliente</SelectItem>
+                              <SelectItem value="all">Todos</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => toast({ title: 'Reproduzindo áudio', description: 'Reproduzindo preview do áudio...' })}
+                            disabled={!selectedAudio}
+                          >
+                            <Play className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Ouvir</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="w-full" 
+                            onClick={() => {
+                              toast({ title: 'Áudio injetado', description: `Áudio injetado para ${injectMode === 'client' ? 'cliente' : 'todos'}` });
+                              handleBackToActions();
+                            }}
+                            disabled={!selectedAudio || !injectMode}
+                          >
+                            <Mic className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Injetar</span>
+                          </Button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('capture')}
+                          >
+                            <Hash className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Captura DTMF</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('inject')}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Voltar</span>
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* INJETAR ÁUDIO TTS */}
+                    {currentAction === 'inject-tts' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Áudio a partir de Texto (TTS)</p>
+                        
+                        <textarea 
+                          className="w-full min-h-[80px] p-3 text-sm rounded-lg border border-input bg-background resize-none"
+                          placeholder="Digite o texto para converter em áudio..."
+                          value={ttsText}
+                          onChange={(e) => setTtsText(e.target.value)}
+                        />
+
+                        <div className="space-y-2">
+                          <p className="text-xs text-muted-foreground">Modo de Injeção</p>
+                          <Select value={ttsMode} onValueChange={setTtsMode}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione o modo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="client">Cliente</SelectItem>
+                              <SelectItem value="all">Todos</SelectItem>
+                              <SelectItem value="listen">Ouvir</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <Button 
+                          size="sm" 
+                          variant="default" 
+                          className="w-full" 
+                          onClick={() => {
+                            toast({ title: 'TTS injetado', description: `Texto convertido e injetado (${ttsMode})` });
+                            handleBackToActions();
+                          }}
+                          disabled={!ttsText.trim() || !ttsMode}
+                        >
+                          <Mic className="w-3.5 h-3.5 mr-1.5" />
+                          <span className="text-xs">Injetar TTS</span>
+                        </Button>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('capture')}
+                          >
+                            <Hash className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Captura DTMF</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={() => setCurrentAction('inject')}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                            <span className="text-xs">Voltar</span>
+                          </Button>
+                        </div>
                       </div>
                     )}
 
