@@ -43,7 +43,6 @@ interface CallActionState {
 
 export default function ActiveCalls() {
   const [calls, setCalls] = useState<ActiveCall[]>(mockCalls);
-  const [managingCallId, setManagingCallId] = useState<string | null>(null);
   
   // Estado por chamada - cada chamada tem seu próprio estado de ações
   const [callStates, setCallStates] = useState<Record<string, CallActionState>>({});
@@ -122,8 +121,9 @@ export default function ActiveCalls() {
   };
 
   const handleManageCall = (callId: string) => {
-    if (managingCallId === callId) {
-      setManagingCallId(null);
+    const isCurrentlyManaging = !!callStates[callId];
+    
+    if (isCurrentlyManaging) {
       // Limpa o estado da chamada
       setCallStates(prev => {
         const newStates = { ...prev };
@@ -131,7 +131,6 @@ export default function ActiveCalls() {
         return newStates;
       });
     } else {
-      setManagingCallId(callId);
       updateCallState(callId, { currentAction: 'actions' });
     }
   };
@@ -257,7 +256,7 @@ export default function ActiveCalls() {
       {/* Calls Grid */}
       <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {calls.map((call) => {
-          const isManaging = managingCallId === call.id;
+          const isManaging = !!callStates[call.id];
           const callState = getCallState(call.id);
           const { currentAction } = callState;
           
