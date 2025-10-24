@@ -217,8 +217,8 @@ export default function ActiveCalls() {
                 {getStatusBadge(call.status)}
               </div>
 
-              {/* Info Grid - Esconde apenas no card sendo gerenciado quando em inject */}
-              {!(isManaging && ['inject-predefined', 'inject-tts'].includes(currentAction)) && (
+              {/* Info Grid - Esconde apenas no card sendo gerenciado quando em inject ou capture */}
+              {!(isManaging && ['inject-predefined', 'inject-tts', 'capture'].includes(currentAction)) && (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Ramal</p>
