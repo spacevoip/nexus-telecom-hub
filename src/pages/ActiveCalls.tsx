@@ -215,8 +215,8 @@ export default function ActiveCalls() {
                 {getStatusBadge(call.status)}
               </div>
 
-              {/* Info Grid - Esconde em inject-predefined e inject-tts */}
-              {!['inject-predefined', 'inject-tts'].includes(currentAction) && (
+              {/* Info Grid - Esconde apenas no card sendo gerenciado quando em inject */}
+              {!(isManaging && ['inject-predefined', 'inject-tts'].includes(currentAction)) && (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Ramal</p>
@@ -279,70 +279,70 @@ export default function ActiveCalls() {
                     {/* AÇÕES PRINCIPAIS */}
                     {currentAction === 'actions' && (
                       <div className="space-y-2 animate-scale-in">
-                        <div className="grid grid-cols-4 gap-2">
+                        <div className="grid grid-cols-4 gap-1.5">
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-9 px-1.5" 
                             onClick={() => setCurrentAction('inject')}
                           >
-                            <Mic className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Injetar</span>
+                            <Mic className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Injetar</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-9 px-1.5" 
                             onClick={() => setCurrentAction('capture')}
                           >
-                            <Hash className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Captura</span>
+                            <Hash className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Captura</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-9 px-1.5" 
                             onClick={() => setCurrentAction('transfer')}
                           >
-                            <ArrowRightLeft className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Transfer</span>
+                            <ArrowRightLeft className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Transfer</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-9 px-1.5" 
                             onClick={() => setCurrentAction('listen')}
                           >
-                            <Headphones className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Escutar</span>
+                            <Headphones className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Escutar</span>
                           </Button>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-3 gap-1.5">
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-9 px-1.5" 
                             onClick={() => setCurrentAction('record')}
                           >
-                            <Radio className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Gravar</span>
+                            <Radio className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Gravar</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10" 
+                            className="w-full h-9 px-1.5 text-destructive hover:text-destructive hover:bg-destructive/10" 
                             onClick={handleEndCall}
                           >
-                            <PhoneOff className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Encerrar</span>
+                            <PhoneOff className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Encerrar</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-9 px-2" 
                             onClick={() => handleManageCall(call.id)}
                           >
-                            <ArrowLeft className="w-3.5 h-3.5" />
+                            <ArrowLeft className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
@@ -356,26 +356,26 @@ export default function ActiveCalls() {
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-auto py-2 px-2" 
                             onClick={() => setCurrentAction('inject-predefined')}
                           >
-                            <Mic className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Áudio Predefinido</span>
+                            <Mic className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Áudio Predefinido</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full" 
+                            className="w-full h-auto py-2 px-2" 
                             onClick={() => setCurrentAction('inject-tts')}
                           >
-                            <Mic className="w-3.5 h-3.5 mr-1" />
-                            <span className="text-xs">Áudio a partir de Texto (TTS)</span>
+                            <Mic className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">Áudio a partir de Texto (TTS)</span>
                           </Button>
                         </div>
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          className="w-full" 
+                          className="w-full h-9" 
                           onClick={handleBackToActions}
                         >
                           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
