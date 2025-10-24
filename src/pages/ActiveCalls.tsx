@@ -25,22 +25,28 @@ const mockCalls: ActiveCall[] = [
 
 type ActionView = 'actions' | 'inject' | 'inject-predefined' | 'inject-tts' | 'capture' | 'transfer' | 'listen' | 'listen-mode' | 'record' | 'sms';
 
+interface CallActionState {
+  currentAction: ActionView;
+  capturedDigits: string;
+  isCapturing: boolean;
+  transferTarget: string;
+  spyExtension: string;
+  listenMode: string;
+  selectedAudio: string;
+  injectMode: string;
+  ttsText: string;
+  ttsMode: string;
+  isRecording: boolean;
+  smsText: string;
+  selectedSmsTemplate: string;
+}
+
 export default function ActiveCalls() {
   const [calls, setCalls] = useState<ActiveCall[]>(mockCalls);
   const [managingCallId, setManagingCallId] = useState<string | null>(null);
-  const [currentAction, setCurrentAction] = useState<ActionView>('actions');
-  const [capturedDigits, setCapturedDigits] = useState('');
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [transferTarget, setTransferTarget] = useState('');
-  const [spyExtension, setSpyExtension] = useState('');
-  const [listenMode, setListenMode] = useState('');
-  const [selectedAudio, setSelectedAudio] = useState('');
-  const [injectMode, setInjectMode] = useState('');
-  const [ttsText, setTtsText] = useState('');
-  const [ttsMode, setTtsMode] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [smsText, setSmsText] = useState('');
-  const [selectedSmsTemplate, setSelectedSmsTemplate] = useState('');
+  
+  // Estado por chamada - cada chamada tem seu próprio estado de ações
+  const [callStates, setCallStates] = useState<Record<string, CallActionState>>({});
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,6 +60,39 @@ export default function ActiveCalls() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Função para obter ou criar estado de uma chamada
+  const getCallState = (callId: string): CallActionState => {
+    if (!callStates[callId]) {
+      return {
+        currentAction: 'actions',
+        capturedDigits: '',
+        isCapturing: false,
+        transferTarget: '',
+        spyExtension: '',
+        listenMode: '',
+        selectedAudio: '',
+        injectMode: '',
+        ttsText: '',
+        ttsMode: '',
+        isRecording: false,
+        smsText: '',
+        selectedSmsTemplate: '',
+      };
+    }
+    return callStates[callId];
+  };
+
+  // Função para atualizar estado de uma chamada específica
+  const updateCallState = (callId: string, updates: Partial<CallActionState>) => {
+    setCallStates(prev => ({
+      ...prev,
+      [callId]: {
+        ...getCallState(callId),
+        ...updates
+      }
+    }));
+  };
 
   const formatDuration = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
@@ -85,31 +124,39 @@ export default function ActiveCalls() {
   const handleManageCall = (callId: string) => {
     if (managingCallId === callId) {
       setManagingCallId(null);
-      setCurrentAction('actions');
+      // Limpa o estado da chamada
+      setCallStates(prev => {
+        const newStates = { ...prev };
+        delete newStates[callId];
+        return newStates;
+      });
     } else {
       setManagingCallId(callId);
-      setCurrentAction('actions');
+      updateCallState(callId, { currentAction: 'actions' });
     }
   };
 
-  const handleBackToActions = () => {
-    setCurrentAction('actions');
-    setCapturedDigits('');
-    setIsCapturing(false);
-    setTransferTarget('');
-    setSpyExtension('');
-    setListenMode('');
-    setSelectedAudio('');
-    setInjectMode('');
-    setTtsText('');
-    setTtsMode('');
-    setIsRecording(false);
-    setSmsText('');
-    setSelectedSmsTemplate('');
+  const handleBackToActions = (callId: string) => {
+    updateCallState(callId, {
+      currentAction: 'actions',
+      capturedDigits: '',
+      isCapturing: false,
+      transferTarget: '',
+      spyExtension: '',
+      listenMode: '',
+      selectedAudio: '',
+      injectMode: '',
+      ttsText: '',
+      ttsMode: '',
+      isRecording: false,
+      smsText: '',
+      selectedSmsTemplate: '',
+    });
   };
 
-  const handleDownloadDigits = () => {
-    const blob = new Blob([capturedDigits], { type: 'text/plain' });
+  const handleDownloadDigits = (callId: string) => {
+    const state = getCallState(callId);
+    const blob = new Blob([state.capturedDigits], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -122,8 +169,9 @@ export default function ActiveCalls() {
     });
   };
 
-  const handleConfirmTransfer = () => {
-    if (!transferTarget) {
+  const handleConfirmTransfer = (callId: string) => {
+    const state = getCallState(callId);
+    if (!state.transferTarget) {
       toast({
         title: 'Erro',
         description: 'Selecione um destino para transferência',
@@ -133,13 +181,14 @@ export default function ActiveCalls() {
     }
     toast({
       title: 'Transferência iniciada',
-      description: `Transferindo chamada para ${transferTarget}`,
+      description: `Transferindo chamada para ${state.transferTarget}`,
     });
-    handleBackToActions();
+    handleBackToActions(callId);
   };
 
-  const handleConfirmListen = () => {
-    if (!listenMode) {
+  const handleConfirmListen = (callId: string) => {
+    const state = getCallState(callId);
+    if (!state.listenMode) {
       toast({
         title: 'Erro',
         description: 'Selecione um modo de escuta',
@@ -149,9 +198,9 @@ export default function ActiveCalls() {
     }
     toast({
       title: 'Escuta iniciada',
-      description: `Modo: ${listenMode === 'listen' ? 'Só Ouvir' : 'Participar'}`,
+      description: `Modo: ${state.listenMode === 'listen' ? 'Só Ouvir' : 'Participar'}`,
     });
-    handleBackToActions();
+    handleBackToActions(callId);
   };
 
   return (
@@ -209,6 +258,8 @@ export default function ActiveCalls() {
       <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {calls.map((call) => {
           const isManaging = managingCallId === call.id;
+          const callState = getCallState(call.id);
+          const { currentAction } = callState;
           
           return (
             <Card key={call.id} className="p-5 shadow-card hover:shadow-lg transition-smooth">
@@ -221,8 +272,8 @@ export default function ActiveCalls() {
                 {getStatusBadge(call.status)}
               </div>
 
-              {/* Info Grid - Esconde apenas no card sendo gerenciado quando em inject ou capture */}
-              {!(isManaging && ['inject-predefined', 'inject-tts', 'capture'].includes(currentAction)) && (
+              {/* Info Grid - Esconde apenas no card sendo gerenciado quando em inject, capture ou sms */}
+              {!(isManaging && ['inject-predefined', 'inject-tts', 'capture', 'sms'].includes(currentAction)) && (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Ramal</p>
@@ -290,7 +341,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-9 px-1.5" 
-                            onClick={() => setCurrentAction('inject')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'inject' })}
                           >
                             <Mic className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Injetar</span>
@@ -299,7 +350,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-9 px-1.5" 
-                            onClick={() => setCurrentAction('capture')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'capture' })}
                           >
                             <Hash className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Captura</span>
@@ -308,7 +359,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-9 px-1.5" 
-                            onClick={() => setCurrentAction('transfer')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'transfer' })}
                           >
                             <ArrowRightLeft className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Transfer</span>
@@ -317,7 +368,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-9 px-1.5" 
-                            onClick={() => setCurrentAction('listen')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'listen' })}
                           >
                             <Headphones className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Escutar</span>
@@ -328,7 +379,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-9 px-1.5" 
-                            onClick={() => setCurrentAction('record')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'record' })}
                           >
                             <Radio className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Gravar</span>
@@ -337,7 +388,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-9 px-1.5" 
-                            onClick={() => setCurrentAction('sms')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'sms' })}
                           >
                             <MessageSquare className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">SMS</span>
@@ -372,7 +423,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-auto py-2 px-2" 
-                            onClick={() => setCurrentAction('inject-predefined')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'inject-predefined' })}
                           >
                             <Mic className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Áudio Predefinido</span>
@@ -381,7 +432,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-auto py-2 px-2" 
-                            onClick={() => setCurrentAction('inject-tts')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'inject-tts' })}
                           >
                             <Mic className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Áudio a partir de Texto (TTS)</span>
@@ -391,7 +442,7 @@ export default function ActiveCalls() {
                           size="sm" 
                           variant="outline" 
                           className="w-full h-9" 
-                          onClick={handleBackToActions}
+                          onClick={() => handleBackToActions(call.id)}
                         >
                           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                           <span className="text-xs">Voltar</span>
@@ -404,7 +455,10 @@ export default function ActiveCalls() {
                       <div className="space-y-3 mb-4 animate-scale-in">
                         <p className="text-xs font-semibold text-center">Áudio Predefinido</p>
                         
-                        <Select value={selectedAudio} onValueChange={setSelectedAudio}>
+                        <Select 
+                          value={callState.selectedAudio} 
+                          onValueChange={(value) => updateCallState(call.id, { selectedAudio: value })}
+                        >
                           <SelectTrigger className="w-full h-8 text-xs">
                             <SelectValue placeholder="Selecione um áudio" />
                           </SelectTrigger>
@@ -417,7 +471,10 @@ export default function ActiveCalls() {
                           </SelectContent>
                         </Select>
 
-                        <Select value={injectMode} onValueChange={setInjectMode}>
+                        <Select 
+                          value={callState.injectMode} 
+                          onValueChange={(value) => updateCallState(call.id, { injectMode: value })}
+                        >
                           <SelectTrigger className="w-full h-8 text-xs">
                             <SelectValue placeholder="Modo: Cliente / Todos" />
                           </SelectTrigger>
@@ -433,7 +490,7 @@ export default function ActiveCalls() {
                             variant="outline" 
                             className="w-full h-8" 
                             onClick={() => toast({ title: 'Reproduzindo áudio', description: 'Reproduzindo preview...' })}
-                            disabled={!selectedAudio}
+                            disabled={!callState.selectedAudio}
                           >
                             <Play className="w-3 h-3 mr-1" />
                             <span className="text-xs">Ouvir</span>
@@ -443,10 +500,10 @@ export default function ActiveCalls() {
                             variant="default" 
                             className="w-full h-8" 
                             onClick={() => {
-                              toast({ title: 'Áudio injetado', description: `Injetado para ${injectMode === 'client' ? 'cliente' : 'todos'}` });
-                              handleBackToActions();
+                              toast({ title: 'Áudio injetado', description: `Injetado para ${callState.injectMode === 'client' ? 'cliente' : 'todos'}` });
+                              handleBackToActions(call.id);
                             }}
-                            disabled={!selectedAudio || !injectMode}
+                            disabled={!callState.selectedAudio || !callState.injectMode}
                           >
                             <Mic className="w-3 h-3 mr-1" />
                             <span className="text-xs">Injetar</span>
@@ -458,7 +515,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-8" 
-                            onClick={() => setCurrentAction('capture')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'capture' })}
                           >
                             <Hash className="w-3 h-3 mr-1" />
                             <span className="text-xs">DTMF</span>
@@ -467,7 +524,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-8" 
-                            onClick={() => setCurrentAction('inject')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'inject' })}
                           >
                             <ArrowLeft className="w-3 h-3 mr-1" />
                             <span className="text-xs">Voltar</span>
@@ -484,11 +541,14 @@ export default function ActiveCalls() {
                         <textarea 
                           className="w-full min-h-[60px] p-2 text-xs rounded-lg border border-input bg-background resize-none"
                           placeholder="Digite o texto para converter em áudio..."
-                          value={ttsText}
-                          onChange={(e) => setTtsText(e.target.value)}
+                          value={callState.ttsText}
+                          onChange={(e) => updateCallState(call.id, { ttsText: e.target.value })}
                         />
 
-                        <Select value={ttsMode} onValueChange={setTtsMode}>
+                        <Select 
+                          value={callState.ttsMode} 
+                          onValueChange={(value) => updateCallState(call.id, { ttsMode: value })}
+                        >
                           <SelectTrigger className="w-full h-8 text-xs">
                             <SelectValue placeholder="Modo: Cliente / Todos / Ouvir" />
                           </SelectTrigger>
@@ -504,10 +564,10 @@ export default function ActiveCalls() {
                           variant="default" 
                           className="w-full h-8" 
                           onClick={() => {
-                            toast({ title: 'TTS injetado', description: `Convertido e injetado (${ttsMode})` });
-                            handleBackToActions();
+                            toast({ title: 'TTS injetado', description: `Convertido e injetado (${callState.ttsMode})` });
+                            handleBackToActions(call.id);
                           }}
-                          disabled={!ttsText.trim() || !ttsMode}
+                          disabled={!callState.ttsText.trim() || !callState.ttsMode}
                         >
                           <Mic className="w-3 h-3 mr-1.5" />
                           <span className="text-xs">Injetar TTS</span>
@@ -518,7 +578,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-8" 
-                            onClick={() => setCurrentAction('capture')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'capture' })}
                           >
                             <Hash className="w-3 h-3 mr-1" />
                             <span className="text-xs">DTMF</span>
@@ -527,7 +587,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full h-8" 
-                            onClick={() => setCurrentAction('inject')}
+                            onClick={() => updateCallState(call.id, { currentAction: 'inject' })}
                           >
                             <ArrowLeft className="w-3 h-3 mr-1" />
                             <span className="text-xs">Voltar</span>
@@ -542,34 +602,39 @@ export default function ActiveCalls() {
                         <p className="text-xs font-semibold text-center">Capturar Dígitos</p>
                         <div className="bg-muted/30 rounded-lg p-4 min-h-[80px] flex items-center justify-center border-2 border-dashed border-primary/20">
                           <p className="text-2xl font-mono font-bold text-primary tracking-wider">
-                            {capturedDigits || '---'}
+                            {callState.capturedDigits || '---'}
                           </p>
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <Button 
                             size="sm" 
-                            variant={isCapturing ? "default" : "outline"}
+                            variant={callState.isCapturing ? "default" : "outline"}
                             className="w-full" 
                             onClick={() => {
-                              setIsCapturing(!isCapturing);
-                              if (!isCapturing) {
+                              updateCallState(call.id, { isCapturing: !callState.isCapturing });
+                              if (!callState.isCapturing) {
                                 toast({ title: 'Captura iniciada', description: 'Capturando dígitos...' });
                                 // Simulação de captura
-                                setTimeout(() => setCapturedDigits(prev => prev + Math.floor(Math.random() * 10)), 1000);
+                                setTimeout(() => {
+                                  const currentState = getCallState(call.id);
+                                  updateCallState(call.id, { 
+                                    capturedDigits: currentState.capturedDigits + Math.floor(Math.random() * 10) 
+                                  });
+                                }, 1000);
                               } else {
                                 toast({ title: 'Captura pausada' });
                               }
                             }}
                           >
-                            {isCapturing ? <Pause className="w-3.5 h-3.5 mr-1" /> : <Play className="w-3.5 h-3.5 mr-1" />}
-                            <span className="text-xs">{isCapturing ? 'Pausar' : 'Iniciar'}</span>
+                            {callState.isCapturing ? <Pause className="w-3.5 h-3.5 mr-1" /> : <Play className="w-3.5 h-3.5 mr-1" />}
+                            <span className="text-xs">{callState.isCapturing ? 'Pausar' : 'Iniciar'}</span>
                           </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 
                             className="w-full" 
                             onClick={() => {
-                              setCapturedDigits('');
+                              updateCallState(call.id, { capturedDigits: '' });
                               toast({ title: 'Dígitos limpos' });
                             }}
                           >
@@ -580,8 +645,8 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full" 
-                            onClick={handleDownloadDigits}
-                            disabled={!capturedDigits}
+                            onClick={() => handleDownloadDigits(call.id)}
+                            disabled={!callState.capturedDigits}
                           >
                             <Download className="w-3.5 h-3.5 mr-1" />
                             <span className="text-xs">Baixar</span>
@@ -591,7 +656,7 @@ export default function ActiveCalls() {
                           size="sm" 
                           variant="outline" 
                           className="w-full" 
-                          onClick={handleBackToActions}
+                          onClick={() => handleBackToActions(call.id)}
                         >
                           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                           <span className="text-xs">Voltar</span>
@@ -603,7 +668,10 @@ export default function ActiveCalls() {
                     {currentAction === 'transfer' && (
                       <div className="space-y-3 animate-scale-in">
                         <p className="text-xs font-semibold text-center">Você deseja transferir para quem a chamada?</p>
-                        <Select value={transferTarget} onValueChange={setTransferTarget}>
+                        <Select 
+                          value={callState.transferTarget} 
+                          onValueChange={(value) => updateCallState(call.id, { transferTarget: value })}
+                        >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione o destino" />
                           </SelectTrigger>
@@ -621,7 +689,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="default" 
                             className="w-full" 
-                            onClick={handleConfirmTransfer}
+                            onClick={() => handleConfirmTransfer(call.id)}
                           >
                             <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" />
                             <span className="text-xs">Confirmar Transferência</span>
@@ -630,7 +698,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full" 
-                            onClick={handleBackToActions}
+                            onClick={() => handleBackToActions(call.id)}
                           >
                             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                             <span className="text-xs">Voltar</span>
@@ -643,10 +711,13 @@ export default function ActiveCalls() {
                     {currentAction === 'listen' && (
                       <div className="space-y-3 animate-scale-in">
                         <p className="text-xs font-semibold text-center">Qual é seu ramal espião?</p>
-                        <Select value={spyExtension} onValueChange={(value) => {
-                          setSpyExtension(value);
-                          setTimeout(() => setCurrentAction('listen-mode'), 300);
-                        }}>
+                        <Select 
+                          value={callState.spyExtension} 
+                          onValueChange={(value) => {
+                            updateCallState(call.id, { spyExtension: value });
+                            setTimeout(() => updateCallState(call.id, { currentAction: 'listen-mode' }), 300);
+                          }}
+                        >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione seu ramal" />
                           </SelectTrigger>
@@ -662,7 +733,7 @@ export default function ActiveCalls() {
                           size="sm" 
                           variant="outline" 
                           className="w-full" 
-                          onClick={handleBackToActions}
+                          onClick={() => handleBackToActions(call.id)}
                         >
                           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                           <span className="text-xs">Voltar</span>
@@ -674,7 +745,10 @@ export default function ActiveCalls() {
                     {currentAction === 'listen-mode' && (
                       <div className="space-y-3 animate-scale-in">
                         <p className="text-xs font-semibold text-center">Qual modo usar?</p>
-                        <Select value={listenMode} onValueChange={setListenMode}>
+                        <Select 
+                          value={callState.listenMode} 
+                          onValueChange={(value) => updateCallState(call.id, { listenMode: value })}
+                        >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione o modo" />
                           </SelectTrigger>
@@ -688,7 +762,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="default" 
                             className="w-full" 
-                            onClick={handleConfirmListen}
+                            onClick={() => handleConfirmListen(call.id)}
                           >
                             <Headphones className="w-3.5 h-3.5 mr-1.5" />
                             <span className="text-xs">Iniciar Escuta</span>
@@ -697,7 +771,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full" 
-                            onClick={handleBackToActions}
+                            onClick={() => handleBackToActions(call.id)}
                           >
                             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                             <span className="text-xs">Voltar</span>
@@ -711,7 +785,7 @@ export default function ActiveCalls() {
                       <div className="space-y-3 animate-scale-in">
                         <p className="text-xs font-semibold text-center">Gravação de Chamada</p>
                         
-                        {!isRecording ? (
+                        {!callState.isRecording ? (
                           <>
                             <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center">
                               <p className="text-sm">Clique em Start para iniciar</p>
@@ -722,7 +796,7 @@ export default function ActiveCalls() {
                                 variant="default" 
                                 className="w-full" 
                                 onClick={() => {
-                                  setIsRecording(true);
+                                  updateCallState(call.id, { isRecording: true });
                                   toast({ title: 'Gravação iniciada', description: 'A chamada está sendo gravada' });
                                 }}
                               >
@@ -733,7 +807,7 @@ export default function ActiveCalls() {
                                 size="sm" 
                                 variant="outline" 
                                 className="w-full" 
-                                onClick={handleBackToActions}
+                                onClick={() => handleBackToActions(call.id)}
                               >
                                 <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                                 <span className="text-xs">Voltar</span>
@@ -752,7 +826,7 @@ export default function ActiveCalls() {
                                 variant="destructive" 
                                 className="w-full" 
                                 onClick={() => {
-                                  setIsRecording(false);
+                                  updateCallState(call.id, { isRecording: false });
                                   toast({ title: 'Gravação parada', description: 'A gravação foi interrompida' });
                                 }}
                               >
@@ -763,7 +837,7 @@ export default function ActiveCalls() {
                                 size="sm" 
                                 variant="outline" 
                                 className="w-full" 
-                                onClick={handleBackToActions}
+                                onClick={() => handleBackToActions(call.id)}
                               >
                                 <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                                 <span className="text-xs">Voltar</span>
@@ -780,9 +854,9 @@ export default function ActiveCalls() {
                         <p className="text-xs font-semibold text-center">Enviar SMS</p>
                         
                         <Select 
-                          value={selectedSmsTemplate} 
+                          value={callState.selectedSmsTemplate} 
                           onValueChange={(value) => {
-                            setSelectedSmsTemplate(value);
+                            updateCallState(call.id, { selectedSmsTemplate: value });
                             // Preenche o texto com a mensagem pronta selecionada
                             const templates: Record<string, string> = {
                               'agradecimento': 'Obrigado por entrar em contato! Em breve retornaremos.',
@@ -791,7 +865,7 @@ export default function ActiveCalls() {
                               'promocao': 'Aproveite nossa promoção especial! Válida até o fim do mês.',
                               'atendimento': 'Estamos processando seu atendimento. Aguarde.',
                             };
-                            setSmsText(templates[value] || '');
+                            updateCallState(call.id, { smsText: templates[value] || '' });
                           }}
                         >
                           <SelectTrigger className="w-full h-8 text-xs">
@@ -809,8 +883,8 @@ export default function ActiveCalls() {
                         <textarea 
                           className="w-full min-h-[80px] p-2 text-xs rounded-lg border border-input bg-background resize-none"
                           placeholder="Digite sua mensagem SMS..."
-                          value={smsText}
-                          onChange={(e) => setSmsText(e.target.value)}
+                          value={callState.smsText}
+                          onChange={(e) => updateCallState(call.id, { smsText: e.target.value })}
                         />
 
                         <div className="grid grid-cols-2 gap-2">
@@ -819,7 +893,7 @@ export default function ActiveCalls() {
                             variant="default" 
                             className="w-full" 
                             onClick={() => {
-                              if (!smsText.trim()) {
+                              if (!callState.smsText.trim()) {
                                 toast({ 
                                   title: 'Erro', 
                                   description: 'Digite uma mensagem para enviar',
@@ -831,7 +905,7 @@ export default function ActiveCalls() {
                                 title: 'SMS enviado', 
                                 description: 'Mensagem enviada com sucesso' 
                               });
-                              handleBackToActions();
+                              handleBackToActions(call.id);
                             }}
                           >
                             <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
@@ -841,7 +915,7 @@ export default function ActiveCalls() {
                             size="sm" 
                             variant="outline" 
                             className="w-full" 
-                            onClick={handleBackToActions}
+                            onClick={() => handleBackToActions(call.id)}
                           >
                             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
                             <span className="text-xs">Voltar</span>
@@ -860,16 +934,13 @@ export default function ActiveCalls() {
       {/* Empty State */}
       {calls.length === 0 && (
         <Card className="p-12 text-center shadow-card">
-          <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-            <Phone className="w-8 h-8 text-muted-foreground" />
-          </div>
+          <Phone className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">Nenhuma chamada ativa</h3>
-          <p className="text-muted-foreground">
-            As chamadas aparecerão aqui quando iniciadas
+          <p className="text-sm text-muted-foreground">
+            As chamadas ativas aparecerão aqui
           </p>
         </Card>
       )}
-
     </div>
   );
 }
