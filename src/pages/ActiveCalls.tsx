@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Phone, Headphones, PhoneOff, ArrowRightLeft, Settings, Mic, Hash, ArrowLeft, Trash2, Download, Play, Pause, Radio } from 'lucide-react';
+import { Phone, Headphones, PhoneOff, ArrowRightLeft, Settings, Mic, Hash, ArrowLeft, Trash2, Download, Play, Pause, Radio, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ const mockCalls: ActiveCall[] = [
   { id: '4', extension: '104', agent: 'Ana Lima', callerId: '1004', destination: '(11) 93456-7890', duration: 5, status: 'ringing' },
 ];
 
-type ActionView = 'actions' | 'inject' | 'inject-predefined' | 'inject-tts' | 'capture' | 'transfer' | 'listen' | 'listen-mode' | 'record';
+type ActionView = 'actions' | 'inject' | 'inject-predefined' | 'inject-tts' | 'capture' | 'transfer' | 'listen' | 'listen-mode' | 'record' | 'sms';
 
 export default function ActiveCalls() {
   const [calls, setCalls] = useState<ActiveCall[]>(mockCalls);
@@ -39,6 +39,8 @@ export default function ActiveCalls() {
   const [ttsText, setTtsText] = useState('');
   const [ttsMode, setTtsMode] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [smsText, setSmsText] = useState('');
+  const [selectedSmsTemplate, setSelectedSmsTemplate] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -102,6 +104,8 @@ export default function ActiveCalls() {
     setTtsText('');
     setTtsMode('');
     setIsRecording(false);
+    setSmsText('');
+    setSelectedSmsTemplate('');
   };
 
   const handleDownloadDigits = () => {
@@ -319,7 +323,7 @@ export default function ActiveCalls() {
                             <span className="text-[10px] ml-1 leading-tight">Escutar</span>
                           </Button>
                         </div>
-                        <div className="grid grid-cols-3 gap-1.5">
+                        <div className="grid grid-cols-4 gap-1.5">
                           <Button 
                             size="sm" 
                             variant="outline" 
@@ -328,6 +332,15 @@ export default function ActiveCalls() {
                           >
                             <Radio className="w-3.5 h-3.5 shrink-0" />
                             <span className="text-[10px] ml-1 leading-tight">Gravar</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full h-9 px-1.5" 
+                            onClick={() => setCurrentAction('sms')}
+                          >
+                            <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                            <span className="text-[10px] ml-1 leading-tight">SMS</span>
                           </Button>
                           <Button 
                             size="sm" 
@@ -758,6 +771,82 @@ export default function ActiveCalls() {
                             </div>
                           </>
                         )}
+                      </div>
+                    )}
+
+                    {/* SMS */}
+                    {currentAction === 'sms' && (
+                      <div className="space-y-3 animate-scale-in">
+                        <p className="text-xs font-semibold text-center">Enviar SMS</p>
+                        
+                        <Select 
+                          value={selectedSmsTemplate} 
+                          onValueChange={(value) => {
+                            setSelectedSmsTemplate(value);
+                            // Preenche o texto com a mensagem pronta selecionada
+                            const templates: Record<string, string> = {
+                              'agradecimento': 'Obrigado por entrar em contato! Em breve retornaremos.',
+                              'confirmacao': 'Sua solicitação foi recebida e está sendo processada.',
+                              'lembrete': 'Lembramos que você tem um agendamento conosco.',
+                              'promocao': 'Aproveite nossa promoção especial! Válida até o fim do mês.',
+                              'atendimento': 'Estamos processando seu atendimento. Aguarde.',
+                            };
+                            setSmsText(templates[value] || '');
+                          }}
+                        >
+                          <SelectTrigger className="w-full h-8 text-xs">
+                            <SelectValue placeholder="Selecione uma mensagem pronta" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="agradecimento">Agradecimento</SelectItem>
+                            <SelectItem value="confirmacao">Confirmação</SelectItem>
+                            <SelectItem value="lembrete">Lembrete</SelectItem>
+                            <SelectItem value="promocao">Promoção</SelectItem>
+                            <SelectItem value="atendimento">Atendimento</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <textarea 
+                          className="w-full min-h-[80px] p-2 text-xs rounded-lg border border-input bg-background resize-none"
+                          placeholder="Digite sua mensagem SMS..."
+                          value={smsText}
+                          onChange={(e) => setSmsText(e.target.value)}
+                        />
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="w-full" 
+                            onClick={() => {
+                              if (!smsText.trim()) {
+                                toast({ 
+                                  title: 'Erro', 
+                                  description: 'Digite uma mensagem para enviar',
+                                  variant: 'destructive'
+                                });
+                                return;
+                              }
+                              toast({ 
+                                title: 'SMS enviado', 
+                                description: 'Mensagem enviada com sucesso' 
+                              });
+                              handleBackToActions();
+                            }}
+                          >
+                            <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Enviar</span>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full" 
+                            onClick={handleBackToActions}
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                            <span className="text-xs">Voltar</span>
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </>
