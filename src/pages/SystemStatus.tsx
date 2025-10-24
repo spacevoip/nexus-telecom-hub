@@ -155,49 +155,6 @@ export default function SystemStatus() {
         </div>
       </Card>
 
-      {/* API Documentation */}
-      <Card className="p-6 shadow-card">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold">Documentação da API</h2>
-            <p className="text-muted-foreground mt-1">
-              Acesse a documentação completa da API REST
-            </p>
-          </div>
-          <Button className="gradient-primary shadow-primary">
-            Ver Documentação
-          </Button>
-        </div>
-      </Card>
-
-      {/* API Keys */}
-      <Card className="p-6 shadow-card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Chaves de API</h2>
-          <Button variant="outline" size="sm">Criar Nova Chave</Button>
-        </div>
-        <div className="space-y-3">
-          {[
-            { name: 'Produção', key: 'pk_live_**********************abc', created: '10/10/2025', lastUsed: 'há 2 minutos' },
-            { name: 'Desenvolvimento', key: 'pk_test_**********************xyz', created: '05/09/2025', lastUsed: 'há 1 hora' },
-          ].map((apiKey, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-              <div>
-                <p className="font-medium">{apiKey.name}</p>
-                <p className="text-sm font-mono text-muted-foreground mt-1">{apiKey.key}</p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                  <span>Criada: {apiKey.created}</span>
-                  <span>•</span>
-                  <span>Último uso: {apiKey.lastUsed}</span>
-                </div>
-              </div>
-              <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-                Revogar
-              </Button>
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 }
