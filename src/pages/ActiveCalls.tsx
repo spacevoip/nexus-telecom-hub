@@ -38,6 +38,7 @@ export default function ActiveCalls() {
   const [injectMode, setInjectMode] = useState('');
   const [ttsText, setTtsText] = useState('');
   const [ttsMode, setTtsMode] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -100,6 +101,7 @@ export default function ActiveCalls() {
     setInjectMode('');
     setTtsText('');
     setTtsMode('');
+    setIsRecording(false);
   };
 
   const handleDownloadDigits = () => {
@@ -695,33 +697,67 @@ export default function ActiveCalls() {
                     {currentAction === 'record' && (
                       <div className="space-y-3 animate-scale-in">
                         <p className="text-xs font-semibold text-center">Gravação de Chamada</p>
-                        <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
-                          <p className="text-sm font-semibold">Gravando...</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="default" 
-                            className="w-full" 
-                            onClick={() => {
-                              toast({ title: 'Gravação salva', description: 'A gravação foi salva com sucesso' });
-                              handleBackToActions();
-                            }}
-                          >
-                            <Download className="w-3.5 h-3.5 mr-1.5" />
-                            <span className="text-xs">Salvar Gravação</span>
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="w-full" 
-                            onClick={handleBackToActions}
-                          >
-                            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-                            <span className="text-xs">Voltar</span>
-                          </Button>
-                        </div>
+                        
+                        {!isRecording ? (
+                          <>
+                            <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center">
+                              <p className="text-sm">Clique em Start para iniciar</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="default" 
+                                className="w-full" 
+                                onClick={() => {
+                                  setIsRecording(true);
+                                  toast({ title: 'Gravação iniciada', description: 'A chamada está sendo gravada' });
+                                }}
+                              >
+                                <Play className="w-3.5 h-3.5 mr-1.5" />
+                                <span className="text-xs">Start</span>
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="w-full" 
+                                onClick={handleBackToActions}
+                              >
+                                <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                                <span className="text-xs">Voltar</span>
+                              </Button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="bg-muted/30 rounded-lg p-4 flex items-center justify-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
+                              <p className="text-sm font-semibold">Gravando...</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="destructive" 
+                                className="w-full" 
+                                onClick={() => {
+                                  setIsRecording(false);
+                                  toast({ title: 'Gravação parada', description: 'A gravação foi interrompida' });
+                                }}
+                              >
+                                <Pause className="w-3.5 h-3.5 mr-1.5" />
+                                <span className="text-xs">Parar</span>
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="w-full" 
+                                onClick={handleBackToActions}
+                              >
+                                <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                                <span className="text-xs">Voltar</span>
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </>
